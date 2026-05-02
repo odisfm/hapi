@@ -1,0 +1,80 @@
+name: Build and Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.2.3
+        with:
+          role-to-assume:
+          aws-region: ${{ vars.aws_region }}
+
+      - uses: opentofu/setup-opentofu@v1
+
+      - name: setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 24
+
+      - name: apply db migration
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_OWNER }}
+        run: |
+          npm install
+          cd shared
+          npx prisma migrate deploy
+
+      - name: tofu vars
+        working-directory: infra/terraform
+        run: |
+          touch terraform.tfvars
+          echo "environment = \"${{ inputs.environment }}\"" >> terraform.tfvars
+
+      - name: tofu init
+        working-directory: infra/terraform
+        run: |
+          tofu init
+
+      - name: build api
+        run: |
+          cd shared
+          npx prisma generate
+          cd ../api
+          npm run build:lambda
+          zip -j dist/lambda.zip dist/lambda.mjs
+
+      - name: deploy aws
+        id: deploy_aws
+        working-directory: infra/terraform
+        run: |
+          tofu apply -auto-approve
+          echo "api_url=$(tofu output -raw api_url)" >> "$GITHUB_OUTPUT"
+          echo "frontend_bucket=$(tofu output -raw frontend_bucket_name)" >> "$GITHUB_OUTPUT"
+
+      - name: build frontend
+        working-directory: client
+        env:
+          VITE_API_URL: ${{ steps.deploy_aws.outputs.api_url }}
+        run: |
+          npx vite build
+
+      - name: deploy frontend
+        working-directory: client
+        run: |
+          aws s3 sync dist/ "s3://${{ steps.deploy_aws.outputs.frontend_bucket }}" --delete
+

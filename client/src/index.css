@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --color-r-red: #E61E2A; /* should never be tinted */
+  --color-r-blue: #000054;
+  --color-r-blue-950: #000054; /* 100% tint */
+  --color-r-blue-700: #40407F; /* 70% tint */
+  --color-r-blue-500: #8080A9; /* 50% tint */
+  --color-r-blue-300: #B3B3CC; /* 30% tint */
+}
+
+:root {
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+}
+
+body {
+  display: flex;
+  flex-direction:  column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+}
+

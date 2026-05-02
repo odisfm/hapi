@@ -1,0 +1,19 @@
+{
+  "name": "@change-me/api",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "build:lambda": "node esbuild.config.ts",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.14",
+    "hono": "^4.12.14"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3"
+  }
+}

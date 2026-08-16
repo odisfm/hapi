@@ -28,12 +28,12 @@ jobs:
       - name: install dependencies
         run: npm install
 
-#      - name: apply db migration
-#        env:
-#          DATABASE_URL: ${{ secrets.DATABASE_URL_OWNER }}
-#        run: |
-#          cd shared
-#          npx prisma migrate deploy
+      - name: apply db migration
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_OWNER }}
+        run: |
+          cd shared
+          npx prisma migrate deploy
 
       - name: tofu vars
         working-directory: infra

@@ -34,7 +34,7 @@ jobs:
 #          npx prisma migrate deploy
 
       - name: tofu vars
-        working-directory: infra/terraform
+        working-directory: infra
         run: |
           touch terraform.tfvars
           echo "environment = \"${{ inputs.environment }}\"" >> terraform.tfvars

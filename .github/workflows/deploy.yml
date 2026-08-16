@@ -18,12 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6.2.3
-        with:
-          role-to-assume:
-          aws-region: ${{ vars.aws_region }}
-
       - uses: opentofu/setup-opentofu@v1
 
       - name: setup Node
@@ -31,13 +25,13 @@ jobs:
         with:
           node-version: 24
 
-      - name: apply db migration
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_OWNER }}
-        run: |
-          npm install
-          cd shared
-          npx prisma migrate deploy
+#      - name: apply db migration
+#        env:
+#          DATABASE_URL: ${{ secrets.DATABASE_URL_OWNER }}
+#        run: |
+#          npm install
+#          cd shared
+#          npx prisma migrate deploy
 
       - name: tofu vars
         working-directory: infra/terraform

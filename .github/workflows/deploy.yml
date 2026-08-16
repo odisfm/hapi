@@ -54,7 +54,7 @@ jobs:
 
       - name: deploy aws
         id: deploy_aws
-        working-directory: infra/terraform
+        working-directory: infra
         run: |
           tofu apply -auto-approve
           echo "api_url=$(tofu output -raw api_url)" >> "$GITHUB_OUTPUT"

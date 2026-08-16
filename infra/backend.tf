@@ -1,5 +1,5 @@
 locals {
-  api_lambda_zip = "${path.module}/../../api/dist/lambda.zip"
+  api_lambda_zip = "${path.module}/../api/dist/lambda.zip"
 }
 
 data "aws_iam_role" "lambda_exec_role" {

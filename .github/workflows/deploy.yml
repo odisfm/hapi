@@ -40,7 +40,7 @@ jobs:
           echo "environment = \"${{ inputs.environment }}\"" >> terraform.tfvars
 
       - name: tofu init
-        working-directory: infra/terraform
+        working-directory: infra
         run: |
           tofu init
 

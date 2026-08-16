@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+console.log(import.meta.env.VITE_API_URL)
+
 export function App() {
   const [count, setCount] = useState(0)
 

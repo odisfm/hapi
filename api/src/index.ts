@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { db } from "@change-me/shared"
+import { db } from "@hapi/shared"
 import { deleteCookie, setCookie } from 'hono/cookie';
 import { csrf } from 'hono/csrf';
 import { jwt } from 'hono/jwt';

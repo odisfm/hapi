@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 24
+      - run: npm install
+
+      - name: lint
+        id: lint
+        continue-on-error: true
+        run: |
+          npm run lint --workspace client
+          npm run lint --workspace api
+          npm run lint --workspace shared
+
+      - name: test frontend
+        id: test-frontend
+        continue-on-error: true
+        run: npm run test --workspace client
+
+      - name: test backend
+        id: test-backend
+        continue-on-error: true
+        run: npm run test --workspace api
+
+      - name: test shared
+        id: test-shared
+        continue-on-error: true
+        run: npm run test --workspace shared
+
+      - name: dependency vulnerability audit
+        id: audit
+        continue-on-error: true
+        run: npm audit --audit-level=high
+
+      - name: check results
+        if: always()
+        run: |
+          if [ "${{ steps.lint.outcome }}" != "success" ] || \
+             [ "${{ steps.test-frontend.outcome }}" != "success" ] || \
+             [ "${{ steps.test-backend.outcome }}" != "success" ] || \
+             [ "${{ steps.test-shared.outcome }}" != "success" ] || \
+             [ "${{ steps.audit.outcome }}" != "success" ]; then
+            echo "One or more steps failed"
+            exit 1
+          fi

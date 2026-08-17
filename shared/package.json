@@ -1,10 +1,12 @@
 {
-  "name": "@change-me/shared",
+  "name": "@hapi/shared",
   "private": true,
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "db:migrate:deploy": "npx prisma migrate deploy && npx prisma db push"
+    "db:migrate:deploy": "npx prisma migrate deploy && npx prisma db push",
+    "test": "vitest run",
+    "test:watch": "vitest watch"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",

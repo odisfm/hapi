@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+console.log("API URL:")
 console.log(import.meta.env.VITE_API_URL)
 
 export function App() {

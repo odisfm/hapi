@@ -5,6 +5,6 @@
     { "path": "./tsconfig.node.json" }
   ],
   "paths": {
-    "@change-me/shared": ["../shared/src/index.ts"]
+    "@hapi/shared": ["../shared/src/index.ts"]
   }
 }

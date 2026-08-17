@@ -1,11 +1,11 @@
 {
-  "name": "@change-me/client",
+  "name": "@hapi/client",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "eslint src/",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest watch"

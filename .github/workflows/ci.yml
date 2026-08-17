@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: npm ci
+      - run: |
+          npm run lint --workspace client
+          npm run lint --workspace api
+          npm run lint --workspace shared
+
+  test-shared:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: npm ci
+      - run: |
+          cd shared
+          npx prisma generate
+          cd ..
+      - run: npm run test --workspace shared
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: npm ci
+      - run: |
+          cd shared
+          npx prisma generate
+          cd ..
+      - run: npm run test --workspace client
+
+  test-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: npm ci
+      - run: |
+          cd shared
+          npx prisma generate
+          cd ..
+      - run: npm run test --workspace api
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: npm ci
+      - run: npm audit --audit-level=high

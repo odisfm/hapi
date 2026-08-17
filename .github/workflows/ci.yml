@@ -45,6 +45,10 @@ jobs:
           node-version: 24
           cache: 'npm'
       - run: npm install
+      - run: |
+          cd shared
+          npx prisma generate
+          cd ..
       - run: npm run test --workspace client
 
   test-backend:
@@ -56,6 +60,10 @@ jobs:
           node-version: 24
           cache: 'npm'
       - run: npm install
+      - run: |
+          cd shared
+          npx prisma generate
+          cd ..
       - run: npm run test --workspace api
 
   audit:

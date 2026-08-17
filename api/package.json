@@ -6,7 +6,7 @@
     "build": "tsc",
     "build:lambda": "node esbuild.config.ts",
     "start": "node dist/server.js",
-    "lint": "eslint src/",
+    "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest watch"
   },

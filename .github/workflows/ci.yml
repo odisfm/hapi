@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: 24
           cache: 'npm'
-      - run: npm install
+      - run: npm ci
       - run: |
           npm run lint --workspace client
           npm run lint --workspace api
@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: 24
           cache: 'npm'
-      - run: npm install
+      - run: npm ci
       - run: |
           cd shared
           npx prisma generate
@@ -44,7 +44,7 @@ jobs:
         with:
           node-version: 24
           cache: 'npm'
-      - run: npm install
+      - run: npm ci
       - run: |
           cd shared
           npx prisma generate
@@ -59,7 +59,7 @@ jobs:
         with:
           node-version: 24
           cache: 'npm'
-      - run: npm install
+      - run: npm ci
       - run: |
           cd shared
           npx prisma generate
@@ -74,5 +74,5 @@ jobs:
         with:
           node-version: 24
           cache: 'npm'
-      - run: npm install
+      - run: npm ci
       - run: npm audit --audit-level=high

@@ -6,4 +6,8 @@ describe("server", () => {
         const res = await app.request("/");
         expect(await res.text()).toEqual("Hello Hono!");
     })
+
+    test("false is true", () => {
+        expect(true).toEqual(false)
+    })
 })

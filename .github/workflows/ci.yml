@@ -37,7 +37,11 @@ jobs:
       - name: test shared
         id: test-shared
         continue-on-error: true
-        run: npm run test --workspace shared
+        run: |
+          cd shared
+          npx prisma generate
+          cd ..
+          npm run test --workspace shared
 
       - name: dependency vulnerability audit
         id: audit

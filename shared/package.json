@@ -15,6 +15,6 @@
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
-    "prisma": "^7.7.0"
+    "prisma": "7.x"
   }
 }

@@ -1,6 +1,6 @@
 # HAPI Showcase — Requirements Specification & Design Proposal
 - **Role:** BA — Imraan Mohammed
-- **Date:** Sun, 23rd Aug 2026 (Version 2.0)
+- **Date:** Sunday, 23rd Aug 2026 (Version 2.0)
 - **Status:** Draft (Version 2.0)
 - **Details:** This document consolidates ideas from our signed project proposal and client meeting notes, complimenting them as an extension, providing implementation ready details, including functional and non-functional requirements, in addition to design elements our UX Designer (Max Thum) has already sketched out, and Infrastructure/Hosting Architecture planned by our Dev 1 (Nick Moore). 
 - **Related Document:** The signed Client Project Proposal organised by our PM (Nirmal Rajesh) already covers the business context, such as the problem statement, our team roles, target users, stakeholders, proposed solution, success criteria, scope boundaries, 3-sprint roadmap, assumptions and constraints.

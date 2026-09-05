@@ -51,9 +51,9 @@ model Project {
   iconUrl         String
   developers      String[]
   approvalStatus  ApprovalStatus @default(PENDING)
-  rejectionReason String?        // only relevant when approvalStatus = REJECTED
-  links           String[]       // parsed on frontend (GitHub/App Store/etc.)
-  order           String?        // Lexo-rank
+  rejectionReason String? // only relevant when approvalStatus = REJECTED
+  links           String[] // parsed on frontend (GitHub/App Store/etc.)
+  order           String? // Lexo-rank
   categoryId      String         @db.Uuid
   category        Category       @relation(fields: [categoryId], references: [id])
   showcaseId      String         @db.Uuid
@@ -69,7 +69,7 @@ model ProjectMedia {
   mediaUrl   String
   mediaType  MediaType
   deviceType DeviceType
-  order      String     // Lexo-rank
+  order      String // Lexo-rank
 }
 
 enum MediaType {

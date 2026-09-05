@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest"
-import { db } from "./db"
+import { db } from "./db.js"
 
 describe("database", () => {
     test("prisma client created", async () => {

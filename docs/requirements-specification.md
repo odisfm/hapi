@@ -197,4 +197,4 @@
 
 ## Deliverable:
 - This Requirements Specification document shall be delivered as a markdown file `.md`, named `requirements-specification.md` and committed to the project's `docs/` directory.
-- The document shall be shared as a deliverable with the UX for refinements and feedback, then the Dev for implementation.
+- The document shall be shared as a deliverable with the UX for refinements and feedback, then the Dev for implementation. 

@@ -5,7 +5,10 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client"
+  output        = "../src/generated/prisma"
+  moduleFormat  = "esm"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 model Category {

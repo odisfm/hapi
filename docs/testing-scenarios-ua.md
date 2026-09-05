@@ -2,10 +2,10 @@
 - **Role:** BA — Imraan Mohammed
 - **Date:** Sprint 1, Week 2 — Tue, 25th Aug 2026 (Version 1.0)
 - **Status:** Draft (Version 1.0)
-- **Details:** This document includes test scenarios which are derived from the `requirements-specification.md` document, covering both General/Public Access and Admin Access from an end-user perspective, alongside any edge cases identified during feedback sessions from the client and our PM (Nirmal Rajesh).
+- **Details:** This document includes test scenarios which are derived from the [requirements specification](./requirements-specification.md) document, covering both General/Public Access and Admin Access from an end-user perspective, alongside any edge cases identified during feedback sessions from the client and our PM (Nirmal Rajesh).
 - **Related Document:** The signed Client Project Proposal organised by our PM (Nirmal Rajesh) and the Sprint 1 Week 1's Requirements Specification Document prepared myself, the BA (Imraan Mohammed), which covers functional and non-functional requirements, edge cases and design guides, all are related documents and are referenced in this document as a source of truth.
     - [Signed Client Project Proposal (PDF)](https://rmiteduau.sharepoint.com/:b:/r/sites/CapstoneProgrammingProject2026-68-HAPIApplePlatformShowcaseTeamA/Shared%20Documents/SIGNED%20HAPI%20Showcase%20Client%20Project%20Proposal%5B64%5D.pdf?d=w5547aa661f4f466982b7ea8309db2338&csf=1&web=1&e=HEDrkA)
-    - [`requirements-specification.md` (MD file - Version 3.0)](https://github.com/odisfm/hapi/blob/main/docs/requirements-specification.md)
+    - [Requirements Specification](./requirements-specification.md)
 - **Scope Note:** This document shall simply define testable scenarios covering the functional requirements and edge cases covered in the Requirements Specification Document, from a General/Public and Admin Access perspective. Accessibility (WCAG) considerations shall be scoped for the Sprint 2 build/development stage and shall not be covered in the current document yet. Backend and Infrastructure concerns, including hosting, storage, database and security/encryption matters, shall be acknowledged as important but sit outside a user acceptance scope, and excluded from this document for now. This document shall be a working checklist against the Requirements Specification Document, and shall be further refined iteratively over the next two sprints after feedback and review from the team and client.
 
 ---

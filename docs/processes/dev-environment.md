@@ -47,6 +47,13 @@ cd shared
 npx prisma migrate dev
 ```
 
+After creating/migrating the database, you will need to [regenerate the Prisma client](https://www.prisma.io/docs/cli/v7/generate):
+
+```shell
+cd shared
+npx prisma generate
+```
+
 ### Populating the database
 
 **TODO:**

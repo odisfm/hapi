@@ -4,7 +4,8 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "db:migrate:deploy": "npx prisma migrate deploy && npx prisma db push",
+    "db:migrate:deploy": "dotenv -e ../.env -- sh -c 'npx prisma migrate deploy && npx prisma db push'",
+    "db:populate": "dotenv -e ../.env -- sh -c 'tsx ./src/scripts/populateDb/populateDb.ts'",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "lint": "eslint ."
@@ -14,7 +15,9 @@
     "@prisma/client": "^7.7.0"
   },
   "devDependencies": {
+    "@types/command-line-args": "^5.2.3",
     "@types/node": "^25.6.0",
+    "command-line-args": "^6.0.2",
     "prisma": "7.x"
   }
 }

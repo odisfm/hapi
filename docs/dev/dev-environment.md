@@ -6,7 +6,7 @@
 
 - [Node.js and NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install) (Windows users only)
+- [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install) (Windows users only; the rest of this guide assumes you are running commands in WSL)
 
 ### Clone this repository
 
@@ -56,7 +56,13 @@ npx prisma generate
 
 ### Populating the database
 
-**TODO:**
+To populate the database with dummy data, from the repo root, run:
+
+`npm run db:populate --workspace shared`
+
+**Note:** this will truncate (delete) all data in the database and replace it with dummy data!
+
+View the script [here](../../shared/src/scripts/populateDb/populateDb.ts).
 
 ### Viewing the database in a GUI
 

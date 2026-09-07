@@ -22,7 +22,7 @@ model Showcase {
   id            String    @id @default(uuid()) @db.Uuid
   name          String
   year          Int
-  semester      String
+  semester      Int
   description   String?
   publishedDate DateTime? // null or future = unpublished
 

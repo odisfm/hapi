@@ -18,6 +18,7 @@
     "@types/command-line-args": "^5.2.3",
     "@types/node": "^25.6.0",
     "command-line-args": "^6.0.2",
-    "prisma": "7.x"
+    "prisma": "7.x",
+    "supabase": "^2.117.0"
   }
 }

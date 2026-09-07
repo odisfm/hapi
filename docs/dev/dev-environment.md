@@ -44,7 +44,7 @@ The first time you create the database, and any time the [database schema](../..
 To do so:
 ```shell
 cd shared
-npx prisma migrate dev
+npm run db:migrate:deploy
 ```
 
 After creating/migrating the database, you will need to [regenerate the Prisma client](https://www.prisma.io/docs/cli/v7/generate):

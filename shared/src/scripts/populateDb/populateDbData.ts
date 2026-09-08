@@ -72,7 +72,7 @@ type ShowcaseSearch = {
     semester: number,
 }
 
-type NewProjectType = Omit<Project, 'id' | 'categoryId' | 'showcaseId'> & {
+type NewProjectType = Omit<Project, 'categoryId' | 'showcaseId'> & {
     categoryName: string,
     showcase: ShowcaseSearch
 }
@@ -80,6 +80,7 @@ type NewProjectType = Omit<Project, 'id' | 'categoryId' | 'showcaseId'> & {
 export const projectData: NewProjectType[] = [
     // Apple Foundation Program 2025 Sem 2
     {
+        id: "69064039-8d63-4fe2-b4c5-0fa46086da39",
         name: "Instagram",
         description: "Bringing you closer to the people and things you love – Instagram from Meta\n" +
             "\n" +
@@ -113,6 +114,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
         name: "Smart Receipts: Expenses and Tax",
         description: "AI-Powered Receipts Scanner & Expense Tracker.\n" +
             "PDF/CSV Expense Reports. Spend management.\n" +
@@ -165,6 +167,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
         name: "Substack",
         description: "",
         subtitle: "Videos, writing & Podcasts",
@@ -182,6 +185,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "e57666ab-186d-45ca-ba5b-b8a5703bea49",
         name: "Patreon",
         description: "Exclusive access to your favourite creators and communities from anywhere.\n" +
             "\n" +
@@ -223,6 +227,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
         name: "DocPlay",
         description: "Watch a curated collection of the world's most amazing and thought-provoking documentaries. From festival favourites to Oscar™ winners with new titles each and every week - start exploring DocPlay today!\n" +
             "\n" +
@@ -243,6 +248,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "6ad331e6-910e-41e0-8cc1-595fe966faed",
         name: "Letterboxd",
         description: "Letterboxd for iOS puts the popular social network for film lovers on your iPhone or iPad, so you can log films and catch up on your friends’ activity with ease.\n" +
             "\n" +
@@ -275,6 +281,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "2713734f-e46f-46f3-8a2d-945b5b22ece2",
         name: "ABC Listen: Radio & Podcasts",
         description: "Download the free ABC listen app to take your favourite podcasts, radio & audiobooks with you on the go. \n" +
             "\n" +
@@ -329,6 +336,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "601a6641-7d7d-436d-bf20-7b11902192aa",
         name: "Discord — Talk, Play, Hang Out",
         subtitle: "Group Chat That's Fun & Games",
         description: "Discord is designed for gaming and great for just chilling with friends or building a community. Customise your own space and gather your friends to talk while playing your favourite games or just hang out.\n" +
@@ -367,6 +375,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "c6bc2e0e-4c29-472e-b0c4-1e353ea24d7c",
         name: "Twitch — Live Streaming",
         subtitle: "Stream, Watch, Chat. Live.",
         description: "Twitch is where thousands of communities come together for our favorite streamers, for the games we love, for the lulz, for each other, for whatever. Download Twitch and join millions enjoying live games, music, sports, esports, podcasts, cooking shows, IRL streams, and whatever else crosses our community’s wonderfully absurd minds. We’ll see you in chat.\n" +
@@ -392,6 +401,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "d5d6d726-b382-47af-aa34-bf63ebfbc0a0",
         name: "Bluey's Quest for The Gold Pen",
         subtitle: "A story-driven adventure game",
         description:
@@ -425,6 +435,7 @@ export const projectData: NewProjectType[] = [
     },
     // Apple Foundation Program 2026 Sem 1
     {
+        id: "ecf961e9-aee6-40a3-bfaf-8901392e46eb",
         name: "Duolingo: Language & Chess",
         subtitle: "Learn Spanish, Math & more",
         description: "Learn a new language, chess & more with the world's most downloaded education app! Duolingo is the fun, free app for learning 40+ languages through quick, bite-sized lessons. Practice speaking, reading, listening & writing to build your vocabulary & grammar skills.\n" +
@@ -481,6 +492,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "af217389-0fc5-4eae-aeba-6a1ebd313bb8",
         name: "Simply Piano: Learn Piano Fast",
         subtitle: "Piano Songs & Lessons",
         description: "A fast and fun way to learn piano - works with any piano or keyboard. Learn to play the songs you love with Simply Piano!\n" +
@@ -538,6 +550,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "3ae40dc9-4321-45b2-a2a3-bd26292faaa9",
         name: "Elevate — Brain Training",
         subtitle: "Vocab, Memory, & Math Puzzles",
         description: "Elevate is a brain training program designed to improve your mind’s focus, memory, speaking abilities, processing speed, math skills, and more. Each person is provided with a personalized training program that adjusts over time to maximize results.\n" +
@@ -588,6 +601,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "181039d7-2674-464b-bc68-05a372f03558",
         name: "LinkedIn Learning",
         subtitle: "Online Courses to Learn Skills",
         description: "Achieve your next career goal with LinkedIn Learning—the only skill development platform based on the real-time skill and career insights from LinkedIn.\n" +
@@ -623,6 +637,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "4752beb8-e38f-409b-a6a1-469c66528ad1",
         name: "Candy Crush Saga",
         subtitle: "The fun match 3 puzzle game!",
         description: "Start playing Candy Crush Saga today – a legendary puzzle game loved by millions of players around the world.\n" +
@@ -663,6 +678,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "714002cf-fda8-4ce3-98f7-f2b52b92fdf8",
         name: "Splitwise",
         subtitle: "Split expenses with friends",
         description: "Splitwise is the easiest way to share expenses with friends and family and stop stressing about “who owes who”. Millions of people around the world use Splitwise to organize group bills for households, trips, and more. Our mission is to reduce the stress and awkwardness that money places on our most important relationships.\n" +
@@ -735,6 +751,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "fd878b06-542c-48c1-be7e-42effb2adeb6",
         name: "Strava: Run, Bike, Walk",
         subtitle: "Track & share with friends",
         description:
@@ -778,6 +795,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "973fbf56-e4f3-48e0-b827-0cd0864a0398",
         name: "Blackmagic Camera",
         subtitle: "Unlock the power of your iPhone",
         description: "Introducing Digital Film for iPhone and iPad!\n" +
@@ -814,6 +832,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
         name: "Microsoft Teams",
         subtitle: "Call. Chat. Collaborate.",
         description:
@@ -856,6 +875,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "cf1a1be5-25ed-4239-9b61-d9895c832dfb",
         name: "Snapchat: Chat with Friends",
         subtitle: "Share the moment",
         description: "Snapchat is a fast and fun way to share the moment with your friends and family\n" +
@@ -911,6 +931,7 @@ export const projectData: NewProjectType[] = [
     },
     // Capstone 2026 Sem 1
     {
+        id: "bccbeeea-dc23-45f6-b2c4-d5a4525df803",
         name: "Swipewipe: Photo Storage",
         subtitle: "Organize & Delete Duplicates",
         description: "Tidy up your camera roll, one swipe at a time. Swipewipe makes cleaning up your photo gallery fun and easy. Reminisce while you declutter!\n" +
@@ -952,6 +973,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "48a9a93c-e109-4c33-8675-f267b0fa880e",
         name: "Pedometer++",
         subtitle: "Count Steps",
         description: "Available on the iPhone and Apple Watch, Pedometer++ is the best way to review your step count, walking distance, active calories, and heart rate data. \n" +
@@ -990,6 +1012,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
         name: "Hoopla",
         subtitle: "Your library anywhere",
         description: "Thousands of free books, audio, comics, and more available right now with your library card. \n" +
@@ -1031,6 +1054,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "480490ca-a41a-4b05-98b8-f8027a47c73b",
         name: "Roost Social",
         subtitle: "Old school messages, by pigeon",
         description: "Slowcial Media. Make Friends and Stay Close. Watch your carrier pigeon travel in real time with your messages. Collect birds, train your flock, and stay in the moment.\n" +
@@ -1071,6 +1095,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "4c0ad5ee-d9ea-4d70-9842-a25f9e7ac777",
         name: "SignNow: e-Signature app",
         subtitle: "Sign documents & PDF forms",
         description: "SignNow is used by over 6 million people worldwide to sign, send, and manage documents — wherever they are, on any device.\n" +
@@ -1121,6 +1146,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "8b231bab-1711-456d-b957-6b36ca6db6f1",
         name: "Bandcamp",
         subtitle: "Buy music, support artists.",
         description: "Bandcamp is an online record store and music community where passionate fans connect with and directly support the artists they love.\n" +
@@ -1140,6 +1166,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "508663c5-dce5-4e07-96ae-1300e6d96d88",
         name: "FocusFlight - Deepfocus Timer",
         subtitle: "Take off into deep focus",
         description: "## Focus Timer\n" +
@@ -1199,6 +1226,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "e4c37641-e09a-4e0f-af84-01155cf8f943",
         name: "Mr Health",
         subtitle: "Personal Health Companion",
         description: "Mr Health helps you understand what’s actually inside the products you buy every day.\n" +
@@ -1272,6 +1300,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "3ef625e2-3796-4756-831f-cda3d46114ab",
         name: "Yubo: Make friends & chat now",
         subtitle: "Meet new friends, find your bff",
         description: "Welcome to Yubo – the ultimate social platform for making new friends all over the world! With millions of users worldwide, we’re all about connecting you with like-minded people in a fun and safe place! \n" +

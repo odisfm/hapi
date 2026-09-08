@@ -95,6 +95,7 @@ for (const project of projectData) {
 
         await db.project.create({
             data: {
+                id: project.id,
                 name: project.name,
                 subtitle: project.subtitle,
                 description: project.description,

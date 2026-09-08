@@ -100,7 +100,7 @@ export const projectData: NewProjectType[] = [
             "* Discover brands and small businesses, and shop products that are relevant to your personal style.\n" +
             "Some Instagram features may not be available in your country or region.\n",
         subtitle: "Videos, Creators & Friends",
-        iconUrl: "",
+        iconUrl: "ad1987aa-6278-4408-b35f-304863998196",
         developers: ["Frantzisko Monifa", "Earl Sue"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -153,7 +153,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Download Smart Receipts today and take control of your expenses, deductions, and tax returns.\n",
         subtitle: "Receipt Scanner, Tracker",
-        iconUrl: "",
+        iconUrl: "ecdd9658-a03d-4eb3-8370-6386fc70d9ee",
         developers: ["Orion Nestan"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -171,7 +171,7 @@ export const projectData: NewProjectType[] = [
         name: "Substack",
         description: "",
         subtitle: "Videos, writing & Podcasts",
-        iconUrl: "",
+        iconUrl: "261be61a-cb4d-4de4-a9aa-0abf3156493a",
         developers: ["Iouri Bilal", "Sven Ameer"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -213,7 +213,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "GET to know other fans and let other fans get to know you through personalised fan profiles.\n",
         subtitle: "Exclusive creator communities",
-        iconUrl: "",
+        iconUrl: "e484563e-99e2-4820-bb23-0b0b0aa1adc0",
         developers: ["Nazaire Sa'dia", "Disha Anu", "Olympas Iuppiter"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -234,7 +234,7 @@ export const projectData: NewProjectType[] = [
             "Premium Membership:\n" +
             "DocPlay Premium is a paid membership that gets you ad-free access to the entire DocPlay catalog in HD.\n",
         subtitle: "The World's Best Documentaries",
-        iconUrl: "",
+        iconUrl: "e3605c03-2a72-4416-a137-79b99a8a6f90",
         developers: ["Yoel Dileep", "Zoila Sara"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -267,7 +267,7 @@ export const projectData: NewProjectType[] = [
             "– Search for films, content and people\n" +
             "– Edit your profile settings\n",
         subtitle: "The social app for film lovers",
-        iconUrl: "",
+        iconUrl: "68d5dee6-9ede-4d52-a3eb-1c734b87f0d6",
         developers: ["Liss Azize"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -322,7 +322,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Life sounds better with ABC listen - download the free app today! ",
         subtitle: "Music, Sport, News, Audiobooks",
-        iconUrl: "",
+        iconUrl: "4b469e71-1672-4fae-873c-d55244afd584",
         developers: ["Erik Astrid"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -361,7 +361,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "WHEREVER YOU GAME, HANG OUT HERE\n" +
             "∙ On your PC, phone or console, you can still hang out on Discord. Easily switch between devices and use tools to manage multiple group chats with friends.",
-        iconUrl: "",
+        iconUrl: "aa765045-ce5c-494b-bb9f-f7652b38266c",
         developers: ["Jaska Arend", "Elsa Grozdana", "Ramzan Alam"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -387,7 +387,7 @@ export const projectData: NewProjectType[] = [
             "Start your own channel: The Twitch app is one of the easiest ways to start streaming. Just create an account, go live directly from the app, and bring people together around whatever you’re passionate about. \n" +
             "You never know what you’ll find: Popular games are always live, but so are music festivals, rocket launches, street tours of Tokyo, and goat yoga. Yes, really. \n" +
             "Dark mode: Y’all love this one. Black and purple have never looked this good together.\n",
-        iconUrl: "",
+        iconUrl: "0b87b97e-0c10-42f9-bfa0-ca311e60d845",
         developers: ["Tina Nora", "Misi Meena", "Reuel Liberato"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -420,7 +420,7 @@ export const projectData: NewProjectType[] = [
             "EXPLORE HAND-DRAWN WORLDS Explore lively levels brimming with snowy mountains, golden beaches, lush forests, and iconic Australian landscapes. Each environment is packed with vibrant details and opportunities for discovery.\n" +
             "\n" +
             "FUN FOR EVERYONE Just like the animated series, Bluey’s Quest for the Gold Pen sparks laughter and encourages players of all ages to discover through play. Packed full of trifficult puzzles and wholesome moments, this is an adventure for the whole household.\n",
-        iconUrl: "",
+        iconUrl: "d4911a18-5b87-4109-968f-cc7346832c38",
         developers: ["Viktorie Haiyang", "Natalija Zoilus"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -478,7 +478,7 @@ export const projectData: NewProjectType[] = [
             "\"Duolingo is cheerful, lighthearted & fun.\" - Forbes\n" +
             "\n" +
             "\"I Can't Stop Playing Duolingo Chess.\" - Wired\n",
-        iconUrl: "",
+        iconUrl: "58e26c42-a120-4c08-9b46-be2749243817",
         developers: ["Märyäm Agapitos", "Aisha Anand"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -536,7 +536,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Have questions, feedback or suggestions? Reach out to us via the in-app chat, just tap on Settings and ‘Have a Question’.\n" +
             "Enjoy Playing!\n",
-        iconUrl: "",
+        iconUrl: "65405e6c-4eab-4cab-bacb-8623e222fd6f",
         developers: ["Kristofor Lal"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -587,7 +587,7 @@ export const projectData: NewProjectType[] = [
             "RESEARCH BEHIND ELEVATE\n" +
             "\n" +
             "Elevate's games are designed in collaboration with experts in neuroscience and cognitive learning and are based on extensive scientific research. Elevate’s brain training algorithms further focus the learning experience by drawing from research in memory studies to develop a personalized training program for each member.\n",
-        iconUrl: "",
+        iconUrl: "d7beb5b9-b958-44e1-894d-649bc5ce4192",
         developers: ["Giosuè Rollie", "Víkingr Ela"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -623,7 +623,7 @@ export const projectData: NewProjectType[] = [
             "• Diversity, equity, and inclusion\n" +
             "• Leadership and management\n" +
             "• Software development\n",
-        iconUrl: "",
+        iconUrl: "dab6bd42-0b5f-46b0-ad4c-1a0e8dd2f0f1",
         developers: ["Aucaman Krystiana", "Zabulon Nindaanis", "Su-bin Barak"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -664,7 +664,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Levels range from easy to hard for all adults to enjoy – accessible on-the-go, offline and online.\n" +
             "It's easy to sync the game between devices and unlock full game features when connected to the Internet or Wifi.\n",
-        iconUrl: "",
+        iconUrl: "9fb303f7-5b03-43c7-8310-15aeb4857d26",
         developers: ["Geno Ceallach", "Deasún Ron"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -737,7 +737,7 @@ export const projectData: NewProjectType[] = [
             "4. Convert expenses to different currencies using our Open Exchange Rates integration\n" +
             "5. Access to “spending by category” budgeting tools and other charts\n" +
             "6. Search full expense history\n",
-        iconUrl: "",
+        iconUrl: "f9ab8a29-f90f-4f01-bdae-dd91bd276bad",
         developers: ["Jitender Yannick", "Sachiko Yuliy"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -781,7 +781,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Strava includes both a free version and a subscription version with premium features.\n" +
             "Strava uses HealthKit to export your Strava activities into the Health app and to read heart rate and biometric data.\n",
-        iconUrl: "",
+        iconUrl: "b10b346b-1277-479c-9068-b03f660e86be",
         developers: ["Yami Briggs", "Czarek Nina"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -818,7 +818,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Live Sync to Blackmagic Cloud Storage\n" +
             "When shooting with Blackmagic Camera, the video you capture can be instantly uploaded as a proxy file, followed by the camera originals, and saved to Blackmagic Cloud Storage. This means you can start editing quickly using your proxies, speeding up your workflow.",
-        iconUrl: "",
+        iconUrl: "d6e6f63c-9690-41f0-a20d-3c96bb45bc9a",
         developers: ["Sawsan Victoria", "Chip Sharia"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -861,7 +861,7 @@ export const projectData: NewProjectType[] = [
             "• Keep communities safe by allowing owners to remove inappropriate content or members*.\n" +
             "• Enterprise-level security and compliance you expect from Microsoft 365**. \n" +
             "\n",
-        iconUrl: "",
+        iconUrl: "63b7e43c-6480-470f-8b3f-b16ad7d09af3",
         developers: ["Ariadna Subramanian", "Regin Anselma"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -916,7 +916,7 @@ export const projectData: NewProjectType[] = [
             "• Friendship Profiles are just between you and a friend, so you can bond over what makes your friendship special.\n" +
             "\n" +
             "Happy Snapping!\n",
-        iconUrl: "",
+        iconUrl: "546fac9b-76f2-4c9f-adf3-6a11991ae254",
         developers: ["Cyra Favour", "Elkan Starla"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -959,7 +959,7 @@ export const projectData: NewProjectType[] = [
             "Let's be honest, our camera rolls can be a bit of a mess. Reclaim your memories, rediscover forgotten moments, and free up some serious storage space today.\n" +
             "\n" +
             "Download Swipewipe and get swiping!\n",
-        iconUrl: "",
+        iconUrl: "7b0ad2ac-fcfd-4272-a260-77d374f56a79",
         developers: ["Laurentino Wulfric"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -998,7 +998,7 @@ export const projectData: NewProjectType[] = [
             "Pedometer++ shows the distance of a route, the elevation changes you will encounter, and the estimated time it will take you to reach your destination. You can also monitor the weather that is expected along your route.\n" +
             "\n" +
             "The best part is that custom routing is available on the iPhone and Apple Watch. Of course, being out in nature often means losing cell service, so Pedometer++ allows you to download offline map data for large areas, not just for your specific route. Offline map data is also available on the iPhone and Apple Watch, as long as your Watch is within range of your phone.",
-        iconUrl: "",
+        iconUrl: "76731acf-95cc-4461-b0bb-aa3845bfb6b6",
         developers: ["Arushi Dechen", "Gautam Audrius"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1040,7 +1040,7 @@ export const projectData: NewProjectType[] = [
             "• Offline downloads — no data needed once borrowed \n" +
             "\n" +
             "All you need is a free library card from a participating library. ",
-        iconUrl: "",
+        iconUrl: "308c396b-2a14-42b5-ae39-354212f89993",
         developers: ["Osiris Zigmantas", "Ophiuchus Semisi", "Muzaffar Adeyemi"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1081,7 +1081,7 @@ export const projectData: NewProjectType[] = [
             "Slow your messages down. Send them by pigeon.\n" +
             "\n" +
             "Download Roost and launch your first flight.\n",
-        iconUrl: "",
+        iconUrl: "38dfdd5b-a44a-4469-b751-040a03b23a86",
         developers: ["Silvia Brage", "Þórgunnr Raginfrid", "Heidi Serafina"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1132,7 +1132,7 @@ export const projectData: NewProjectType[] = [
             "• Access documents from mobile or web\n" +
             "• Print documents directly from the app\n" +
             "• Use widgets for quick access to key actions\n",
-        iconUrl: "",
+        iconUrl: "72ffdc60-1d22-46a9-8315-dcbf605cd6bb",
         developers: ["Tutku Magnus"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1152,7 +1152,7 @@ export const projectData: NewProjectType[] = [
         description: "Bandcamp is an online record store and music community where passionate fans connect with and directly support the artists they love.\n" +
             "\n" +
             "The Bandcamp app lets fans explore a vast catalog of music by artists from every corner of the globe, allows them to directly support artists by buying their merch (and wishlisting albums & tracks for purchase at a later time), and lets them instantly listen to the music they've purchased, online or offline.",
-        iconUrl: "",
+        iconUrl: "e5d956fd-0583-4cf4-9c04-544384eee795",
         developers: ["Myranda Onouphrios", "Raz Aoede"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1212,7 +1212,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "【Different Focus Types】\n" +
             "Choose focus types through seat options, such as study, work, reading, or creative time. Make every flight better matched to your current task, and make focusing more flexible and fun.\n",
-        iconUrl: "",
+        iconUrl: "594d534e-99cd-4041-93c1-46c273a848ec",
         developers: ["Gunta Ingulf"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1286,7 +1286,7 @@ export const projectData: NewProjectType[] = [
             "\t•\tClear explanations in plain English\n" +
             "\t•\tBuilt for everyday shopping, not perfection\n" +
             "\t•\tNo brand partnerships influencing scores\n",
-        iconUrl: "",
+        iconUrl: "c6409053-52db-440a-8583-3e2a9ee60383",
         developers: ["Emiliya Aada"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1318,7 +1318,7 @@ export const projectData: NewProjectType[] = [
             "5) IT’S SAFE: We take your safety seriously. That's why we've designed many features and tools to ensure you can use Yubo safely. \n" +
             "\n" +
             "So, what are you waiting for? \n",
-        iconUrl: "",
+        iconUrl: "fb634641-fc81-4342-9f52-0dd154a22781",
         developers: ["Muireann Onnophris", "Mira Nontle"],
         approvalStatus: "APPROVED",
         rejectionReason: null,

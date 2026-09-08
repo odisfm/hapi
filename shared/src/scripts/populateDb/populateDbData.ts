@@ -1,4 +1,4 @@
-import type {Showcase, Category, Project} from "../../generated/prisma/client.js";
+import type {Showcase, Category, Project, ProjectMedia} from "../../generated/prisma/client.js";
 
 type NewShowcaseType = Omit<Showcase, 'id'>
 
@@ -1332,3 +1332,605 @@ export const projectData: NewProjectType[] = [
         }
     }
 ]
+
+type NewProjectMediaType = Omit<ProjectMedia, "id">
+
+export const projectMediaData: NewProjectMediaType[] = [
+    {
+        order: "",
+        projectId: "69064039-8d63-4fe2-b4c5-0fa46086da39",
+        mediaUrl: "6fcc12df-28ce-449a-83c6-fb2a38e84bd7",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "69064039-8d63-4fe2-b4c5-0fa46086da39",
+        mediaUrl: "31df5f95-083f-4881-9e2d-f3b42e03cd11",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "69064039-8d63-4fe2-b4c5-0fa46086da39",
+        mediaUrl: "11d35ee7-0a2a-4c10-9fa5-a2e6482f4eae",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "69064039-8d63-4fe2-b4c5-0fa46086da39",
+        mediaUrl: "f50c81e0-dbf3-4fb7-9e87-bffb848d9c9d",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
+        mediaUrl: "15860d99-4e9d-4870-98d8-e3aa88b74624",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
+        mediaUrl: "5e1aa249-c881-4bd6-a2f2-9a114a1caea5",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
+        mediaUrl: "3e06ad3e-f992-4d12-808b-9ae346c6d653",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
+        mediaUrl: "3e06ad3e-f992-4d12-808b-9ae346c6d653",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
+        mediaUrl: "4d520f57-73b6-4620-a072-7ab1c0611264",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
+        mediaUrl: "72aa86d5-6e3d-4b3a-b366-a6d4e0e24f75",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
+        mediaUrl: "ad763471-32ac-44b0-88d3-336e7dd7f0ac",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
+        mediaUrl: "d2b3800d-f62c-4518-9dc8-32061b6abf38",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
+        mediaUrl: "6629b104-1f33-4264-92d5-437b514d7fd7",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
+        mediaUrl: "5359999d-1e73-4b90-996a-04a54c6d8aa6",
+        mediaType: "SCREENSHOT",
+        deviceType: "TV"
+    },
+    {
+        order: "",
+        projectId: "e57666ab-186d-45ca-ba5b-b8a5703bea49",
+        mediaUrl: "cecdf8c8-2b7c-4968-8b14-8acf6ea5fa00",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "e57666ab-186d-45ca-ba5b-b8a5703bea49",
+        mediaUrl: "d26caccd-32a1-40c5-b24b-a25453222aa3",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "e57666ab-186d-45ca-ba5b-b8a5703bea49",
+        mediaUrl: "44c58321-7b60-48c8-bde1-cfc3d9d248f6",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "e57666ab-186d-45ca-ba5b-b8a5703bea49",
+        mediaUrl: "434331c2-b390-4fef-9dcf-ac9813f76b35",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "ef6acd60-355d-427b-91e5-9d10bcb2a2f5",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "f86772ad-f121-43f6-932d-1c4693498835",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "02328a4c-0336-47d8-90ef-60ef96390d87",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "bc39d09b-1b2d-4c15-a07a-39563200157b",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },{
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "9659268c-7b60-47c5-9818-48718ad963e5",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },{
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "37d84efb-4b02-4694-a85f-40a9aa6d725c",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },{
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "34c17330-171f-4d1f-9433-c453a9f022ec",
+        mediaType: "SCREENSHOT",
+        deviceType: "TV"
+    },{
+        order: "",
+        projectId: "6ad331e6-910e-41e0-8cc1-595fe966faed",
+        mediaUrl: "3cbe00bd-f269-4bc8-8cf8-8f3a0360963e",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "6ad331e6-910e-41e0-8cc1-595fe966faed",
+        mediaUrl: "b8a42708-75cd-4f23-aede-9fd644cdae12",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "2713734f-e46f-46f3-8a2d-945b5b22ece2",
+        mediaUrl: "3dfa64a7-ac51-4dc6-83d8-d5543a09bc48",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "2713734f-e46f-46f3-8a2d-945b5b22ece2",
+        mediaUrl: "7ae7d8b4-9ff9-40f5-b59a-84a3e4427b8a",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },{
+        order: "",
+        projectId: "601a6641-7d7d-436d-bf20-7b11902192aa",
+        mediaUrl: "999dd8cc-ab4d-48c9-8e89-774bd536b224",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "c6bc2e0e-4c29-472e-b0c4-1e353ea24d7c",
+        mediaUrl: "acbee86f-7c6e-4983-90f9-4b157ef59e7d",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "d5d6d726-b382-47af-aa34-bf63ebfbc0a0",
+        mediaUrl: "b8bab4fb-2b94-44b1-9859-3b30e5ce2660",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "d5d6d726-b382-47af-aa34-bf63ebfbc0a0",
+        mediaUrl: "90309509-4d4b-4d8b-92d3-798e6f8a0269",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "d5d6d726-b382-47af-aa34-bf63ebfbc0a0",
+        mediaUrl: "1433f794-e118-4a61-9292-b9b196d7a73e",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },{
+        order: "",
+        projectId: "d5d6d726-b382-47af-aa34-bf63ebfbc0a0",
+        mediaUrl: "b919ba51-4f05-45f4-ade2-7747bd3b9ef4",
+        mediaType: "SCREENSHOT",
+        deviceType: "DESKTOP"
+    },{
+        order: "",
+        projectId: "ecf961e9-aee6-40a3-bfaf-8901392e46eb",
+        mediaUrl: "20f3c14c-1a89-4a24-84ef-13add0b889de",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "ecf961e9-aee6-40a3-bfaf-8901392e46eb",
+        mediaUrl: "73a458bf-aabb-4b76-9023-c9a4bb2ea508",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "af217389-0fc5-4eae-aeba-6a1ebd313bb8",
+        mediaUrl: "b41fc61b-d098-46e7-98b8-ec9d3e2aa492",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "3ae40dc9-4321-45b2-a2a3-bd26292faaa9",
+        mediaUrl: "bbf180cc-e281-451b-b6d6-06e5f2c6bc4c",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "3ae40dc9-4321-45b2-a2a3-bd26292faaa9",
+        mediaUrl: "73e6b87e-9159-4c70-9b6d-556dd7149cb4",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "3ae40dc9-4321-45b2-a2a3-bd26292faaa9",
+        mediaUrl: "1f8d0846-1958-4b6f-b350-ce981b863ef8",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "3ae40dc9-4321-45b2-a2a3-bd26292faaa9",
+        mediaUrl: "5323bca5-fb8f-4271-819d-641a713aff01",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "181039d7-2674-464b-bc68-05a372f03558",
+        mediaUrl: "f9617d57-0cc4-450e-ba91-39a65b7ae771",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "181039d7-2674-464b-bc68-05a372f03558",
+        mediaUrl: "3cc7d039-1b85-420e-94e9-572d28aba041",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "181039d7-2674-464b-bc68-05a372f03558",
+        mediaUrl: "516b7949-ad6b-4851-b686-880b70c9ec75",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "181039d7-2674-464b-bc68-05a372f03558",
+        mediaUrl: "6b03c85d-16ab-47c2-ae93-306b54b52b3e",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },{
+        order: "",
+        projectId: "181039d7-2674-464b-bc68-05a372f03558",
+        mediaUrl: "c0e6f07b-b514-421b-bb52-5947af7844b0",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },{
+        order: "",
+        projectId: "4752beb8-e38f-409b-a6a1-469c66528ad1",
+        mediaUrl: "1371ff61-ec36-4c54-aded-f3f3f8362cbf",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "4752beb8-e38f-409b-a6a1-469c66528ad1",
+        mediaUrl: "9163f111-4168-4cba-b106-5ac54463333a",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "714002cf-fda8-4ce3-98f7-f2b52b92fdf8",
+        mediaUrl: "b6118d84-ed9a-4953-8d9d-723bfa83014d",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "714002cf-fda8-4ce3-98f7-f2b52b92fdf8",
+        mediaUrl: "520e2f52-783b-4913-bd3b-01ca5c494c33",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "fd878b06-542c-48c1-be7e-42effb2adeb6",
+        mediaUrl: "b7437035-3da3-472a-a576-ad87a87cd45b",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "fd878b06-542c-48c1-be7e-42effb2adeb6",
+        mediaUrl: "69713fee-abcb-4a90-8987-1402c4928ad0",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "fd878b06-542c-48c1-be7e-42effb2adeb6",
+        mediaUrl: "5699bda6-e3ff-4037-8698-5bf54d60d1a8",
+        mediaType: "SCREENSHOT",
+        deviceType: "WATCH"
+    },{
+        order: "",
+        projectId: "fd878b06-542c-48c1-be7e-42effb2adeb6",
+        mediaUrl: "2a9aa191-dbd5-4956-99e1-f957b7342dc4",
+        mediaType: "SCREENSHOT",
+        deviceType: "WATCH"
+    },{
+        order: "",
+        projectId: "973fbf56-e4f3-48e0-b827-0cd0864a0398",
+        mediaUrl: "8f0bb76b-1631-4b3f-8cd5-346b9e0ad3be",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "973fbf56-e4f3-48e0-b827-0cd0864a0398",
+        mediaUrl: "43a105e3-1afe-4ad6-a1c1-a225a3c1e4f2",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
+        mediaUrl: "7ce643ef-2f31-4971-b3dd-0c526fe2e588",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
+        mediaUrl: "4b38d484-8d56-46d1-b6a6-31ee4bd1359d",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
+        mediaUrl: "78034fbd-fcc7-4f77-898e-8324dc569da7",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
+        mediaUrl: "c8608063-24f2-437e-bdbb-eedabb153552",
+        mediaType: "SCREENSHOT",
+        deviceType: "AR"
+    },{
+        order: "",
+        projectId: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
+        mediaUrl: "f26c0675-3082-481c-9e2c-386e91bbe011",
+        mediaType: "SCREENSHOT",
+        deviceType: "AR"
+    },{
+        order: "",
+        projectId: "cf1a1be5-25ed-4239-9b61-d9895c832dfb",
+        mediaUrl: "37cabef7-59c2-412f-b866-bf47c5a9c5df",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "cf1a1be5-25ed-4239-9b61-d9895c832dfb",
+        mediaUrl: "80bee0a6-cf6a-41c5-80fc-89d45a23b3b3",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "cf1a1be5-25ed-4239-9b61-d9895c832dfb",
+        mediaUrl: "9deafdbc-b50f-437f-94ea-fdd46b2c3b99",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "cf1a1be5-25ed-4239-9b61-d9895c832dfb",
+        mediaUrl: "982ee922-41bf-45d8-a946-b79b12164ed3",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "bccbeeea-dc23-45f6-b2c4-d5a4525df803",
+        mediaUrl: "0dbed4e8-a350-47bc-a276-b2ac9f899d40",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "bccbeeea-dc23-45f6-b2c4-d5a4525df803",
+        mediaUrl: "e1e4f5e4-08d0-4eb4-8808-412fe12975ea",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "bccbeeea-dc23-45f6-b2c4-d5a4525df803",
+        mediaUrl: "e1e4f5e4-08d0-4eb4-8808-412fe12975ea",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "48a9a93c-e109-4c33-8675-f267b0fa880e",
+        mediaUrl: "880ef0ad-9d31-4510-aa60-3f2f2c10f6bc",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "48a9a93c-e109-4c33-8675-f267b0fa880e",
+        mediaUrl: "d17a45fa-cf52-4f4f-b61b-4fc51fd1a730",
+        mediaType: "SCREENSHOT",
+        deviceType: "WATCH"
+    },{
+        order: "",
+        projectId: "48a9a93c-e109-4c33-8675-f267b0fa880e",
+        mediaUrl: "63cd773b-19cf-4bfd-a992-a8847f063c58",
+        mediaType: "SCREENSHOT",
+        deviceType: "WATCH"
+    },{
+        order: "",
+        projectId: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
+        mediaUrl: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
+        mediaUrl: "edea552b-aa04-458b-80d9-46bd2e524f90",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
+        mediaUrl: "5a18c8cd-5dd6-4a76-bd57-6a4210375be5",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
+        mediaUrl: "704a41d4-545a-4584-b14f-a29fc3d9a963",
+        mediaType: "SCREENSHOT",
+        deviceType: "TV"
+    },{
+        order: "",
+        projectId: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
+        mediaUrl: "19c16358-dfd5-47f0-86d3-4cbb71182ee1",
+        mediaType: "SCREENSHOT",
+        deviceType: "TV"
+    },{
+        order: "",
+        projectId: "480490ca-a41a-4b05-98b8-f8027a47c73b",
+        mediaUrl: "893b334a-175e-4983-8b08-87f838b4b774",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "480490ca-a41a-4b05-98b8-f8027a47c73b",
+        mediaUrl: "ec866bf4-58ec-426d-96dc-738d875a7617",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "480490ca-a41a-4b05-98b8-f8027a47c73b",
+        mediaUrl: "fb43fdd1-af23-4a7e-b7fe-bb8cc15f7652",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "8b231bab-1711-456d-b957-6b36ca6db6f1",
+        mediaUrl: "46e9d3f4-0e3a-44eb-afba-15da5b0159f1",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "8b231bab-1711-456d-b957-6b36ca6db6f1",
+        mediaUrl: "6db209e9-3c84-4021-b3d2-fe4f379ab3ff",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "8b231bab-1711-456d-b957-6b36ca6db6f1",
+        mediaUrl: "59e02454-ba07-4971-a766-ada7bcca6f88",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "508663c5-dce5-4e07-96ae-1300e6d96d88",
+        mediaUrl: "905a88f8-44dd-4120-8aef-009cf82d7b78",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "508663c5-dce5-4e07-96ae-1300e6d96d88",
+        mediaUrl: "452ab937-8832-4b6d-8dff-a9c69c2bd332",
+        mediaType: "SCREENSHOT",
+        deviceType: "DESKTOP"
+    },{
+        order: "",
+        projectId: "508663c5-dce5-4e07-96ae-1300e6d96d88",
+        mediaUrl: "e0459a06-87fe-47f5-97e6-a68e018b0f69",
+        mediaType: "SCREENSHOT",
+        deviceType: "DESKTOP"
+    },{
+        order: "",
+        projectId: "508663c5-dce5-4e07-96ae-1300e6d96d88",
+        mediaUrl: "c363524f-0d20-4551-9023-0a43ef97332e",
+        mediaType: "SCREENSHOT",
+        deviceType: "DESKTOP"
+    },{
+        order: "",
+        projectId: "508663c5-dce5-4e07-96ae-1300e6d96d88",
+        mediaUrl: "c363524f-0d20-4551-9023-0a43ef97332e",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "e4c37641-e09a-4e0f-af84-01155cf8f943",
+        mediaUrl: "985d1580-d83a-4a93-be58-ba81de5a639e",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "e4c37641-e09a-4e0f-af84-01155cf8f943",
+        mediaUrl: "dad5e167-5d6d-48ff-bc1d-b47c28491731",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "3ef625e2-3796-4756-831f-cda3d46114ab",
+        mediaUrl: "7a088314-87c2-45a0-bd5e-289d60d671ca",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "3ef625e2-3796-4756-831f-cda3d46114ab",
+        mediaUrl: "62b580e2-3c7f-4c32-b1ba-cec8963476b2",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "3ef625e2-3796-4756-831f-cda3d46114ab",
+        mediaUrl: "408e056b-58dc-4214-ac07-6172ced5f817",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },{
+        order: "",
+        projectId: "3ef625e2-3796-4756-831f-cda3d46114ab",
+        mediaUrl: "59d355a0-9c67-4ec3-bd5b-42f2667fd358",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+]
+
+
+// todo: delete
+
+const blankMedia: NewProjectMediaType = {
+    order: "",
+    projectId: "",
+    mediaUrl: "",
+    mediaType: "SCREENSHOT",
+    deviceType: "PHONE"
+}

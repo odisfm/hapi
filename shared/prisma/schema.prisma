@@ -11,6 +11,15 @@ generator client {
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
+generator erd {
+  provider        = "prisma-erd-generator"
+  output          = "ERD.md"
+  renderer        = "mermaid"
+  theme           = "dark"
+  includeComments = true
+  showIndexes     = true
+}
+
 model Category {
   id   String @id @default(uuid()) @db.Uuid
   name String @unique
@@ -24,7 +33,7 @@ model Showcase {
   year          Int
   semester      Int
   description   String?
-  publishedDate DateTime? // null or future = unpublished
+  publishedDate DateTime? /// null or future = unpublished
 
   projects Project[]
 
@@ -51,9 +60,9 @@ model Project {
   iconUrl         String
   developers      String[]
   approvalStatus  ApprovalStatus @default(PENDING)
-  rejectionReason String? // only relevant when approvalStatus = REJECTED
-  links           String[] // parsed on frontend (GitHub/App Store/etc.)
-  order           String? // Lexo-rank
+  rejectionReason String? /// only relevant when approvalStatus = REJECTED
+  links           String[] /// parsed on frontend (GitHub/App Store/etc.)
+  order           String? /// Lexo-rank
   categoryId      String         @db.Uuid
   category        Category       @relation(fields: [categoryId], references: [id])
   showcaseId      String         @db.Uuid
@@ -70,7 +79,7 @@ model ProjectMedia {
   mediaUrl   String
   mediaType  MediaType
   deviceType DeviceType
-  order      String // Lexo-rank
+  order      String /// Lexo-rank
 }
 
 model ProjectSlug {

@@ -51,6 +51,7 @@ jobs:
       - name: build api
         run: |
           cd shared
+          export DISABLE_ERD=true
           npx prisma generate
           cd ../api
           npm run build:lambda

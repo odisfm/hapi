@@ -18,6 +18,11 @@ app.use(
 app.route("/showcase", showcaseRouter)
 app.route("/project", projectRouter)
 
+app.get("/category", async (c) => {
+    const records = await db.category.findMany()
+    return c.json(records)
+})
+
 app.get('/', (c) => {
   return c.text('Hello Hono!')
 })

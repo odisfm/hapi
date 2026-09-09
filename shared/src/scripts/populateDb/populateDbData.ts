@@ -1995,14 +1995,3 @@ export const projectMediaData: NewProjectMediaType[] = [
         deviceType: "PHONE"
     },
 ]
-
-
-// todo: delete
-
-const blankMedia: NewProjectMediaType = {
-    order: "",
-    projectId: "",
-    mediaUrl: "",
-    mediaType: "SCREENSHOT",
-    deviceType: "PHONE"
-}

@@ -1,6 +1,7 @@
 import {Hono} from 'hono'
 import {db} from "@hapi/shared"
 import {filterShowcase} from "../utils/filters/filterShowcase.js";
+import {type ShowcaseFeaturedResponse} from "@hapi/shared/src/types/apiResponses.js"
 
 const NUM_FEATURED_SHOWCASES = 3
 const NUM_FEATURED_PROJECTS = 9
@@ -8,30 +9,32 @@ const NUM_FEATURED_PROJECTS = 9
 export const showcaseRouter = new Hono()
 
 showcaseRouter.get("featured", async (c) => {
-    const showcaseRecords = await db.showcase.findMany({
-        where: {
-            publishedDate: {
-                lt: new Date(),
-            }
-        },
-        take: NUM_FEATURED_SHOWCASES,
-        include: {
-            projects: {
-                take: NUM_FEATURED_PROJECTS,
-                include: {
-                    // todo: slugs
-                    media: true,
-                    category: true,
-                    showcase: true
-                },
-                orderBy: {
-                    order: "asc"
+        const showcaseRecords = await db.showcase.findMany({
+            where: {
+                publishedDate: {
+                    lt: new Date(),
+                }
+            },
+            take: NUM_FEATURED_SHOWCASES,
+            include: {
+                projects: {
+                    take: NUM_FEATURED_PROJECTS,
+                    include: {
+                        // todo: slugs
+                        media: true,
+                        category: true,
+                        showcase: true
+                    },
+                    orderBy: {
+                        order: "asc"
+                    }
                 }
             }
-        }
-    })
-    // todo: get user role
+        })
+        // todo: get user role
 
-    return c.json(showcaseRecords.map(s => filterShowcase(s, null)))
+        return c.json({
+            showcases: showcaseRecords.map(s => filterShowcase(s, null))
+        } satisfies ShowcaseFeaturedResponse);
     }
 )

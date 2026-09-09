@@ -74,7 +74,8 @@ type ShowcaseSearch = {
 
 type NewProjectType = Omit<Project, 'categoryId' | 'showcaseId'> & {
     categoryName: string,
-    showcase: ShowcaseSearch
+    showcase: ShowcaseSearch,
+    slug: string
 }
 
 export const projectData: NewProjectType[] = [
@@ -82,6 +83,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "69064039-8d63-4fe2-b4c5-0fa46086da39",
         name: "Instagram",
+        slug: "instagram",
         description: "Bringing you closer to the people and things you love – Instagram from Meta\n" +
             "\n" +
             "Connect with friends, share what you're up to or see what's new from others all over the world. Explore our community where you can feel free to be yourself and share everything from your daily moments to life's highlights.\n" +
@@ -116,6 +118,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
         name: "Smart Receipts: Expenses and Tax",
+        slug: "smart-receipts",
         description: "AI-Powered Receipts Scanner & Expense Tracker.\n" +
             "PDF/CSV Expense Reports. Spend management.\n" +
             "Receipts keeper.\n" +
@@ -169,6 +172,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
         name: "Substack",
+        slug: "substack",
         description: "",
         subtitle: "Videos, writing & Podcasts",
         iconUrl: "261be61a-cb4d-4de4-a9aa-0abf3156493a",
@@ -187,6 +191,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "e57666ab-186d-45ca-ba5b-b8a5703bea49",
         name: "Patreon",
+        slug: "patreon",
         description: "Exclusive access to your favourite creators and communities from anywhere.\n" +
             "\n" +
             "\n" +
@@ -229,6 +234,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
         name: "DocPlay",
+        slug: "docplay",
         description: "Watch a curated collection of the world's most amazing and thought-provoking documentaries. From festival favourites to Oscar™ winners with new titles each and every week - start exploring DocPlay today!\n" +
             "\n" +
             "Premium Membership:\n" +
@@ -250,6 +256,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "6ad331e6-910e-41e0-8cc1-595fe966faed",
         name: "Letterboxd",
+        slug: "letterboxd",
         description: "Letterboxd for iOS puts the popular social network for film lovers on your iPhone or iPad, so you can log films and catch up on your friends’ activity with ease.\n" +
             "\n" +
             "Sign in with your existing account (or create one for free) to enjoy our native app interface. These features of the web experience are supported, with more to come:\n" +
@@ -283,6 +290,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "2713734f-e46f-46f3-8a2d-945b5b22ece2",
         name: "ABC Listen: Radio & Podcasts",
+        slug: "abc-listen",
         description: "Download the free ABC listen app to take your favourite podcasts, radio & audiobooks with you on the go. \n" +
             "\n" +
             "Stream live sport, choose your news, and explore a world of music anywhere, anytime, and all for free! \n" +
@@ -338,6 +346,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "601a6641-7d7d-436d-bf20-7b11902192aa",
         name: "Discord — Talk, Play, Hang Out",
+        slug: "discord",
         subtitle: "Group Chat That's Fun & Games",
         description: "Discord is designed for gaming and great for just chilling with friends or building a community. Customise your own space and gather your friends to talk while playing your favourite games or just hang out.\n" +
             "\n" +
@@ -377,6 +386,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "c6bc2e0e-4c29-472e-b0c4-1e353ea24d7c",
         name: "Twitch — Live Streaming",
+        slug: "twitch",
         subtitle: "Stream, Watch, Chat. Live.",
         description: "Twitch is where thousands of communities come together for our favorite streamers, for the games we love, for the lulz, for each other, for whatever. Download Twitch and join millions enjoying live games, music, sports, esports, podcasts, cooking shows, IRL streams, and whatever else crosses our community’s wonderfully absurd minds. We’ll see you in chat.\n" +
             "\n" +
@@ -403,6 +413,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "d5d6d726-b382-47af-aa34-bf63ebfbc0a0",
         name: "Bluey's Quest for The Gold Pen",
+        slug: "bluey-gold-pen",
         subtitle: "A story-driven adventure game",
         description:
             "Join Bluey in a new adventure game with story by the show's creator. Set off on an epic quest featuring new characters, fully animated cutscenes, and hand-drawn environments inspired by the Dragon and Escape episodes in the TV series. \n" +
@@ -437,6 +448,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "ecf961e9-aee6-40a3-bfaf-8901392e46eb",
         name: "Duolingo: Language & Chess",
+        slug: "duolingo",
         subtitle: "Learn Spanish, Math & more",
         description: "Learn a new language, chess & more with the world's most downloaded education app! Duolingo is the fun, free app for learning 40+ languages through quick, bite-sized lessons. Practice speaking, reading, listening & writing to build your vocabulary & grammar skills.\n" +
             "\n" +
@@ -494,6 +506,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "af217389-0fc5-4eae-aeba-6a1ebd313bb8",
         name: "Simply Piano: Learn Piano Fast",
+        slug: "simply-piano",
         subtitle: "Piano Songs & Lessons",
         description: "A fast and fun way to learn piano - works with any piano or keyboard. Learn to play the songs you love with Simply Piano!\n" +
             "\n" +
@@ -552,6 +565,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "3ae40dc9-4321-45b2-a2a3-bd26292faaa9",
         name: "Elevate — Brain Training",
+        slug: "elevate",
         subtitle: "Vocab, Memory, & Math Puzzles",
         description: "Elevate is a brain training program designed to improve your mind’s focus, memory, speaking abilities, processing speed, math skills, and more. Each person is provided with a personalized training program that adjusts over time to maximize results.\n" +
             "\n" +
@@ -603,6 +617,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "181039d7-2674-464b-bc68-05a372f03558",
         name: "LinkedIn Learning",
+        slug: "linkedin-learning",
         subtitle: "Online Courses to Learn Skills",
         description: "Achieve your next career goal with LinkedIn Learning—the only skill development platform based on the real-time skill and career insights from LinkedIn.\n" +
             "\n" +
@@ -639,6 +654,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "4752beb8-e38f-409b-a6a1-469c66528ad1",
         name: "Candy Crush Saga",
+        slug: "candy-crush-saga",
         subtitle: "The fun match 3 puzzle game!",
         description: "Start playing Candy Crush Saga today – a legendary puzzle game loved by millions of players around the world.\n" +
             "\n" +
@@ -680,6 +696,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "714002cf-fda8-4ce3-98f7-f2b52b92fdf8",
         name: "Splitwise",
+        slug: "splitwise",
         subtitle: "Split expenses with friends",
         description: "Splitwise is the easiest way to share expenses with friends and family and stop stressing about “who owes who”. Millions of people around the world use Splitwise to organize group bills for households, trips, and more. Our mission is to reduce the stress and awkwardness that money places on our most important relationships.\n" +
             " \n" +
@@ -753,6 +770,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "fd878b06-542c-48c1-be7e-42effb2adeb6",
         name: "Strava: Run, Bike, Walk",
+        slug: "strava",
         subtitle: "Track & share with friends",
         description:
             "Strava makes fitness tracking social. We house your entire active journey in one spot – and you get to share it with friends. Here’s how:\n" +
@@ -797,6 +815,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "973fbf56-e4f3-48e0-b827-0cd0864a0398",
         name: "Blackmagic Camera",
+        slug: "blackmagic-camera",
         subtitle: "Unlock the power of your iPhone",
         description: "Introducing Digital Film for iPhone and iPad!\n" +
             "Blackmagic Camera unlocks the power of your iPhone and iPad by adding digital film camera controls and operating systems! Now you can create the same cinematic ‘look’ as Hollywood feature films. You get the same intuitive and user friendly interface as Blackmagic Design’s award winning cameras. So it’s just like using a professional digital film camera! This means you can adjust settings such as frame rate, shutter angle, white balance and ISO all in a single tap. Or record directly to Blackmagic Cloud in industry standard 10-bit Apple ProRes files up to 4K! Recording to Blackmagic Cloud Storage lets you collaborate on DaVinci Resolve projects with editors anywhere in the world, all at the same time!\n" +
@@ -834,6 +853,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
         name: "Microsoft Teams",
+        slug: "microsoft-teams",
         subtitle: "Call. Chat. Collaborate.",
         description:
             "Whether you’re connecting with your community for an upcoming activity or working with teammates on a project, Microsoft Teams helps bring people together so that they can get things done. It’s the only app that has communities, events, chats, channels, meetings, storage, tasks, and calendars in one place—so you can easily connect and manage access to information. Get your community, family, friends, or workmates together to accomplish tasks, share ideas, and make plans. Join audio and video calls in a secure setting, collaborate in documents, and store files and photos with built-in cloud storage. You can do it all in Microsoft Teams. \n" +
@@ -877,6 +897,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "cf1a1be5-25ed-4239-9b61-d9895c832dfb",
         name: "Snapchat: Chat with Friends",
+        slug: "snapchat",
         subtitle: "Share the moment",
         description: "Snapchat is a fast and fun way to share the moment with your friends and family\n" +
             "\n" +
@@ -933,6 +954,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "bccbeeea-dc23-45f6-b2c4-d5a4525df803",
         name: "Swipewipe: Photo Storage",
+        slug: "swipewipe",
         subtitle: "Organize & Delete Duplicates",
         description: "Tidy up your camera roll, one swipe at a time. Swipewipe makes cleaning up your photo gallery fun and easy. Reminisce while you declutter!\n" +
             "\n" +
@@ -975,6 +997,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "48a9a93c-e109-4c33-8675-f267b0fa880e",
         name: "Pedometer++",
+        slug: "pedometer-plus-plus",
         subtitle: "Count Steps",
         description: "Available on the iPhone and Apple Watch, Pedometer++ is the best way to review your step count, walking distance, active calories, and heart rate data. \n" +
             "\n" +
@@ -1014,6 +1037,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
         name: "Hoopla",
+        slug: "hoopla",
         subtitle: "Your library anywhere",
         description: "Thousands of free books, audio, comics, and more available right now with your library card. \n" +
             "\n" +
@@ -1056,6 +1080,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "480490ca-a41a-4b05-98b8-f8027a47c73b",
         name: "Roost Social",
+        slug: "roost",
         subtitle: "Old school messages, by pigeon",
         description: "Slowcial Media. Make Friends and Stay Close. Watch your carrier pigeon travel in real time with your messages. Collect birds, train your flock, and stay in the moment.\n" +
             "\n" +
@@ -1097,6 +1122,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "4c0ad5ee-d9ea-4d70-9842-a25f9e7ac777",
         name: "SignNow: e-Signature app",
+        slug: "sign-now",
         subtitle: "Sign documents & PDF forms",
         description: "SignNow is used by over 6 million people worldwide to sign, send, and manage documents — wherever they are, on any device.\n" +
             "Skip printing, scanning, and waiting. With SignNow, you can get legally binding e-signatures in minutes.\n" +
@@ -1148,6 +1174,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "8b231bab-1711-456d-b957-6b36ca6db6f1",
         name: "Bandcamp",
+        slug: "bandcamp",
         subtitle: "Buy music, support artists.",
         description: "Bandcamp is an online record store and music community where passionate fans connect with and directly support the artists they love.\n" +
             "\n" +
@@ -1168,6 +1195,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "508663c5-dce5-4e07-96ae-1300e6d96d88",
         name: "FocusFlight - Deepfocus Timer",
+        slug: "focus-flight",
         subtitle: "Take off into deep focus",
         description: "## Focus Timer\n" +
             "## App Blocker\n" +
@@ -1228,6 +1256,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "e4c37641-e09a-4e0f-af84-01155cf8f943",
         name: "Mr Health",
+        slug: "mr-health",
         subtitle: "Personal Health Companion",
         description: "Mr Health helps you understand what’s actually inside the products you buy every day.\n" +
             "\n" +
@@ -1302,6 +1331,7 @@ export const projectData: NewProjectType[] = [
     {
         id: "3ef625e2-3796-4756-831f-cda3d46114ab",
         name: "Yubo: Make friends & chat now",
+        slug: "yubo",
         subtitle: "Meet new friends, find your bff",
         description: "Welcome to Yubo – the ultimate social platform for making new friends all over the world! With millions of users worldwide, we’re all about connecting you with like-minded people in a fun and safe place! \n" +
             "\n" +

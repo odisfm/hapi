@@ -110,6 +110,14 @@ for (const project of projectData) {
             }
         })
 
+        await db.projectSlug.create({
+            data: {
+                projectId: project.id,
+                slug: project.slug,
+                assignedDate: new Date()
+            }
+        })
+
     } catch (error) {
         console.error(`Error inserting project: ${project.name}`)
         console.error(error)

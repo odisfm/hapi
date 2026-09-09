@@ -8,21 +8,21 @@ export const showcaseData: NewShowcaseType[] = [
         year: 2026,
         semester: 1,
         description: null,
-        publishedDate: null
+        publishedDate: new Date("2026-06-01")
     },
     {
         name: "Apple Foundation Program",
         year: 2025,
         semester: 2,
         description: null,
-        publishedDate: null
+        publishedDate: new Date("2026-01-01")
     },
     {
         name: "Apple Foundation Program",
         year: 2026,
         semester: 1,
         description: null,
-        publishedDate: null
+        publishedDate: new Date("2026-06-01")
     },
 ]
 

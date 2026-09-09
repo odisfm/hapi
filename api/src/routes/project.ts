@@ -4,6 +4,7 @@ import {filterProject, filterProjectPreview} from "../utils/filters/filterProjec
 import {type ProjectSearchQuery} from "@hapi/shared/src/types/projectSearchQuery.js";
 import type {ApprovalStatus} from "@hapi/shared/src/generated/prisma/enums.js";
 import {toTsQuery} from "../utils/toTsQuery.js";
+import type {ProjectDetailsResponse, ProjectSearchResponse} from "@hapi/shared/src/types/apiResponses.js";
 
 export const projectRouter = new Hono()
 
@@ -42,7 +43,6 @@ projectRouter.get("/search", async (c) => {
             ...(searchQuery.category && { categoryId: searchQuery.category }),
             ...(searchQuery.approvalStatus && { approvalStatus: searchQuery.approvalStatus }),
         },
-        ...(query.cursor && { cursor: { id: query.cursor } }),
         include: {
             showcase: true,
             category: true,
@@ -65,7 +65,7 @@ projectRouter.get("/search", async (c) => {
     })
     const now = new Date()
 
-    const filteredRecords = records.filter(r => {
+    let filteredRecords = records.filter(r => {
         if (userRole === "ADMIN") {
             return true
         }
@@ -75,8 +75,25 @@ projectRouter.get("/search", async (c) => {
         return true
     }).map(r => filterProjectPreview(r))
 
-    return c.json(filteredRecords)
+    const resultCount = filteredRecords.length
+    let cursorIndex: number | null = null
+    if (searchQuery.cursor) {
+        cursorIndex = filteredRecords.findIndex(r => r.id === searchQuery.cursor);
+        if (cursorIndex === -1) {
+            return c.json({error: `Invalid cursor: ${searchQuery.cursor}`}, 400)
+        }
 
+        filteredRecords = filteredRecords.slice(cursorIndex + 1, -1)
+    }
+
+    filteredRecords = filteredRecords.slice(0, searchQuery.limit)
+
+    return c.json({
+        projects: filteredRecords,
+        info: {
+            totalResults: resultCount
+        }
+    } satisfies ProjectSearchResponse)
 })
 
 projectRouter.get("/project/id/:projectId", async (c) => {
@@ -101,5 +118,7 @@ projectRouter.get("/project/id/:projectId", async (c) => {
         return c.status(404)
     }
     const project = filterProject(record, userRole)
-    return c.json(project)
+    return c.json({
+        project
+    } satisfies ProjectDetailsResponse)
 })

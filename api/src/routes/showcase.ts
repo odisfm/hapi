@@ -21,7 +21,8 @@ showcaseRouter.get("featured", async (c) => {
                 include: {
                     // todo: slugs
                     media: true,
-                    category: true
+                    category: true,
+                    showcase: true
                 },
                 orderBy: {
                     order: "asc"

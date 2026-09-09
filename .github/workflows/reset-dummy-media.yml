@@ -1,0 +1,37 @@
+name: Reset dummy media
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        type: choice
+        description: The environment to affect
+        options:
+          - dev
+          - staging
+
+jobs:
+  reset-dummy-media:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      BUCKET_ICONS_DEST: ${{ secrets.BUCKET_ICONS }}
+      BUCKET_MEDIA_DEST: ${{ secrets.BUCKET_MEDIA }}
+      BUCKET_ICONS_SOURCE: ${{ secrets.BUCKET_DUMMY_ICONS }}
+      BUCKET_MEDIA_SOURCE: ${{ secrets.BUCKET_DUMMY_MEDIA }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 24
+
+      - name: install dependencies
+        run: npm install
+
+      - name: run script
+        run: npx tsx ./shared/src/scripts/resetDummyMedia.ts

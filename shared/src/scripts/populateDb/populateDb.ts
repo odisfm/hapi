@@ -1,6 +1,6 @@
 import commandLineArgs from 'command-line-args'
 import {db} from "../../db.js"
-import {categoryData, projectData, showcaseData} from "./populateDbData.js";
+import {categoryData, projectData, projectMediaData, showcaseData} from "./populateDbData.js";
 
 const cliArgDefinitions = [
     { name: "use-external-db", type: Boolean }
@@ -95,6 +95,7 @@ for (const project of projectData) {
 
         await db.project.create({
             data: {
+                id: project.id,
                 name: project.name,
                 subtitle: project.subtitle,
                 description: project.description,
@@ -115,6 +116,27 @@ for (const project of projectData) {
         process.exit(1)
     }
 }
+console.log(`Done`)
+
+console.log(`Populating table ProjectMedia`)
+for (const media of projectMediaData) {
+    try {
+        await db.projectMedia.create({
+            data: {
+                mediaUrl: media.mediaUrl,
+                mediaType: media.mediaType,
+                projectId: media.projectId,
+                deviceType: media.deviceType,
+                order: media.order
+            }
+        })
+    } catch (e) {
+        console.error(`Error inserting media with URI: ${media.mediaUrl}`)
+        console.error(e)
+        process.exit(1)
+    }
+}
+console.log(`Done`)
 
 console.log(`Script finished successfully :)`)
 process.exit(0)

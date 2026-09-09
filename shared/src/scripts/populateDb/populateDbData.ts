@@ -1,4 +1,4 @@
-import type {Showcase, Category, Project} from "../../generated/prisma/client.js";
+import type {Showcase, Category, Project, ProjectMedia} from "../../generated/prisma/client.js";
 
 type NewShowcaseType = Omit<Showcase, 'id'>
 
@@ -72,7 +72,7 @@ type ShowcaseSearch = {
     semester: number,
 }
 
-type NewProjectType = Omit<Project, 'id' | 'categoryId' | 'showcaseId'> & {
+type NewProjectType = Omit<Project, 'categoryId' | 'showcaseId'> & {
     categoryName: string,
     showcase: ShowcaseSearch
 }
@@ -80,6 +80,7 @@ type NewProjectType = Omit<Project, 'id' | 'categoryId' | 'showcaseId'> & {
 export const projectData: NewProjectType[] = [
     // Apple Foundation Program 2025 Sem 2
     {
+        id: "69064039-8d63-4fe2-b4c5-0fa46086da39",
         name: "Instagram",
         description: "Bringing you closer to the people and things you love – Instagram from Meta\n" +
             "\n" +
@@ -99,7 +100,7 @@ export const projectData: NewProjectType[] = [
             "* Discover brands and small businesses, and shop products that are relevant to your personal style.\n" +
             "Some Instagram features may not be available in your country or region.\n",
         subtitle: "Videos, Creators & Friends",
-        iconUrl: "",
+        iconUrl: "ad1987aa-6278-4408-b35f-304863998196",
         developers: ["Frantzisko Monifa", "Earl Sue"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -113,6 +114,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
         name: "Smart Receipts: Expenses and Tax",
         description: "AI-Powered Receipts Scanner & Expense Tracker.\n" +
             "PDF/CSV Expense Reports. Spend management.\n" +
@@ -151,7 +153,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Download Smart Receipts today and take control of your expenses, deductions, and tax returns.\n",
         subtitle: "Receipt Scanner, Tracker",
-        iconUrl: "",
+        iconUrl: "ecdd9658-a03d-4eb3-8370-6386fc70d9ee",
         developers: ["Orion Nestan"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -165,10 +167,11 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
         name: "Substack",
         description: "",
         subtitle: "Videos, writing & Podcasts",
-        iconUrl: "",
+        iconUrl: "261be61a-cb4d-4de4-a9aa-0abf3156493a",
         developers: ["Iouri Bilal", "Sven Ameer"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -182,6 +185,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "e57666ab-186d-45ca-ba5b-b8a5703bea49",
         name: "Patreon",
         description: "Exclusive access to your favourite creators and communities from anywhere.\n" +
             "\n" +
@@ -209,7 +213,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "GET to know other fans and let other fans get to know you through personalised fan profiles.\n",
         subtitle: "Exclusive creator communities",
-        iconUrl: "",
+        iconUrl: "e484563e-99e2-4820-bb23-0b0b0aa1adc0",
         developers: ["Nazaire Sa'dia", "Disha Anu", "Olympas Iuppiter"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -223,13 +227,14 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
         name: "DocPlay",
         description: "Watch a curated collection of the world's most amazing and thought-provoking documentaries. From festival favourites to Oscar™ winners with new titles each and every week - start exploring DocPlay today!\n" +
             "\n" +
             "Premium Membership:\n" +
             "DocPlay Premium is a paid membership that gets you ad-free access to the entire DocPlay catalog in HD.\n",
         subtitle: "The World's Best Documentaries",
-        iconUrl: "",
+        iconUrl: "e3605c03-2a72-4416-a137-79b99a8a6f90",
         developers: ["Yoel Dileep", "Zoila Sara"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -243,6 +248,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "6ad331e6-910e-41e0-8cc1-595fe966faed",
         name: "Letterboxd",
         description: "Letterboxd for iOS puts the popular social network for film lovers on your iPhone or iPad, so you can log films and catch up on your friends’ activity with ease.\n" +
             "\n" +
@@ -261,7 +267,7 @@ export const projectData: NewProjectType[] = [
             "– Search for films, content and people\n" +
             "– Edit your profile settings\n",
         subtitle: "The social app for film lovers",
-        iconUrl: "",
+        iconUrl: "68d5dee6-9ede-4d52-a3eb-1c734b87f0d6",
         developers: ["Liss Azize"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -275,6 +281,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "2713734f-e46f-46f3-8a2d-945b5b22ece2",
         name: "ABC Listen: Radio & Podcasts",
         description: "Download the free ABC listen app to take your favourite podcasts, radio & audiobooks with you on the go. \n" +
             "\n" +
@@ -315,7 +322,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Life sounds better with ABC listen - download the free app today! ",
         subtitle: "Music, Sport, News, Audiobooks",
-        iconUrl: "",
+        iconUrl: "4b469e71-1672-4fae-873c-d55244afd584",
         developers: ["Erik Astrid"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -329,6 +336,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "601a6641-7d7d-436d-bf20-7b11902192aa",
         name: "Discord — Talk, Play, Hang Out",
         subtitle: "Group Chat That's Fun & Games",
         description: "Discord is designed for gaming and great for just chilling with friends or building a community. Customise your own space and gather your friends to talk while playing your favourite games or just hang out.\n" +
@@ -353,7 +361,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "WHEREVER YOU GAME, HANG OUT HERE\n" +
             "∙ On your PC, phone or console, you can still hang out on Discord. Easily switch between devices and use tools to manage multiple group chats with friends.",
-        iconUrl: "",
+        iconUrl: "aa765045-ce5c-494b-bb9f-f7652b38266c",
         developers: ["Jaska Arend", "Elsa Grozdana", "Ramzan Alam"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -367,6 +375,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "c6bc2e0e-4c29-472e-b0c4-1e353ea24d7c",
         name: "Twitch — Live Streaming",
         subtitle: "Stream, Watch, Chat. Live.",
         description: "Twitch is where thousands of communities come together for our favorite streamers, for the games we love, for the lulz, for each other, for whatever. Download Twitch and join millions enjoying live games, music, sports, esports, podcasts, cooking shows, IRL streams, and whatever else crosses our community’s wonderfully absurd minds. We’ll see you in chat.\n" +
@@ -378,7 +387,7 @@ export const projectData: NewProjectType[] = [
             "Start your own channel: The Twitch app is one of the easiest ways to start streaming. Just create an account, go live directly from the app, and bring people together around whatever you’re passionate about. \n" +
             "You never know what you’ll find: Popular games are always live, but so are music festivals, rocket launches, street tours of Tokyo, and goat yoga. Yes, really. \n" +
             "Dark mode: Y’all love this one. Black and purple have never looked this good together.\n",
-        iconUrl: "",
+        iconUrl: "0b87b97e-0c10-42f9-bfa0-ca311e60d845",
         developers: ["Tina Nora", "Misi Meena", "Reuel Liberato"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -392,6 +401,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "d5d6d726-b382-47af-aa34-bf63ebfbc0a0",
         name: "Bluey's Quest for The Gold Pen",
         subtitle: "A story-driven adventure game",
         description:
@@ -410,7 +420,7 @@ export const projectData: NewProjectType[] = [
             "EXPLORE HAND-DRAWN WORLDS Explore lively levels brimming with snowy mountains, golden beaches, lush forests, and iconic Australian landscapes. Each environment is packed with vibrant details and opportunities for discovery.\n" +
             "\n" +
             "FUN FOR EVERYONE Just like the animated series, Bluey’s Quest for the Gold Pen sparks laughter and encourages players of all ages to discover through play. Packed full of trifficult puzzles and wholesome moments, this is an adventure for the whole household.\n",
-        iconUrl: "",
+        iconUrl: "d4911a18-5b87-4109-968f-cc7346832c38",
         developers: ["Viktorie Haiyang", "Natalija Zoilus"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -425,6 +435,7 @@ export const projectData: NewProjectType[] = [
     },
     // Apple Foundation Program 2026 Sem 1
     {
+        id: "ecf961e9-aee6-40a3-bfaf-8901392e46eb",
         name: "Duolingo: Language & Chess",
         subtitle: "Learn Spanish, Math & more",
         description: "Learn a new language, chess & more with the world's most downloaded education app! Duolingo is the fun, free app for learning 40+ languages through quick, bite-sized lessons. Practice speaking, reading, listening & writing to build your vocabulary & grammar skills.\n" +
@@ -467,7 +478,7 @@ export const projectData: NewProjectType[] = [
             "\"Duolingo is cheerful, lighthearted & fun.\" - Forbes\n" +
             "\n" +
             "\"I Can't Stop Playing Duolingo Chess.\" - Wired\n",
-        iconUrl: "",
+        iconUrl: "58e26c42-a120-4c08-9b46-be2749243817",
         developers: ["Märyäm Agapitos", "Aisha Anand"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -481,6 +492,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "af217389-0fc5-4eae-aeba-6a1ebd313bb8",
         name: "Simply Piano: Learn Piano Fast",
         subtitle: "Piano Songs & Lessons",
         description: "A fast and fun way to learn piano - works with any piano or keyboard. Learn to play the songs you love with Simply Piano!\n" +
@@ -524,7 +536,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Have questions, feedback or suggestions? Reach out to us via the in-app chat, just tap on Settings and ‘Have a Question’.\n" +
             "Enjoy Playing!\n",
-        iconUrl: "",
+        iconUrl: "65405e6c-4eab-4cab-bacb-8623e222fd6f",
         developers: ["Kristofor Lal"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -538,6 +550,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "3ae40dc9-4321-45b2-a2a3-bd26292faaa9",
         name: "Elevate — Brain Training",
         subtitle: "Vocab, Memory, & Math Puzzles",
         description: "Elevate is a brain training program designed to improve your mind’s focus, memory, speaking abilities, processing speed, math skills, and more. Each person is provided with a personalized training program that adjusts over time to maximize results.\n" +
@@ -574,7 +587,7 @@ export const projectData: NewProjectType[] = [
             "RESEARCH BEHIND ELEVATE\n" +
             "\n" +
             "Elevate's games are designed in collaboration with experts in neuroscience and cognitive learning and are based on extensive scientific research. Elevate’s brain training algorithms further focus the learning experience by drawing from research in memory studies to develop a personalized training program for each member.\n",
-        iconUrl: "",
+        iconUrl: "d7beb5b9-b958-44e1-894d-649bc5ce4192",
         developers: ["Giosuè Rollie", "Víkingr Ela"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -588,6 +601,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "181039d7-2674-464b-bc68-05a372f03558",
         name: "LinkedIn Learning",
         subtitle: "Online Courses to Learn Skills",
         description: "Achieve your next career goal with LinkedIn Learning—the only skill development platform based on the real-time skill and career insights from LinkedIn.\n" +
@@ -609,7 +623,7 @@ export const projectData: NewProjectType[] = [
             "• Diversity, equity, and inclusion\n" +
             "• Leadership and management\n" +
             "• Software development\n",
-        iconUrl: "",
+        iconUrl: "dab6bd42-0b5f-46b0-ad4c-1a0e8dd2f0f1",
         developers: ["Aucaman Krystiana", "Zabulon Nindaanis", "Su-bin Barak"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -623,6 +637,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "4752beb8-e38f-409b-a6a1-469c66528ad1",
         name: "Candy Crush Saga",
         subtitle: "The fun match 3 puzzle game!",
         description: "Start playing Candy Crush Saga today – a legendary puzzle game loved by millions of players around the world.\n" +
@@ -649,7 +664,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Levels range from easy to hard for all adults to enjoy – accessible on-the-go, offline and online.\n" +
             "It's easy to sync the game between devices and unlock full game features when connected to the Internet or Wifi.\n",
-        iconUrl: "",
+        iconUrl: "9fb303f7-5b03-43c7-8310-15aeb4857d26",
         developers: ["Geno Ceallach", "Deasún Ron"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -663,6 +678,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "714002cf-fda8-4ce3-98f7-f2b52b92fdf8",
         name: "Splitwise",
         subtitle: "Split expenses with friends",
         description: "Splitwise is the easiest way to share expenses with friends and family and stop stressing about “who owes who”. Millions of people around the world use Splitwise to organize group bills for households, trips, and more. Our mission is to reduce the stress and awkwardness that money places on our most important relationships.\n" +
@@ -721,7 +737,7 @@ export const projectData: NewProjectType[] = [
             "4. Convert expenses to different currencies using our Open Exchange Rates integration\n" +
             "5. Access to “spending by category” budgeting tools and other charts\n" +
             "6. Search full expense history\n",
-        iconUrl: "",
+        iconUrl: "f9ab8a29-f90f-4f01-bdae-dd91bd276bad",
         developers: ["Jitender Yannick", "Sachiko Yuliy"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -735,6 +751,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "fd878b06-542c-48c1-be7e-42effb2adeb6",
         name: "Strava: Run, Bike, Walk",
         subtitle: "Track & share with friends",
         description:
@@ -764,7 +781,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Strava includes both a free version and a subscription version with premium features.\n" +
             "Strava uses HealthKit to export your Strava activities into the Health app and to read heart rate and biometric data.\n",
-        iconUrl: "",
+        iconUrl: "b10b346b-1277-479c-9068-b03f660e86be",
         developers: ["Yami Briggs", "Czarek Nina"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -778,6 +795,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "973fbf56-e4f3-48e0-b827-0cd0864a0398",
         name: "Blackmagic Camera",
         subtitle: "Unlock the power of your iPhone",
         description: "Introducing Digital Film for iPhone and iPad!\n" +
@@ -800,7 +818,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Live Sync to Blackmagic Cloud Storage\n" +
             "When shooting with Blackmagic Camera, the video you capture can be instantly uploaded as a proxy file, followed by the camera originals, and saved to Blackmagic Cloud Storage. This means you can start editing quickly using your proxies, speeding up your workflow.",
-        iconUrl: "",
+        iconUrl: "d6e6f63c-9690-41f0-a20d-3c96bb45bc9a",
         developers: ["Sawsan Victoria", "Chip Sharia"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -814,6 +832,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
         name: "Microsoft Teams",
         subtitle: "Call. Chat. Collaborate.",
         description:
@@ -842,7 +861,7 @@ export const projectData: NewProjectType[] = [
             "• Keep communities safe by allowing owners to remove inappropriate content or members*.\n" +
             "• Enterprise-level security and compliance you expect from Microsoft 365**. \n" +
             "\n",
-        iconUrl: "",
+        iconUrl: "63b7e43c-6480-470f-8b3f-b16ad7d09af3",
         developers: ["Ariadna Subramanian", "Regin Anselma"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -856,6 +875,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "cf1a1be5-25ed-4239-9b61-d9895c832dfb",
         name: "Snapchat: Chat with Friends",
         subtitle: "Share the moment",
         description: "Snapchat is a fast and fun way to share the moment with your friends and family\n" +
@@ -896,7 +916,7 @@ export const projectData: NewProjectType[] = [
             "• Friendship Profiles are just between you and a friend, so you can bond over what makes your friendship special.\n" +
             "\n" +
             "Happy Snapping!\n",
-        iconUrl: "",
+        iconUrl: "546fac9b-76f2-4c9f-adf3-6a11991ae254",
         developers: ["Cyra Favour", "Elkan Starla"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -911,6 +931,7 @@ export const projectData: NewProjectType[] = [
     },
     // Capstone 2026 Sem 1
     {
+        id: "bccbeeea-dc23-45f6-b2c4-d5a4525df803",
         name: "Swipewipe: Photo Storage",
         subtitle: "Organize & Delete Duplicates",
         description: "Tidy up your camera roll, one swipe at a time. Swipewipe makes cleaning up your photo gallery fun and easy. Reminisce while you declutter!\n" +
@@ -938,7 +959,7 @@ export const projectData: NewProjectType[] = [
             "Let's be honest, our camera rolls can be a bit of a mess. Reclaim your memories, rediscover forgotten moments, and free up some serious storage space today.\n" +
             "\n" +
             "Download Swipewipe and get swiping!\n",
-        iconUrl: "",
+        iconUrl: "7b0ad2ac-fcfd-4272-a260-77d374f56a79",
         developers: ["Laurentino Wulfric"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -952,6 +973,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "48a9a93c-e109-4c33-8675-f267b0fa880e",
         name: "Pedometer++",
         subtitle: "Count Steps",
         description: "Available on the iPhone and Apple Watch, Pedometer++ is the best way to review your step count, walking distance, active calories, and heart rate data. \n" +
@@ -976,7 +998,7 @@ export const projectData: NewProjectType[] = [
             "Pedometer++ shows the distance of a route, the elevation changes you will encounter, and the estimated time it will take you to reach your destination. You can also monitor the weather that is expected along your route.\n" +
             "\n" +
             "The best part is that custom routing is available on the iPhone and Apple Watch. Of course, being out in nature often means losing cell service, so Pedometer++ allows you to download offline map data for large areas, not just for your specific route. Offline map data is also available on the iPhone and Apple Watch, as long as your Watch is within range of your phone.",
-        iconUrl: "",
+        iconUrl: "76731acf-95cc-4461-b0bb-aa3845bfb6b6",
         developers: ["Arushi Dechen", "Gautam Audrius"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -990,6 +1012,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
         name: "Hoopla",
         subtitle: "Your library anywhere",
         description: "Thousands of free books, audio, comics, and more available right now with your library card. \n" +
@@ -1017,7 +1040,7 @@ export const projectData: NewProjectType[] = [
             "• Offline downloads — no data needed once borrowed \n" +
             "\n" +
             "All you need is a free library card from a participating library. ",
-        iconUrl: "",
+        iconUrl: "308c396b-2a14-42b5-ae39-354212f89993",
         developers: ["Osiris Zigmantas", "Ophiuchus Semisi", "Muzaffar Adeyemi"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1031,6 +1054,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "480490ca-a41a-4b05-98b8-f8027a47c73b",
         name: "Roost Social",
         subtitle: "Old school messages, by pigeon",
         description: "Slowcial Media. Make Friends and Stay Close. Watch your carrier pigeon travel in real time with your messages. Collect birds, train your flock, and stay in the moment.\n" +
@@ -1057,7 +1081,7 @@ export const projectData: NewProjectType[] = [
             "Slow your messages down. Send them by pigeon.\n" +
             "\n" +
             "Download Roost and launch your first flight.\n",
-        iconUrl: "",
+        iconUrl: "38dfdd5b-a44a-4469-b751-040a03b23a86",
         developers: ["Silvia Brage", "Þórgunnr Raginfrid", "Heidi Serafina"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1071,6 +1095,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "4c0ad5ee-d9ea-4d70-9842-a25f9e7ac777",
         name: "SignNow: e-Signature app",
         subtitle: "Sign documents & PDF forms",
         description: "SignNow is used by over 6 million people worldwide to sign, send, and manage documents — wherever they are, on any device.\n" +
@@ -1107,7 +1132,7 @@ export const projectData: NewProjectType[] = [
             "• Access documents from mobile or web\n" +
             "• Print documents directly from the app\n" +
             "• Use widgets for quick access to key actions\n",
-        iconUrl: "",
+        iconUrl: "72ffdc60-1d22-46a9-8315-dcbf605cd6bb",
         developers: ["Tutku Magnus"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1121,12 +1146,13 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "8b231bab-1711-456d-b957-6b36ca6db6f1",
         name: "Bandcamp",
         subtitle: "Buy music, support artists.",
         description: "Bandcamp is an online record store and music community where passionate fans connect with and directly support the artists they love.\n" +
             "\n" +
             "The Bandcamp app lets fans explore a vast catalog of music by artists from every corner of the globe, allows them to directly support artists by buying their merch (and wishlisting albums & tracks for purchase at a later time), and lets them instantly listen to the music they've purchased, online or offline.",
-        iconUrl: "",
+        iconUrl: "e5d956fd-0583-4cf4-9c04-544384eee795",
         developers: ["Myranda Onouphrios", "Raz Aoede"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1140,6 +1166,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "508663c5-dce5-4e07-96ae-1300e6d96d88",
         name: "FocusFlight - Deepfocus Timer",
         subtitle: "Take off into deep focus",
         description: "## Focus Timer\n" +
@@ -1185,7 +1212,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "【Different Focus Types】\n" +
             "Choose focus types through seat options, such as study, work, reading, or creative time. Make every flight better matched to your current task, and make focusing more flexible and fun.\n",
-        iconUrl: "",
+        iconUrl: "594d534e-99cd-4041-93c1-46c273a848ec",
         developers: ["Gunta Ingulf"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1199,6 +1226,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "e4c37641-e09a-4e0f-af84-01155cf8f943",
         name: "Mr Health",
         subtitle: "Personal Health Companion",
         description: "Mr Health helps you understand what’s actually inside the products you buy every day.\n" +
@@ -1258,7 +1286,7 @@ export const projectData: NewProjectType[] = [
             "\t•\tClear explanations in plain English\n" +
             "\t•\tBuilt for everyday shopping, not perfection\n" +
             "\t•\tNo brand partnerships influencing scores\n",
-        iconUrl: "",
+        iconUrl: "c6409053-52db-440a-8583-3e2a9ee60383",
         developers: ["Emiliya Aada"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1272,6 +1300,7 @@ export const projectData: NewProjectType[] = [
         }
     },
     {
+        id: "3ef625e2-3796-4756-831f-cda3d46114ab",
         name: "Yubo: Make friends & chat now",
         subtitle: "Meet new friends, find your bff",
         description: "Welcome to Yubo – the ultimate social platform for making new friends all over the world! With millions of users worldwide, we’re all about connecting you with like-minded people in a fun and safe place! \n" +
@@ -1289,7 +1318,7 @@ export const projectData: NewProjectType[] = [
             "5) IT’S SAFE: We take your safety seriously. That's why we've designed many features and tools to ensure you can use Yubo safely. \n" +
             "\n" +
             "So, what are you waiting for? \n",
-        iconUrl: "",
+        iconUrl: "fb634641-fc81-4342-9f52-0dd154a22781",
         developers: ["Muireann Onnophris", "Mira Nontle"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -1302,4 +1331,667 @@ export const projectData: NewProjectType[] = [
             semester: 1
         }
     }
+]
+
+type NewProjectMediaType = Omit<ProjectMedia, "id">
+
+export const projectMediaData: NewProjectMediaType[] = [
+    {
+        order: "",
+        projectId: "69064039-8d63-4fe2-b4c5-0fa46086da39",
+        mediaUrl: "6fcc12df-28ce-449a-83c6-fb2a38e84bd7",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "69064039-8d63-4fe2-b4c5-0fa46086da39",
+        mediaUrl: "31df5f95-083f-4881-9e2d-f3b42e03cd11",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "69064039-8d63-4fe2-b4c5-0fa46086da39",
+        mediaUrl: "11d35ee7-0a2a-4c10-9fa5-a2e6482f4eae",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "69064039-8d63-4fe2-b4c5-0fa46086da39",
+        mediaUrl: "f50c81e0-dbf3-4fb7-9e87-bffb848d9c9d",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
+        mediaUrl: "15860d99-4e9d-4870-98d8-e3aa88b74624",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
+        mediaUrl: "5e1aa249-c881-4bd6-a2f2-9a114a1caea5",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
+        mediaUrl: "3e06ad3e-f992-4d12-808b-9ae346c6d653",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
+        mediaUrl: "3e06ad3e-f992-4d12-808b-9ae346c6d653",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
+        mediaUrl: "4d520f57-73b6-4620-a072-7ab1c0611264",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
+        mediaUrl: "72aa86d5-6e3d-4b3a-b366-a6d4e0e24f75",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
+        mediaUrl: "ad763471-32ac-44b0-88d3-336e7dd7f0ac",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
+        mediaUrl: "d2b3800d-f62c-4518-9dc8-32061b6abf38",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
+        mediaUrl: "6629b104-1f33-4264-92d5-437b514d7fd7",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
+        mediaUrl: "5359999d-1e73-4b90-996a-04a54c6d8aa6",
+        mediaType: "SCREENSHOT",
+        deviceType: "TV"
+    },
+    {
+        order: "",
+        projectId: "e57666ab-186d-45ca-ba5b-b8a5703bea49",
+        mediaUrl: "cecdf8c8-2b7c-4968-8b14-8acf6ea5fa00",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "e57666ab-186d-45ca-ba5b-b8a5703bea49",
+        mediaUrl: "d26caccd-32a1-40c5-b24b-a25453222aa3",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "e57666ab-186d-45ca-ba5b-b8a5703bea49",
+        mediaUrl: "44c58321-7b60-48c8-bde1-cfc3d9d248f6",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "e57666ab-186d-45ca-ba5b-b8a5703bea49",
+        mediaUrl: "434331c2-b390-4fef-9dcf-ac9813f76b35",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "ef6acd60-355d-427b-91e5-9d10bcb2a2f5",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "f86772ad-f121-43f6-932d-1c4693498835",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "02328a4c-0336-47d8-90ef-60ef96390d87",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "bc39d09b-1b2d-4c15-a07a-39563200157b",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "9659268c-7b60-47c5-9818-48718ad963e5",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "37d84efb-4b02-4694-a85f-40a9aa6d725c",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
+        mediaUrl: "34c17330-171f-4d1f-9433-c453a9f022ec",
+        mediaType: "SCREENSHOT",
+        deviceType: "TV"
+    },
+    {
+        order: "",
+        projectId: "6ad331e6-910e-41e0-8cc1-595fe966faed",
+        mediaUrl: "3cbe00bd-f269-4bc8-8cf8-8f3a0360963e",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "6ad331e6-910e-41e0-8cc1-595fe966faed",
+        mediaUrl: "b8a42708-75cd-4f23-aede-9fd644cdae12",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "2713734f-e46f-46f3-8a2d-945b5b22ece2",
+        mediaUrl: "3dfa64a7-ac51-4dc6-83d8-d5543a09bc48",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "2713734f-e46f-46f3-8a2d-945b5b22ece2",
+        mediaUrl: "7ae7d8b4-9ff9-40f5-b59a-84a3e4427b8a",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "601a6641-7d7d-436d-bf20-7b11902192aa",
+        mediaUrl: "999dd8cc-ab4d-48c9-8e89-774bd536b224",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "c6bc2e0e-4c29-472e-b0c4-1e353ea24d7c",
+        mediaUrl: "acbee86f-7c6e-4983-90f9-4b157ef59e7d",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "d5d6d726-b382-47af-aa34-bf63ebfbc0a0",
+        mediaUrl: "b8bab4fb-2b94-44b1-9859-3b30e5ce2660",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "d5d6d726-b382-47af-aa34-bf63ebfbc0a0",
+        mediaUrl: "90309509-4d4b-4d8b-92d3-798e6f8a0269",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "d5d6d726-b382-47af-aa34-bf63ebfbc0a0",
+        mediaUrl: "1433f794-e118-4a61-9292-b9b196d7a73e",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "d5d6d726-b382-47af-aa34-bf63ebfbc0a0",
+        mediaUrl: "b919ba51-4f05-45f4-ade2-7747bd3b9ef4",
+        mediaType: "SCREENSHOT",
+        deviceType: "DESKTOP"
+    },
+    {
+        order: "",
+        projectId: "ecf961e9-aee6-40a3-bfaf-8901392e46eb",
+        mediaUrl: "20f3c14c-1a89-4a24-84ef-13add0b889de",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "ecf961e9-aee6-40a3-bfaf-8901392e46eb",
+        mediaUrl: "73a458bf-aabb-4b76-9023-c9a4bb2ea508",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "af217389-0fc5-4eae-aeba-6a1ebd313bb8",
+        mediaUrl: "b41fc61b-d098-46e7-98b8-ec9d3e2aa492",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "3ae40dc9-4321-45b2-a2a3-bd26292faaa9",
+        mediaUrl: "bbf180cc-e281-451b-b6d6-06e5f2c6bc4c",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "3ae40dc9-4321-45b2-a2a3-bd26292faaa9",
+        mediaUrl: "73e6b87e-9159-4c70-9b6d-556dd7149cb4",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "3ae40dc9-4321-45b2-a2a3-bd26292faaa9",
+        mediaUrl: "1f8d0846-1958-4b6f-b350-ce981b863ef8",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "3ae40dc9-4321-45b2-a2a3-bd26292faaa9",
+        mediaUrl: "5323bca5-fb8f-4271-819d-641a713aff01",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "181039d7-2674-464b-bc68-05a372f03558",
+        mediaUrl: "f9617d57-0cc4-450e-ba91-39a65b7ae771",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "181039d7-2674-464b-bc68-05a372f03558",
+        mediaUrl: "3cc7d039-1b85-420e-94e9-572d28aba041",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "181039d7-2674-464b-bc68-05a372f03558",
+        mediaUrl: "516b7949-ad6b-4851-b686-880b70c9ec75",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "181039d7-2674-464b-bc68-05a372f03558",
+        mediaUrl: "6b03c85d-16ab-47c2-ae93-306b54b52b3e",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "181039d7-2674-464b-bc68-05a372f03558",
+        mediaUrl: "c0e6f07b-b514-421b-bb52-5947af7844b0",
+        mediaType: "SCREENSHOT",
+        deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "4752beb8-e38f-409b-a6a1-469c66528ad1",
+        mediaUrl: "1371ff61-ec36-4c54-aded-f3f3f8362cbf",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "4752beb8-e38f-409b-a6a1-469c66528ad1",
+        mediaUrl: "9163f111-4168-4cba-b106-5ac54463333a",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "714002cf-fda8-4ce3-98f7-f2b52b92fdf8",
+        mediaUrl: "b6118d84-ed9a-4953-8d9d-723bfa83014d",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "714002cf-fda8-4ce3-98f7-f2b52b92fdf8",
+        mediaUrl: "520e2f52-783b-4913-bd3b-01ca5c494c33",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "fd878b06-542c-48c1-be7e-42effb2adeb6",
+        mediaUrl: "b7437035-3da3-472a-a576-ad87a87cd45b",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "fd878b06-542c-48c1-be7e-42effb2adeb6",
+        mediaUrl: "69713fee-abcb-4a90-8987-1402c4928ad0",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "fd878b06-542c-48c1-be7e-42effb2adeb6",
+        mediaUrl: "5699bda6-e3ff-4037-8698-5bf54d60d1a8",
+        mediaType: "SCREENSHOT",
+        deviceType: "WATCH"
+    },
+    {
+        order: "",
+        projectId: "fd878b06-542c-48c1-be7e-42effb2adeb6",
+        mediaUrl: "2a9aa191-dbd5-4956-99e1-f957b7342dc4",
+        mediaType: "SCREENSHOT",
+        deviceType: "WATCH"
+    },
+    {
+        order: "",
+        projectId: "973fbf56-e4f3-48e0-b827-0cd0864a0398",
+        mediaUrl: "8f0bb76b-1631-4b3f-8cd5-346b9e0ad3be",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "973fbf56-e4f3-48e0-b827-0cd0864a0398",
+        mediaUrl: "43a105e3-1afe-4ad6-a1c1-a225a3c1e4f2",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
+        mediaUrl: "7ce643ef-2f31-4971-b3dd-0c526fe2e588",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
+        mediaUrl: "4b38d484-8d56-46d1-b6a6-31ee4bd1359d",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
+        mediaUrl: "78034fbd-fcc7-4f77-898e-8324dc569da7",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
+        mediaUrl: "c8608063-24f2-437e-bdbb-eedabb153552",
+        mediaType: "SCREENSHOT",
+        deviceType: "AR"
+    },
+    {
+        order: "",
+        projectId: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
+        mediaUrl: "f26c0675-3082-481c-9e2c-386e91bbe011",
+        mediaType: "SCREENSHOT",
+        deviceType: "AR"
+    },
+    {
+        order: "",
+        projectId: "cf1a1be5-25ed-4239-9b61-d9895c832dfb",
+        mediaUrl: "37cabef7-59c2-412f-b866-bf47c5a9c5df",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "cf1a1be5-25ed-4239-9b61-d9895c832dfb",
+        mediaUrl: "80bee0a6-cf6a-41c5-80fc-89d45a23b3b3",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "cf1a1be5-25ed-4239-9b61-d9895c832dfb",
+        mediaUrl: "9deafdbc-b50f-437f-94ea-fdd46b2c3b99",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "cf1a1be5-25ed-4239-9b61-d9895c832dfb",
+        mediaUrl: "982ee922-41bf-45d8-a946-b79b12164ed3",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "bccbeeea-dc23-45f6-b2c4-d5a4525df803",
+        mediaUrl: "0dbed4e8-a350-47bc-a276-b2ac9f899d40",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "bccbeeea-dc23-45f6-b2c4-d5a4525df803",
+        mediaUrl: "e1e4f5e4-08d0-4eb4-8808-412fe12975ea",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "bccbeeea-dc23-45f6-b2c4-d5a4525df803",
+        mediaUrl: "e1e4f5e4-08d0-4eb4-8808-412fe12975ea",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "48a9a93c-e109-4c33-8675-f267b0fa880e",
+        mediaUrl: "880ef0ad-9d31-4510-aa60-3f2f2c10f6bc",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "48a9a93c-e109-4c33-8675-f267b0fa880e",
+        mediaUrl: "d17a45fa-cf52-4f4f-b61b-4fc51fd1a730",
+        mediaType: "SCREENSHOT",
+        deviceType: "WATCH"
+    },
+    {
+        order: "",
+        projectId: "48a9a93c-e109-4c33-8675-f267b0fa880e",
+        mediaUrl: "63cd773b-19cf-4bfd-a992-a8847f063c58",
+        mediaType: "SCREENSHOT",
+        deviceType: "WATCH"
+    },
+    {
+        order: "",
+        projectId: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
+        mediaUrl: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
+        mediaUrl: "edea552b-aa04-458b-80d9-46bd2e524f90",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
+        mediaUrl: "5a18c8cd-5dd6-4a76-bd57-6a4210375be5",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
+        mediaUrl: "704a41d4-545a-4584-b14f-a29fc3d9a963",
+        mediaType: "SCREENSHOT",
+        deviceType: "TV"
+    },
+    {
+        order: "",
+        projectId: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
+        mediaUrl: "19c16358-dfd5-47f0-86d3-4cbb71182ee1",
+        mediaType: "SCREENSHOT",
+        deviceType: "TV"
+    },
+    {
+        order: "",
+        projectId: "480490ca-a41a-4b05-98b8-f8027a47c73b",
+        mediaUrl: "893b334a-175e-4983-8b08-87f838b4b774",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "480490ca-a41a-4b05-98b8-f8027a47c73b",
+        mediaUrl: "ec866bf4-58ec-426d-96dc-738d875a7617",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "480490ca-a41a-4b05-98b8-f8027a47c73b",
+        mediaUrl: "fb43fdd1-af23-4a7e-b7fe-bb8cc15f7652",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "8b231bab-1711-456d-b957-6b36ca6db6f1",
+        mediaUrl: "46e9d3f4-0e3a-44eb-afba-15da5b0159f1",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "8b231bab-1711-456d-b957-6b36ca6db6f1",
+        mediaUrl: "6db209e9-3c84-4021-b3d2-fe4f379ab3ff",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "8b231bab-1711-456d-b957-6b36ca6db6f1",
+        mediaUrl: "59e02454-ba07-4971-a766-ada7bcca6f88",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "508663c5-dce5-4e07-96ae-1300e6d96d88",
+        mediaUrl: "905a88f8-44dd-4120-8aef-009cf82d7b78",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "508663c5-dce5-4e07-96ae-1300e6d96d88",
+        mediaUrl: "452ab937-8832-4b6d-8dff-a9c69c2bd332",
+        mediaType: "SCREENSHOT",
+        deviceType: "DESKTOP"
+    },
+    {
+        order: "",
+        projectId: "508663c5-dce5-4e07-96ae-1300e6d96d88",
+        mediaUrl: "e0459a06-87fe-47f5-97e6-a68e018b0f69",
+        mediaType: "SCREENSHOT",
+        deviceType: "DESKTOP"
+    },
+    {
+        order: "",
+        projectId: "508663c5-dce5-4e07-96ae-1300e6d96d88",
+        mediaUrl: "c363524f-0d20-4551-9023-0a43ef97332e",
+        mediaType: "SCREENSHOT",
+        deviceType: "DESKTOP"
+    },
+    {
+        order: "",
+        projectId: "508663c5-dce5-4e07-96ae-1300e6d96d88",
+        mediaUrl: "c363524f-0d20-4551-9023-0a43ef97332e",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "e4c37641-e09a-4e0f-af84-01155cf8f943",
+        mediaUrl: "985d1580-d83a-4a93-be58-ba81de5a639e",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "e4c37641-e09a-4e0f-af84-01155cf8f943",
+        mediaUrl: "dad5e167-5d6d-48ff-bc1d-b47c28491731",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "3ef625e2-3796-4756-831f-cda3d46114ab",
+        mediaUrl: "7a088314-87c2-45a0-bd5e-289d60d671ca",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "3ef625e2-3796-4756-831f-cda3d46114ab",
+        mediaUrl: "62b580e2-3c7f-4c32-b1ba-cec8963476b2",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "3ef625e2-3796-4756-831f-cda3d46114ab",
+        mediaUrl: "408e056b-58dc-4214-ac07-6172ced5f817",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
+    {
+        order: "",
+        projectId: "3ef625e2-3796-4756-831f-cda3d46114ab",
+        mediaUrl: "59d355a0-9c67-4ec3-bd5b-42f2667fd358",
+        mediaType: "SCREENSHOT",
+        deviceType: "PHONE"
+    },
 ]

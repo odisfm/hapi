@@ -6,7 +6,8 @@ type ProjectPayload = ProjectGetPayload<{
     include: {
         media: true,
         category: true,
-        showcase: true
+        showcase: true,
+        ProjectSlug: true
     }
 }>
 
@@ -35,7 +36,15 @@ const mockPayload: ProjectPayload = {
         year: 0,
         semester: 0,
         publishedDate: null
-    }
+    },
+    ProjectSlug: [
+        {
+            assignedDate: new Date(),
+            slug: "test-project",
+            projectId: "",
+            id: ""
+        }
+    ]
 }
 
 describe("Project details filtering by role and context", () => {

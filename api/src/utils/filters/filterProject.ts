@@ -12,7 +12,8 @@ type ProjectPayload = ProjectGetPayload<{
     include: {
         media: true,
         category: true,
-        showcase: true
+        showcase: true,
+        ProjectSlug: true
     }
 }>
 
@@ -22,7 +23,8 @@ export function filterProjectPreview(project: ProjectPayload): ProjectPreviewTyp
         id: project.id,
         name: project.name,
         order: project.order || DEFAULT_ORDER,
-        subtitle: project.subtitle || ""
+        subtitle: project.subtitle || "",
+        slug: project.ProjectSlug[0].slug
     }
 }
 
@@ -44,7 +46,8 @@ export function filterProject(project: ProjectPayload, role: UserRole | null): P
             }
         }),
         category: project.category.name,
-        developers: project.developers
+        developers: project.developers,
+        slug: project.ProjectSlug[0].slug
     }
     if (role === "ADMIN") {
         const _projectAdmin: ProjectAdminType = {

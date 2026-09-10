@@ -46,7 +46,13 @@ projectRouter.get("/search", async (c) => {
         include: {
             showcase: true,
             category: true,
-            media: true
+            media: true,
+            ProjectSlug: {
+                take: 1,
+                orderBy: {
+                    assignedDate: "desc"
+                }
+            }
         },
         orderBy: searchQuery.searchTerm
             ? [
@@ -96,26 +102,41 @@ projectRouter.get("/search", async (c) => {
     } satisfies ProjectSearchResponse)
 })
 
-projectRouter.get("/project/id/:projectId", async (c) => {
-    const projectId = c.req.param("projectId")
-    const record = await db.project.findUnique({
+projectRouter.get("/:projectSlug", async (c) => {
+    const projectSlug = c.req.param("projectSlug")
+    const slugRecord = await db.projectSlug.findUnique({
             where: {
-                id: projectId
+                slug: projectSlug
             },
             include: {
-                showcase: true,
-                media: true,
-                category: true
+                project: {
+                    include: {
+                        showcase: true,
+                        media: true,
+                        category: true,
+                        ProjectSlug: {
+                            take: 1,
+                            orderBy: {
+                                assignedDate: "desc"
+                            }
+                        }
+                    }
+                }
             }
         }
     )
-    if (!record) {
-        return c.status(404)
+    if (!slugRecord) {
+        return c.json({
+            error: `No project found called '${projectSlug}'`
+        }, 404)
     }
+    const record = slugRecord.project
     const showcasePublic = record.showcase.publishedDate && record.showcase.publishedDate < new Date()
     const userRole = null // todo: get user role
     if (!showcasePublic && userRole !== "ADMIN") {
-        return c.status(404)
+        return c.json({
+            error: `No project found called '${projectSlug}'`
+        }, 404)
     }
     const project = filterProject(record, userRole)
     return c.json({

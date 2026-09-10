@@ -20,10 +20,15 @@ showcaseRouter.get("featured", async (c) => {
                 projects: {
                     take: NUM_FEATURED_PROJECTS,
                     include: {
-                        // todo: slugs
                         media: true,
                         category: true,
-                        showcase: true
+                        showcase: true,
+                        ProjectSlug: {
+                            take: 1,
+                            orderBy: {
+                                assignedDate: "desc"
+                            }
+                        }
                     },
                     orderBy: {
                         order: "asc"

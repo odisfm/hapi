@@ -9,7 +9,7 @@ const NUM_FEATURED_PROJECTS = 9
 export const showcaseRouter = new Hono()
 
 showcaseRouter.get("featured", async (c) => {
-        const showcaseRecords = await db.showcase.findMany({
+        let showcaseRecords = await db.showcase.findMany({
             where: {
                 publishedDate: {
                     lt: new Date(),
@@ -37,9 +37,18 @@ showcaseRouter.get("featured", async (c) => {
             }
         })
         // todo: get user role
+        let userRole = null
+        if (userRole !== "ADMIN") {
+            const now = new Date()
+            showcaseRecords = showcaseRecords.filter(s => {
+                return s.publishedDate && s.publishedDate < now
+            })
+        }
+        let showcases = showcaseRecords.map(s => filterShowcase(s, userRole))
+
 
         return c.json({
-            showcases: showcaseRecords.map(s => filterShowcase(s, null))
+            showcases: showcases
         } satisfies ShowcaseFeaturedResponse);
     }
 )

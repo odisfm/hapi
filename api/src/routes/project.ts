@@ -3,8 +3,10 @@ import { db } from "@hapi/shared"
 import {filterProject, filterProjectPreview} from "../utils/filters/filterProject.js";
 import {type ProjectSearchQuery} from "@hapi/shared/src/types/projectSearchQuery.js";
 import type {ApprovalStatus} from "@hapi/shared/src/generated/prisma/enums.js";
-import {toTsQuery} from "../utils/toTsQuery.js";
 import type {ProjectDetailsResponse, ProjectSearchResponse} from "@hapi/shared/src/types/apiResponses.js";
+import Fuse from "fuse.js"
+
+const SEARCH_SCORE_CUTOFF = 0.6 // 0 - exact match, 1 - no match
 
 export const projectRouter = new Hono()
 
@@ -39,9 +41,9 @@ projectRouter.get("/search", async (c) => {
 
     const records = await db.project.findMany({
         where: {
-            ...(searchQuery.showcase && { showcaseId: searchQuery.showcase }),
-            ...(searchQuery.category && { categoryId: searchQuery.category }),
-            ...(searchQuery.approvalStatus && { approvalStatus: searchQuery.approvalStatus }),
+            ...(searchQuery.showcase && {showcaseId: searchQuery.showcase}),
+            ...(searchQuery.category && {categoryId: searchQuery.category}),
+            ...(searchQuery.approvalStatus && {approvalStatus: searchQuery.approvalStatus}),
         },
         include: {
             showcase: true,
@@ -54,20 +56,10 @@ projectRouter.get("/search", async (c) => {
                 }
             }
         },
-        orderBy: searchQuery.searchTerm
-            ? [
-                {
-                    _relevance: {
-                        fields: ["name", "description", "developers"],
-                        search: toTsQuery(searchQuery.searchTerm),
-                        sort: "desc",
-                    },
-                },
-            ]
-            : [
-                { showcase: { publishedDate: "desc" } },
-                { order: "asc" },
-            ]
+        orderBy: [
+            {showcase: {publishedDate: "desc"}},
+            {order: "asc"},
+        ]
     })
     const now = new Date()
 
@@ -79,23 +71,57 @@ projectRouter.get("/search", async (c) => {
             return false
         }
         return true
-    }).map(r => filterProjectPreview(r))
+    })
 
-    const resultCount = filteredRecords.length
+    if (searchQuery.searchTerm) {
+        const searchItems = filteredRecords.map(
+            i => ({...i, categoryName: i.category.name})
+        );
+        const fuse = new Fuse(
+            searchItems, {
+                useTokenSearch: true,
+                ignoreLocation: true,
+                ignoreDiacritics: true,
+                fieldNormWeight: 0.7,
+                threshold: 0.8,
+                keys: [
+                    {name: "name", weight: 5},
+                    {name: "subtitle", weight: 3},
+                    {name: "description", weight: 1},
+                    {name: "developers", weight: 1},
+                    {name: "categoryName", weight: 3}
+                ],
+                includeScore: true
+            }
+        )
+        let searchResult = fuse.search(searchQuery.searchTerm)
+        searchResult = searchResult.filter((r) => {
+            return r.score && r.score <= SEARCH_SCORE_CUTOFF
+        })
+        filteredRecords = searchResult.map((r) => {
+            const { categoryName, ...item } = r.item;
+            return item;
+        });
+    }
+    let processedRecords = filteredRecords.map((r) => {
+        return filterProjectPreview(r)
+    })
+
+    const resultCount = processedRecords.length
     let cursorIndex: number | null = null
     if (searchQuery.cursor) {
-        cursorIndex = filteredRecords.findIndex(r => r.id === searchQuery.cursor);
+        cursorIndex = processedRecords.findIndex(r => r.id === searchQuery.cursor);
         if (cursorIndex === -1) {
             return c.json({error: `Invalid cursor: ${searchQuery.cursor}`}, 400)
         }
 
-        filteredRecords = filteredRecords.slice(cursorIndex + 1, -1)
+        processedRecords = processedRecords.slice(cursorIndex + 1, -1)
     }
 
-    filteredRecords = filteredRecords.slice(0, searchQuery.limit)
+    processedRecords = processedRecords.slice(0, searchQuery.limit)
 
     return c.json({
-        projects: filteredRecords,
+        projects: processedRecords,
         info: {
             totalResults: resultCount
         }

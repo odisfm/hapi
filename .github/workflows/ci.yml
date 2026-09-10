@@ -32,6 +32,7 @@ jobs:
       - run: npm ci
       - run: |
           cd shared
+          export DISABLE_ERD=true
           npx prisma generate
           cd ..
       - run: npm run test --workspace shared
@@ -47,6 +48,7 @@ jobs:
       - run: npm ci
       - run: |
           cd shared
+          export DISABLE_ERD=true
           npx prisma generate
           cd ..
       - run: npm run test --workspace client
@@ -62,6 +64,7 @@ jobs:
       - run: npm ci
       - run: |
           cd shared
+          export DISABLE_ERD=true
           npx prisma generate
           cd ..
       - run: npm run test --workspace api

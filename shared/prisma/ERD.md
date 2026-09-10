@@ -78,6 +78,13 @@ REJECTED REJECTED
     String order "Lexo-rank"
     }
   
+
+  "ProjectSlug" {
+    String id "🗝️"
+    String slug "🔒"
+    DateTime assignedDate 
+    }
+  
     "User" |o--|| "UserRole" : "enum:role"
     "Project" |o--|| "ApprovalStatus" : "enum:approvalStatus"
     "Project" }o--|| "Category" : "category"
@@ -85,4 +92,5 @@ REJECTED REJECTED
     "ProjectMedia" }o--|| "Project" : "project"
     "ProjectMedia" |o--|| "MediaType" : "enum:mediaType"
     "ProjectMedia" |o--|| "DeviceType" : "enum:deviceType"
+    "ProjectSlug" }o--|| "Project" : "project"
 ```

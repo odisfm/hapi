@@ -7,6 +7,7 @@ export type ProjectPreviewType = {
     subtitle?: string,
     iconUrl: string,
     order: string,
+    slug: string
 }
 
 export type ProjectPublicType = ProjectPreviewType & {

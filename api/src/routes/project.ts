@@ -115,7 +115,7 @@ projectRouter.get("/search", async (c) => {
             return c.json({error: `Invalid cursor: ${searchQuery.cursor}`}, 400)
         }
 
-        processedRecords = processedRecords.slice(cursorIndex + 1, -1)
+        processedRecords = processedRecords.slice(cursorIndex + 1)
     }
 
     processedRecords = processedRecords.slice(0, searchQuery.limit)

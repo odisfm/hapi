@@ -1,0 +1,41 @@
+name: Reset staging
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: >
+          Type "reset" to wipe DB and media in staging, returning staging environment to initial state
+        type: string
+        required: true
+
+jobs:
+  reset-dummy-media:
+    if: github.event.inputs.confirmation == 'reset'
+    uses: ./.github/workflows/reset-dummy-media.yml
+    with:
+      environment: staging
+    secrets: inherit
+
+  reset-db:
+    if: github.event.inputs.confirmation == 'reset'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 24
+
+      - name: install dependencies
+        run: npm install
+
+      - name: truncate/re-seed db
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_OWNER }}
+        run: |
+          cd shared
+          export DISABLE_ERD=true
+          npx prisma generate
+          npm run db:populate

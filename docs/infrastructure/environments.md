@@ -1,6 +1,6 @@
 # Environments
 
-This project uses two live environments, with near-identical but separate [cloud infrastructure](../infrastructure/infrastructure-proposal.md).
+This project uses two live environments, with near-identical but separate [cloud infrastructure](infrastructure-design.md).
 
 ## Staging
 

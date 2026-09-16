@@ -20,7 +20,7 @@ resource "aws_lambda_function" "api" {
     variables = {
       ENVIRONMENT = var.environment
       DATABASE_URL = var.lambda_db_url
-      ALLOWED_CORS = format("frontend-${var.environment}-%s-%s-an", data.aws_caller_identity.current.account_id, data.aws_region.current.region)
+      ALLOWED_CORS = "http://${aws_s3_bucket.frontend_bucket.bucket}.s3-website.${data.aws_region.current.name}.amazonaws.com"
     }
   }
 }
@@ -29,7 +29,10 @@ resource "aws_apigatewayv2_api" "http" {
   name          = "api-gateway-${var.environment}"
   protocol_type = "HTTP"
   cors_configuration {
-    allow_origins = ["http://${aws_s3_bucket.frontend_bucket.bucket}.s3-website.${data.aws_region.current.name}.amazonaws.com"]
+    allow_origins     = ["http://${aws_s3_bucket.frontend_bucket.bucket}.s3-website.${data.aws_region.current.name}.amazonaws.com"]
+    allow_credentials = true
+    allow_methods     = ["GET", "POST", "PUT", "PATCH", "DELETE"]
+    allow_headers     = ["*"]
   }
 
 }

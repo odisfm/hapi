@@ -1,6 +1,6 @@
-import {type UserRole} from "@hapi/shared/src/generated/prisma/enums.js";
-import {type ShowcaseGetPayload} from "@hapi/shared/src/generated/prisma/models/Showcase.js";
-import {type ShowcaseType, type ShowcaseAdminType} from "@hapi/shared/src/types/showcase.js";
+import {type UserRole} from "@hapi/shared/prisma/enums.js";
+import {type ShowcaseGetPayload} from "@hapi/shared/prisma/models/Showcase.js";
+import {type ShowcaseType, type ShowcaseAdminType} from "@hapi/shared/types/showcase";
 import {filterProjectPreview} from "./filterProject.js";
 
 type ShowcasePayload = ShowcaseGetPayload<{

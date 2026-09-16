@@ -8,7 +8,8 @@
     "start": "node dist/server.js",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:watch": "vitest watch"
+    "test:watch": "vitest watch",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.1111.0",

@@ -13,9 +13,9 @@ vi.mock("@hapi/shared", () => ({
 }))
 
 import { db } from "@hapi/shared"
-import type {ProjectSlugGetPayload} from "@hapi/shared/src/generated/prisma/models/ProjectSlug.js";
-import type {ProjectDetailsResponse, ProjectSearchResponse} from "@hapi/shared/src/types/apiResponses.js";
-import type {ProjectGetPayload} from "@hapi/shared/src/generated/prisma/models/Project.js";
+import type {ProjectSlugGetPayload} from "@hapi/shared/prisma/models/ProjectSlug.js";
+import type {ProjectDetailsResponse, ProjectSearchResponse} from "@hapi/shared/types/apiResponses";
+import type {ProjectGetPayload} from "@hapi/shared/prisma/models/Project.js";
 
 beforeEach(() => {
     vi.clearAllMocks()
@@ -57,7 +57,7 @@ describe("GET /project", async () => {
             },
         } as unknown as SlugWithProject)
         const res = await projectRouter.request("/my-cool-app")
-        const json: ProjectDetailsResponse = await res.json()
+        const json = await res.json() as ProjectDetailsResponse
         expect(json.project).toBeDefined()
         expect(json.project.slug).toEqual("my-cool-app")
     })
@@ -116,7 +116,7 @@ describe("GET /project/search", async () => {
         })
         const res = await projectRouter.request(`/search?${params}`)
         expect(res.status).toBe(200)
-        const json: ProjectSearchResponse = await res.json()
+        const json = await res.json() as ProjectSearchResponse
         for (const p of json.projects) {
             expect(p.slug).not.toEqual("we-hate-fun")
         }
@@ -165,7 +165,7 @@ describe("GET /project/search", async () => {
             "limit": "1",
         })
         let res = await projectRouter.request(`/search?${params}`)
-        let json: ProjectSearchResponse = await res.json()
+        let json = await res.json() as ProjectSearchResponse
 
         let id = json.projects[0].id
         expect(id).toBe("a")
@@ -174,7 +174,7 @@ describe("GET /project/search", async () => {
             "limit": "1", "cursor": "a"
         })
         res = await projectRouter.request(`/search?${params}`)
-        json = await res.json()
+        json = await res.json() as ProjectSearchResponse
 
         id = json.projects[0].id
         expect(id).toBe("b")
@@ -183,7 +183,7 @@ describe("GET /project/search", async () => {
             "limit": "1", "cursor": "b"
         })
         res = await projectRouter.request(`/search?${params}`)
-        json = await res.json()
+        json = await res.json() as ProjectSearchResponse
 
         id = json.projects[0].id
         expect(id).toBe("c")
@@ -192,7 +192,7 @@ describe("GET /project/search", async () => {
             "limit": "1", "cursor": "c"
         })
         res = await projectRouter.request(`/search?${params}`)
-        json = await res.json()
+        json = await res.json() as ProjectSearchResponse
         expect(json.projects.length).toBe(0)
         expect(json.info.totalResults).toBe(3)
 

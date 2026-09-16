@@ -1,10 +1,10 @@
 import {describe, test, expect} from "vitest";
-import {type ShowcaseGetPayload} from "@hapi/shared/src/generated/prisma/models/Showcase.js";
+import {type ShowcaseGetPayload} from "@hapi/shared/prisma/models/Showcase.js";
 import {filterShowcase} from "./filterShowcase.js";
 
 type ShowcasePayload = ShowcaseGetPayload<{
     include: {
-        projects: {include: {media: true, category: true}}
+        projects: {include: {media: true, category: true, showcase: true, ProjectSlug: true}};
     }
 }>
 

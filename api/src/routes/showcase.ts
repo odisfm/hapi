@@ -1,7 +1,7 @@
 import {Hono} from 'hono'
 import {db} from "@hapi/shared"
 import {filterShowcase} from "../utils/filters/filterShowcase.js";
-import {type ShowcaseFeaturedResponse} from "@hapi/shared/src/types/apiResponses.js"
+import {type ShowcaseFeaturedResponse} from "@hapi/shared/types/apiResponses"
 
 const NUM_FEATURED_SHOWCASES = 3
 const NUM_FEATURED_PROJECTS = 9

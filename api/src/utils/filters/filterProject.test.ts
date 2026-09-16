@@ -1,5 +1,5 @@
 import {describe, test, expect} from "vitest";
-import {type ProjectGetPayload} from "@hapi/shared/src/generated/prisma/models/Project.js";
+import {type ProjectGetPayload} from "@hapi/shared/prisma/models/Project.js"
 import {filterProjectPreview, filterProject} from "./filterProject.js";
 
 type ProjectPayload = ProjectGetPayload<{

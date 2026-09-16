@@ -4,7 +4,7 @@ import { deleteCookie, setCookie } from 'hono/cookie';
 import { csrf } from 'hono/csrf';
 import { cors } from 'hono/cors';
 import { jwt } from 'hono/jwt';
-import {type CategoryResponse} from "@hapi/shared/src/types/apiResponses.js"
+import {type CategoryResponse} from "@hapi/shared/types/apiResponses"
 import {showcaseRouter} from "./routes/showcase.js";
 import {projectRouter} from "./routes/project.js";
 

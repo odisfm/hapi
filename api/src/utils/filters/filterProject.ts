@@ -2,9 +2,9 @@ import {
     type ProjectType,
     type ProjectPreviewType,
     type ProjectAdminType,
-} from "@hapi/shared/src/types/project.js";
-import {type ProjectGetPayload} from "@hapi/shared/src/generated/prisma/models/Project.js";
-import {type UserRole} from "@hapi/shared/src/generated/prisma/enums.js";
+} from "@hapi/shared/types/project";
+import {type ProjectGetPayload} from "@hapi/shared/prisma/models/Project.js";
+import {type UserRole} from "@hapi/shared/prisma/enums.js";
 
 const DEFAULT_ORDER = "zzzzzzzzzzzzz"
 

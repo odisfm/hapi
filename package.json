@@ -1,12 +1,15 @@
 {
   "name": "hapi",
   "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
   "workspaces": [
     "api",
     "client",
     "shared"
   ],
-  "type": "module",
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",

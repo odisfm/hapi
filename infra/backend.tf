@@ -19,6 +19,8 @@ resource "aws_lambda_function" "api" {
   environment {
     variables = {
       ENVIRONMENT = var.environment
+      DATABASE_URL = var.lambda_db_url
+      ALLOWED_CORS = format("frontend-${var.environment}-%s-%s-an", data.aws_caller_identity.current.account_id, data.aws_region.current.region)
     }
   }
 }

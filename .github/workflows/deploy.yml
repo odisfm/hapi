@@ -40,6 +40,7 @@ jobs:
         run: |
           touch terraform.tfvars
           echo "environment = \"${{ inputs.environment }}\"" >> terraform.tfvars
+          echo "lambda_db_url = \"${{ secrets.LAMBDA_DB_URL }}\"" >> terraform.tfvars
 
       - name: tofu init
         working-directory: infra

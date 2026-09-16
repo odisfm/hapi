@@ -1,14 +1,14 @@
-import { Hono } from 'hono'
+import {createHono} from "../helpers/createHono";
 import { db } from "@hapi/shared"
 import {filterProject, filterProjectPreview} from "../utils/filters/filterProject.js";
-import {type ProjectSearchQuery} from "@hapi/shared/types/projectSearchQuery";
+import {type ProjectSearchQuery} from "@hapi/shared/types/apiRequests";
 import type {ApprovalStatus} from "@hapi/shared/prisma/enums.js";
 import type {ProjectDetailsResponse, ProjectSearchResponse} from "@hapi/shared/types/apiResponses";
 import Fuse from "fuse.js"
 
 const SEARCH_SCORE_CUTOFF = 0.6 // 0 - exact match, 1 - no match
 
-export const projectRouter = new Hono()
+export const projectRouter = createHono()
 
 const MAX_SEARCH_LIMIT = 20
 const DEFAULT_SEARCH_LIMIT = 10
@@ -34,8 +34,7 @@ projectRouter.get("/search", async (c) => {
     }
     searchQuery.limit = Math.min(searchQuery.limit, MAX_SEARCH_LIMIT)
 
-    const userRole = null // todo:
-    if (userRole !== "ADMIN" && searchQuery.approvalStatus) {
+    if ((!c.get("user") || c.get("user")!.role !== "ADMIN") && searchQuery.approvalStatus) {
         searchQuery.approvalStatus = undefined
     }
 
@@ -64,7 +63,7 @@ projectRouter.get("/search", async (c) => {
     const now = new Date()
 
     let filteredRecords = records.filter(r => {
-        if (userRole === "ADMIN") {
+        if (c.get("user") && c.get("user")!.role === "ADMIN") {
             return true
         }
         if (!r.showcase.publishedDate || r.showcase.publishedDate > now) {
@@ -158,7 +157,7 @@ projectRouter.get("/:projectSlug", async (c) => {
     }
     const record = slugRecord.project
     const showcasePublic = record.showcase.publishedDate && record.showcase.publishedDate < new Date()
-    const userRole = null // todo: get user role
+    const userRole = c.get("user")?.role || null
     if (!showcasePublic && userRole !== "ADMIN") {
         return c.json({
             error: `No project found called '${projectSlug}'`

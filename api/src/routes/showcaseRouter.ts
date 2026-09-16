@@ -1,4 +1,4 @@
-import {Hono} from 'hono'
+import {createHono} from "../helpers/createHono";
 import {db} from "@hapi/shared"
 import {filterShowcase} from "../utils/filters/filterShowcase.js";
 import {type ShowcaseFeaturedResponse} from "@hapi/shared/types/apiResponses"
@@ -6,7 +6,7 @@ import {type ShowcaseFeaturedResponse} from "@hapi/shared/types/apiResponses"
 const NUM_FEATURED_SHOWCASES = 3
 const NUM_FEATURED_PROJECTS = 9
 
-export const showcaseRouter = new Hono()
+export const showcaseRouter = createHono()
 
 showcaseRouter.get("featured", async (c) => {
         let showcaseRecords = await db.showcase.findMany({
@@ -36,8 +36,7 @@ showcaseRouter.get("featured", async (c) => {
                 }
             }
         })
-        // todo: get user role
-        let userRole = null
+        const userRole = c.get("user")?.role || null
         if (userRole !== "ADMIN") {
             const now = new Date()
             showcaseRecords = showcaseRecords.filter(s => {

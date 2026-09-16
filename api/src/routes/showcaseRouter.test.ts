@@ -1,5 +1,5 @@
 import { describe, expect, test, vi, beforeEach } from 'vitest'
-import { showcaseRouter } from "./showcase";
+import { showcaseRouter } from "./showcaseRouter";
 
 vi.mock("@hapi/shared", () => ({
     db: {

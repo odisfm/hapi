@@ -1,7 +1,7 @@
 import {createHono} from "../helpers/createHono";
 import { db } from "@hapi/shared"
 import {filterProject, filterProjectPreview} from "../utils/filters/filterProject.js";
-import {type ProjectSearchQuery} from "@hapi/shared/types/projectSearchQuery";
+import {type ProjectSearchQuery} from "@hapi/shared/types/apiRequests";
 import type {ApprovalStatus} from "@hapi/shared/prisma/enums.js";
 import type {ProjectDetailsResponse, ProjectSearchResponse} from "@hapi/shared/types/apiResponses";
 import Fuse from "fuse.js"

@@ -56,6 +56,12 @@ REJECTED REJECTED
     }
   
 
+  "Session" {
+    String id "🗝️"
+    DateTime expiry 
+    }
+  
+
   "Project" {
     String id "🗝️"
     String name 
@@ -86,6 +92,7 @@ REJECTED REJECTED
     }
   
     "User" |o--|| "UserRole" : "enum:role"
+    "Session" }o--|| "User" : "user"
     "Project" |o--|| "ApprovalStatus" : "enum:approvalStatus"
     "Project" }o--|| "Category" : "category"
     "Project" }o--|| "Showcase" : "showcase"

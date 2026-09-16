@@ -1,6 +1,7 @@
 import commandLineArgs from 'command-line-args'
 import {db} from "../../db.js"
 import {categoryData, projectData, projectMediaData, showcaseData} from "./populateDbData.js";
+import {hashPassword} from "@hapi/api/src/helpers/password";
 
 const cliArgDefinitions = [
     { name: "use-external-db", type: Boolean }
@@ -145,6 +146,27 @@ for (const media of projectMediaData) {
     }
 }
 console.log(`Done`)
+
+if (!process.env.DEFAULT_ADMIN_EMAIL || !process.env.DEFAULT_ADMIN_PASSWORD) {
+    console.warn(`Missing "DEFAULT_ADMIN_EMAIL" or "DEFAULT_ADMIN_PASSWORD" in .env, not creating default admin account`)
+} else {
+    console.log("Creating default admin account")
+    try {
+        await db.user.create({
+            data: {
+                name: "Dev Team",
+                email: process.env.DEFAULT_ADMIN_EMAIL!.toLowerCase(),
+                password: await hashPassword(process.env.DEFAULT_ADMIN_PASSWORD!),
+                role: "ADMIN"
+            }
+        })
+        console.log(`Done`)
+    } catch (e) {
+        console.error(`Error creating default admin account`)
+        console.error(e)
+        process.exit(1)
+    }
+}
 
 console.log(`Script finished successfully :)`)
 process.exit(0)

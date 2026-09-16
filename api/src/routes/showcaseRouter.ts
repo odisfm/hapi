@@ -36,8 +36,7 @@ showcaseRouter.get("featured", async (c) => {
                 }
             }
         })
-        // todo: get user role
-        let userRole = null
+        const userRole = c.get("user")?.role || null
         if (userRole !== "ADMIN") {
             const now = new Date()
             showcaseRecords = showcaseRecords.filter(s => {

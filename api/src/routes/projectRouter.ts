@@ -34,8 +34,7 @@ projectRouter.get("/search", async (c) => {
     }
     searchQuery.limit = Math.min(searchQuery.limit, MAX_SEARCH_LIMIT)
 
-    const userRole = null // todo:
-    if (userRole !== "ADMIN" && searchQuery.approvalStatus) {
+    if ((!c.get("user") || c.get("user")!.role !== "ADMIN") && searchQuery.approvalStatus) {
         searchQuery.approvalStatus = undefined
     }
 
@@ -64,7 +63,7 @@ projectRouter.get("/search", async (c) => {
     const now = new Date()
 
     let filteredRecords = records.filter(r => {
-        if (userRole === "ADMIN") {
+        if (c.get("user") && c.get("user")!.role === "ADMIN") {
             return true
         }
         if (!r.showcase.publishedDate || r.showcase.publishedDate > now) {
@@ -158,7 +157,7 @@ projectRouter.get("/:projectSlug", async (c) => {
     }
     const record = slugRecord.project
     const showcasePublic = record.showcase.publishedDate && record.showcase.publishedDate < new Date()
-    const userRole = null // todo: get user role
+    const userRole = c.get("user")?.role || null
     if (!showcasePublic && userRole !== "ADMIN") {
         return c.json({
             error: `No project found called '${projectSlug}'`

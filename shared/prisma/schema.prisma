@@ -57,7 +57,7 @@ enum UserRole {
 model Session {
   id     String   @id @default(uuid()) @db.Uuid
   userId String   @db.Uuid
-  user   User     @relation(fields: [userId], references: [id])
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiry DateTime
 }
 

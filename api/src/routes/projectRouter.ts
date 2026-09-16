@@ -1,9 +1,9 @@
 import {createHono} from "../helpers/createHono";
 import { db } from "@hapi/shared"
 import {filterProject, filterProjectPreview} from "../utils/filters/filterProject.js";
-import {type ProjectSearchQuery} from "@hapi/shared/src/types/projectSearchQuery.js";
-import type {ApprovalStatus} from "@hapi/shared/src/generated/prisma/enums.js";
-import type {ProjectDetailsResponse, ProjectSearchResponse} from "@hapi/shared/src/types/apiResponses.js";
+import {type ProjectSearchQuery} from "@hapi/shared/types/apiRequests";
+import type {ApprovalStatus} from "@hapi/shared/prisma/enums.js";
+import type {ProjectDetailsResponse, ProjectSearchResponse} from "@hapi/shared/types/apiResponses";
 import Fuse from "fuse.js"
 
 const SEARCH_SCORE_CUTOFF = 0.6 // 0 - exact match, 1 - no match

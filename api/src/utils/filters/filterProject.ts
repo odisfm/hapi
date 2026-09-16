@@ -24,7 +24,8 @@ export function filterProjectPreview(project: ProjectPayload): ProjectPreviewTyp
         name: project.name,
         order: project.order || DEFAULT_ORDER,
         subtitle: project.subtitle || "",
-        slug: project.ProjectSlug[0].slug
+        slug: project.ProjectSlug[0].slug,
+        developers: project.developers
     }
 }
 
@@ -39,14 +40,16 @@ export function filterProject(project: ProjectPayload, role: UserRole | null): P
         subtitle: project.subtitle || "",
         media: project.media.map(media => {
             return {
+                id: media.id,
                 uri: media.mediaUrl,
                 order: media.order,
                 mediaType: media.mediaType,
                 deviceType: media.deviceType,
             }
         }),
-        category: project.category.name,
         developers: project.developers,
+        showcaseId: project.showcaseId,
+        category: project.category.name,
         slug: project.ProjectSlug[0].slug
     }
     if (role === "ADMIN") {
@@ -54,6 +57,7 @@ export function filterProject(project: ProjectPayload, role: UserRole | null): P
             ..._project,
             approvalStatus: project.approvalStatus,
             rejectionReason: project.rejectionReason,
+            published: project.published
         }
         return _projectAdmin;
     }

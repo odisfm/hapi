@@ -8,7 +8,7 @@ export function App() {
     const isAdminPage = currentLocation.pathname === "/admin-login" || currentLocation.pathname === "/dashboard";
 
     return (
-        <div className={`w-full`}>
+        <div className={`w-full font-copy`}>
             <div
                 className={`w-full bg-[#D1D1D6] text-black`}
             >

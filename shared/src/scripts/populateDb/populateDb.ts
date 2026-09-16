@@ -108,6 +108,7 @@ for (const project of projectData) {
                 order: project.order,
                 categoryId,
                 showcaseId,
+                published: project.published
             }
         })
 

@@ -28,5 +28,8 @@
   "overrides": {
     "deepmerge-ts": "^8.0.1",
     "mysql2": "^3.23.1"
+  },
+  "dependencies": {
+    "@dalet-oss/lexorank": "^1.1.5"
   }
 }

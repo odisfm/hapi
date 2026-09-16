@@ -9,10 +9,10 @@ export function AdminDashboard() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!authContext.user) {
+        if (!authContext.user && !authContext.authPending) {
             navigate("/admin-login");
         }
-    }, [authContext.user, navigate]);
+    }, [authContext.user, authContext.authPending, navigate]);
 
     return (
         <div className={`flex flex-col gap-4 items-center`}>

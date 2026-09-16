@@ -1,4 +1,4 @@
-import { Hono } from 'hono'
+import {createHono} from "../helpers/createHono";
 import { db } from "@hapi/shared"
 import {filterProject, filterProjectPreview} from "../utils/filters/filterProject.js";
 import {type ProjectSearchQuery} from "@hapi/shared/types/projectSearchQuery";
@@ -8,7 +8,7 @@ import Fuse from "fuse.js"
 
 const SEARCH_SCORE_CUTOFF = 0.6 // 0 - exact match, 1 - no match
 
-export const projectRouter = new Hono()
+export const projectRouter = createHono()
 
 const MAX_SEARCH_LIMIT = 20
 const DEFAULT_SEARCH_LIMIT = 10

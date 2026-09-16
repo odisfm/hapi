@@ -1,14 +1,14 @@
-import { Hono } from 'hono'
+import {createHono} from "./helpers/createHono";
 import { db } from "@hapi/shared"
 import { deleteCookie, setCookie } from 'hono/cookie';
 import { csrf } from 'hono/csrf';
 import { cors } from 'hono/cors';
 import { jwt } from 'hono/jwt';
 import {type CategoryResponse} from "@hapi/shared/types/apiResponses"
-import {showcaseRouter} from "./routes/showcase.js";
-import {projectRouter} from "./routes/project.js";
+import {showcaseRouter} from "./routes/showcaseRouter";
+import {projectRouter} from "./routes/projectRouter";
 
-export const app = new Hono()
+export const app = createHono()
 
 app.use(
     cors({

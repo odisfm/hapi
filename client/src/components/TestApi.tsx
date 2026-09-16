@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {API_URL} from "../consts.ts";
 
 type ApiStatus = true | false | undefined;
 
@@ -9,7 +10,7 @@ export default function TestApi() {
         console.log("testing api")
         let res: Response;
         try {
-            res = await fetch(import.meta.env.VITE_API_URL)
+            res = await fetch(API_URL)
         } catch (e) {
             console.error(e)
             return false;

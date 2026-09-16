@@ -10,6 +10,12 @@ on:
           - dev
           - staging
 
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
 jobs:
   reset-dummy-media:
     runs-on: ubuntu-latest

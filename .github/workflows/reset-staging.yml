@@ -15,11 +15,13 @@ jobs:
     with:
       environment: staging
     secrets: inherit
+    concurrency: reset-staging
 
   reset-db:
     if: github.event.inputs.confirmation == 'reset'
     runs-on: ubuntu-latest
     environment: staging
+    concurrency: reset-staging
     steps:
       - uses: actions/checkout@v4
 
@@ -34,8 +36,10 @@ jobs:
       - name: truncate/re-seed db
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_OWNER }}
+          DEFAULT_ADMIN_EMAIL: ${{ secrets.DEFAULT_ADMIN_EMAIL }}
+          DEFAULT_ADMIN_PASSWORD: ${{ secrets.DEFAULT_ADMIN_PASSWORD }}
         run: |
           cd shared
           export DISABLE_ERD=true
           npx prisma generate
-          npm run db:populate
+          npx tsx ./src/scripts/populateDb/populateDb.ts --use-external-db

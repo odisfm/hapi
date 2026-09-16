@@ -76,6 +76,7 @@ model Project {
   category        Category       @relation(fields: [categoryId], references: [id])
   showcaseId      String         @db.Uuid
   showcase        Showcase       @relation(fields: [showcaseId], references: [id])
+  published       Boolean
 
   media       ProjectMedia[]
   ProjectSlug ProjectSlug[]

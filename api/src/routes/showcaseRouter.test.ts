@@ -1,5 +1,5 @@
 import { describe, expect, test, vi, beforeEach } from 'vitest'
-import { showcaseRouter } from "./showcase.js";
+import { showcaseRouter } from "./showcaseRouter";
 
 vi.mock("@hapi/shared", () => ({
     db: {
@@ -10,8 +10,8 @@ vi.mock("@hapi/shared", () => ({
 }))
 
 import { db } from "@hapi/shared"
-import type {ShowcaseGetPayload} from "@hapi/shared/src/generated/prisma/models/Showcase.js";
-import type {ShowcaseFeaturedResponse} from "@hapi/shared/src/types/apiResponses.js";
+import type {ShowcaseGetPayload} from "@hapi/shared/prisma/models/Showcase.js";
+import type {ShowcaseFeaturedResponse} from "@hapi/shared/types/apiResponses";
 
 beforeEach(() => {
     vi.clearAllMocks()
@@ -68,7 +68,7 @@ describe("GET /showcase/featured", async () => {
         ] as unknown as ShowcaseFindMany)
 
         const res = await showcaseRouter.request("/featured")
-        const json: ShowcaseFeaturedResponse = await res.json()
+        const json = await res.json() as ShowcaseFeaturedResponse
         expect(json.showcases).toBeDefined()
         expect(json.showcases.length).toBe(3)
     })
@@ -97,7 +97,7 @@ describe("GET /showcase/featured", async () => {
             } satisfies ShowcasePayload,
         ] as unknown as ShowcaseFindMany)
         const res = await showcaseRouter.request("/featured")
-        const json: ShowcaseFeaturedResponse = await res.json()
+        const json = await res.json() as ShowcaseFeaturedResponse
         expect(json.showcases.length).toEqual(1)
     })
 })

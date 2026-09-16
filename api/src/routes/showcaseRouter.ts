@@ -1,4 +1,4 @@
-import {Hono} from 'hono'
+import {createHono} from "../helpers/createHono";
 import {db} from "@hapi/shared"
 import {filterShowcase} from "../utils/filters/filterShowcase.js";
 import {type ShowcaseFeaturedResponse} from "@hapi/shared/src/types/apiResponses.js"
@@ -6,7 +6,7 @@ import {type ShowcaseFeaturedResponse} from "@hapi/shared/src/types/apiResponses
 const NUM_FEATURED_SHOWCASES = 3
 const NUM_FEATURED_PROJECTS = 9
 
-export const showcaseRouter = new Hono()
+export const showcaseRouter = createHono()
 
 showcaseRouter.get("featured", async (c) => {
         let showcaseRecords = await db.showcase.findMany({

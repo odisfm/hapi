@@ -1,5 +1,5 @@
 import { describe, expect, test, vi, beforeEach } from 'vitest'
-import {projectRouter} from "./project.js";
+import {projectRouter} from "./projectRouter";
 
 vi.mock("@hapi/shared", () => ({
     db: {

@@ -20,6 +20,33 @@ type ProjectPageState = {
     loading: boolean;
 }
 
+const platformIcons = [
+    {deviceType: "PHONE", label: "iPhone", source: "/icons/iphone.svg"},
+    {deviceType: "TABLET", label: "iPad", source: "/icons/ipad.svg"},
+    {deviceType: "DESKTOP", label: "macOS", source: "/icons/macbook.svg"},
+    {deviceType: "AR", label: "Vision Pro", source: "/icons/vision_pro.svg"},
+] as const;
+
+function PlatformIcon({label, source, available}: {label: string, source: string, available: boolean}) {
+    return (
+        <span
+            aria-label={label}
+            className={`inline-block h-5 w-5 bg-current ${available ? "text-black" : "text-[#909090]"}`}
+            role="img"
+            style={{
+                maskImage: `url(${source})`,
+                maskPosition: "center",
+                maskRepeat: "no-repeat",
+                maskSize: "contain",
+                WebkitMaskImage: `url(${source})`,
+                WebkitMaskPosition: "center",
+                WebkitMaskRepeat: "no-repeat",
+                WebkitMaskSize: "contain",
+            }}
+        />
+    );
+}
+
 export default function ProjectPage() {
     const {projectSlug} = useParams();
     const [state, setState] = useState<ProjectPageState>({
@@ -29,7 +56,7 @@ export default function ProjectPage() {
     });
 
     useEffect(() => {
-        const controller = new AbortController();
+        const projectRequestController = new AbortController();
 
         async function loadProject() {
             if (!projectSlug) {
@@ -40,23 +67,23 @@ export default function ProjectPage() {
             setState({project: null, error: null, loading: true});
 
             try {
-                const response = await fetch(
+                const projectResponse = await fetch(
                     `${API_URL}/project/${encodeURIComponent(projectSlug)}`,
-                    {signal: controller.signal}
+                    {signal: projectRequestController.signal}
                 );
 
-                if (response.status === 404) {
+                if (projectResponse.status === 404) {
                     setState({project: null, error: "Project not found.", loading: false});
                     return;
                 }
 
-                if (!response.ok) {
+                if (!projectResponse.ok) {
                     setState({project: null, error: "Unable to load this project.", loading: false});
                     return;
                 }
 
-                const data = await response.json() as ProjectDetailsResponse;
-                setState({project: data.project, error: null, loading: false});
+                const projectResponseBody = await projectResponse.json() as ProjectDetailsResponse;
+                setState({project: projectResponseBody.project, error: null, loading: false});
             } catch (error) {
                 if (error instanceof DOMException && error.name === "AbortError") {
                     return;
@@ -68,7 +95,7 @@ export default function ProjectPage() {
 
         void loadProject();
 
-        return () => controller.abort();
+        return () => projectRequestController.abort();
     }, [projectSlug]);
 
     if (state.loading) {
@@ -84,22 +111,57 @@ export default function ProjectPage() {
     }
 
     const {project} = state;
+    const availableDeviceTypes = [...new Set(
+        project.media
+            .filter((media) => media.mediaType === "SCREENSHOT")
+            .map((media) => media.deviceType)
+    )];
+    const developerLabel = project.developers.length === 1 ? "Developer" : "Developers";
 
     return (
-        <article className="w-full max-w-3xl">
-            <img
-                src={resolveStorageUrl(ICON_BUCKET_URL, project.iconUrl, ".webp")}
-                alt="App icon"
-                className="h-15 w-15 aspect-square rounded-xl object-cover"
-            />
-            <h1 className="text-2xl font-bold">{project.name}</h1>
-            <p className="mt-1">{project.subtitle}</p>
-            <dl className="mt-4">
-                <dt className="font-bold">Developers</dt>
-                <dd>{project.developers.join(", ")}</dd>
-                <dt className="mt-3 font-bold">Category</dt>
-                <dd>{project.category}</dd>
-            </dl>
+        <article className="w-full max-w-5xl">
+            <section className="rounded-2xl bg-[#D9D9D9] p-4 text-black sm:p-5">
+                <div className="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_auto] md:items-center md:gap-8 lg:gap-12">
+                    <div className="flex min-w-0 items-center gap-3">
+                        <img
+                            src={resolveStorageUrl(ICON_BUCKET_URL, project.iconUrl, ".webp")}
+                            alt="App icon"
+                            className="h-15 w-15 aspect-square shrink-0 rounded-xl object-cover"
+                        />
+                        <div className="min-w-0">
+                            <h1 className="break-words text-xl font-bold [font-family:Museo,sans-serif]">{project.name}</h1>
+                            <p className="break-words text-sm [font-family:'Helvetica Neue',Helvetica,sans-serif]">{project.subtitle}</p>
+                        </div>
+                    </div>
+                    <dl className="grid min-w-0 grid-cols-1 gap-y-3 text-xs sm:grid-cols-2 sm:gap-x-8 [font-family:'Helvetica Neue',Helvetica,sans-serif]">
+                        <div>
+                            <dt className="font-bold">{developerLabel}</dt>
+                            <dd>{project.developers.join(", ")}</dd>
+                        </div>
+                        <div>
+                            <dt className="font-bold">Available On</dt>
+                            <dd className="mt-1 flex items-center gap-1">
+                                {platformIcons.map((platformIcon) => (
+                                    <PlatformIcon
+                                        key={platformIcon.deviceType}
+                                        label={platformIcon.label}
+                                        source={platformIcon.source}
+                                        available={availableDeviceTypes.includes(platformIcon.deviceType)}
+                                    />
+                                ))}
+                            </dd>
+                        </div>
+                    </dl>
+                    <a
+                        href={project.links[0] || "#"}
+                        target={project.links[0] ? "_blank" : undefined}
+                        rel={project.links[0] ? "noreferrer" : undefined}
+                        className="min-w-48 shrink-0 rounded-full bg-[#000054] px-16 py-3 text-center text-sm font-bold text-white [font-family:'Helvetica Neue',Helvetica,sans-serif]"
+                    >
+                        GET
+                    </a>
+                </div>
+            </section>
             <section className="mt-6">
                 <h2 className="text-xl font-bold">Description</h2>
                 <p className="mt-2 whitespace-pre-wrap">{project.description}</p>

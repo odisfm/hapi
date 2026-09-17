@@ -3,6 +3,17 @@ import {useParams} from "react-router";
 import type {ProjectDetailsResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL} from "../consts.ts";
 
+const ICON_BUCKET_URL = import.meta.env.VITE_S3_ICON_BUCKET;
+const MEDIA_BUCKET_URL = import.meta.env.VITE_S3_MEDIA_BUCKET;
+
+function resolveStorageUrl(bucketUrl: string, storageKey: string, extension = "") {
+    if (storageKey.startsWith("http://") || storageKey.startsWith("https://")) {
+        return storageKey;
+    }
+
+    return `${bucketUrl}${storageKey}${extension}`;
+}
+
 type ProjectPageState = {
     project: ProjectDetailsResponse["project"] | null;
     error: string | null;
@@ -76,6 +87,11 @@ export default function ProjectPage() {
 
     return (
         <article className="w-full max-w-3xl">
+            <img
+                src={resolveStorageUrl(ICON_BUCKET_URL, project.iconUrl, ".webp")}
+                alt="App icon"
+                className="h-15 w-15 aspect-square rounded-xl object-cover"
+            />
             <h1 className="text-2xl font-bold">{project.name}</h1>
             <p className="mt-1">{project.subtitle}</p>
             <dl className="mt-4">
@@ -87,6 +103,21 @@ export default function ProjectPage() {
             <section className="mt-6">
                 <h2 className="text-xl font-bold">Description</h2>
                 <p className="mt-2 whitespace-pre-wrap">{project.description}</p>
+            </section>
+            <section className="mt-6">
+                <h2 className="text-xl font-bold">Media</h2>
+                <div className="mt-2 grid gap-4 sm:grid-cols-2">
+                    {project.media
+                        .filter((media) => media.mediaType === "SCREENSHOT")
+                        .map((media) => (
+                            <img
+                                key={media.uri}
+                                src={resolveStorageUrl(MEDIA_BUCKET_URL, media.uri, ".webp")}
+                                alt={`${project.name} screenshot`}
+                                className="w-full rounded-lg object-cover"
+                            />
+                        ))}
+                </div>
             </section>
         </article>
     );

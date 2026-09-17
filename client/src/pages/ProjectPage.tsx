@@ -49,6 +49,7 @@ function PlatformIcon({label, source, available}: {label: string, source: string
 
 export default function ProjectPage() {
     const {projectSlug} = useParams();
+    const [descriptionExpanded, setDescriptionExpanded] = useState(false);
     const [state, setState] = useState<ProjectPageState>({
         project: null,
         error: null,
@@ -120,7 +121,7 @@ export default function ProjectPage() {
 
     return (
         <article className="w-full max-w-5xl">
-            <section className="rounded-2xl bg-[#D9D9D9] p-4 text-black sm:p-5">
+            <section className="rounded-2xl bg-[#C6C6C6] p-4 text-black sm:p-5">
                 <div className="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_auto] md:items-center md:gap-8 lg:gap-12">
                     <div className="flex min-w-0 items-center gap-3">
                         <img
@@ -162,11 +163,7 @@ export default function ProjectPage() {
                     </a>
                 </div>
             </section>
-            <section className="mt-6">
-                <h2 className="text-xl font-bold">Description</h2>
-                <p className="mt-2 whitespace-pre-wrap">{project.description}</p>
-            </section>
-            <section className="mt-6">
+            <section className="mt-8">
                 <h2 className="text-xl font-bold">Media</h2>
                 <div className="mt-2 grid gap-4 sm:grid-cols-2">
                     {project.media
@@ -180,6 +177,48 @@ export default function ProjectPage() {
                             />
                         ))}
                 </div>
+            </section>
+            <section className="mt-8 rounded-2xl bg-[#D9D9D9] px-6 py-10 text-black sm:px-7 sm:py-12">
+                <h2 className="text-2xl font-bold">Meet {project.name}.</h2>
+                <div
+                    className={`overflow-hidden transition-[max-height] duration-500 ease-in-out ${descriptionExpanded ? "max-h-[2000px]" : "max-h-40"}`}
+                >
+                    <p className="mt-3 whitespace-pre-wrap text-xs leading-5">{project.description}</p>
+                </div>
+                <button
+                    type="button"
+                    onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+                    className="mt-8 block text-xs font-bold hover:text-r-red"
+                >
+                    {descriptionExpanded ? "View Less ↑" : "View More ↓"}
+                </button>
+            </section>
+            <section className="mt-8 rounded-2xl bg-[#D9D9D9] px-6 py-10 text-black sm:px-7 sm:py-12">
+                <h2 className="text-2xl font-bold">How to Install</h2>
+                <div className="mt-3 text-xs leading-5">
+                    <p className="font-bold">Available On:</p>
+                    <div className="mt-2 flex items-center gap-1">
+                        {platformIcons.map((platformIcon) => (
+                            <PlatformIcon
+                                key={platformIcon.deviceType}
+                                label={platformIcon.label}
+                                source={platformIcon.source}
+                                available={availableDeviceTypes.includes(platformIcon.deviceType)}
+                            />
+                        ))}
+                    </div>
+                </div>
+                <p className="mt-4 text-xs leading-5">Join the {project.name} Beta with a single tap.</p>
+                <p className="mt-2 text-xs leading-5">Choose your device and select TestFlight to begin.</p>
+                <p className="mt-2 text-xs leading-5">After installation, open {project.name} from your Home Screen and follow the quick onboarding steps to unlock immersive focus tracking and real-time alerts.</p>
+                <a
+                    href={project.links[0] || "#"}
+                    target={project.links[0] ? "_blank" : undefined}
+                    rel={project.links[0] ? "noreferrer" : undefined}
+                    className="mt-5 inline-block rounded-full bg-[#000054] px-10 py-2 text-center text-sm font-bold text-white"
+                >
+                    DOWNLOAD
+                </a>
             </section>
         </article>
     );

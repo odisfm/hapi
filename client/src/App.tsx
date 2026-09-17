@@ -1,9 +1,11 @@
-import {Link, Outlet} from "react-router";
+import {Link, Outlet, useLocation} from "react-router";
 import {MdSearch} from "react-icons/md";
 import {useAuth} from "./contexts/auth/useAuth.ts";
 
 export function App() {
     const authenticationContext = useAuth()
+    const currentLocation = useLocation();
+    const isAdminPage = currentLocation.pathname === "/admin-login" || currentLocation.pathname === "/dashboard";
 
     return (
         <div className={`w-full`}>
@@ -46,13 +48,28 @@ export function App() {
                     </div>
                 </div>
             </div>
-            <main className={`h-full w-full flex flex-col items-center justify-center px-4 pb-4 pt-8`}>
+            <main className={`h-full w-full flex flex-col items-center justify-center px-4 pb-12 pt-8`}>
                 <Outlet/>
             </main>
-
-
-            <div className="ticks"></div>
-            <section id="spacer"></section>
+            {!isAdminPage &&
+                <footer className={`w-full bg-[#D1D1D6] text-xs text-black`}>
+                    <div className={`mx-auto max-w-6xl px-5 py-12 sm:py-16`}>
+                        <div className={`max-w-sm`}>
+                            <div className={`flex items-start gap-2`}>
+                                <img src="/rmit-logo-red.png" alt="RMIT" className={`ml-2 h-6 w-6 object-contain`} />
+                                <div className={`max-w-xs`}>
+                                    <span className={`text-base font-bold`}>RMIT HAPI -</span>
+                                    <h2 className={`text-base font-bold`}>Hub for Apple Innovation.</h2>
+                                    <p className={`mt-2 leading-5`}>
+                                        HAPI enriches student experiences and empowers them to make impactful contributions to the tech industry.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={`h-6 w-full bg-[#000054]`} />
+                </footer>
+            }
         </div>
     )
 }

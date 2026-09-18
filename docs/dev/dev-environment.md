@@ -62,6 +62,8 @@ To populate the database with dummy data, from the repo root, run:
 
 **Note:** this will truncate (delete) all data in the database and replace it with dummy data!
 
+If you have `DEFAULT_ADMIN_EMAIL` and `DEFAULT_ADMIN_PASSWORD` in your `.env`, an admin account will be created with these credentials.
+
 View the script [here](../../shared/src/scripts/populateDb/populateDb.ts).
 
 ### Viewing the database in a GUI

@@ -7,6 +7,7 @@ import AdminLoginPage from "./pages/admin/AdminLoginPage.tsx";
 import TestApi from "./components/TestApi.tsx";
 import {AuthProvider} from "./contexts/auth/AuthProvider.tsx";
 import {AdminDashboard} from "./pages/admin/AdminDashboard.tsx";
+import ProjectPage from "./pages/ProjectPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
             {
                 path: "/dashboard",
                 element: <AdminDashboard />
+            },
+            {
+                path: "/project/:projectSlug",
+                element: <ProjectPage />
             }
         ]
     },

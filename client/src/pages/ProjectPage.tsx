@@ -3,8 +3,8 @@ import {useParams} from "react-router";
 import {MdChevronLeft, MdChevronRight} from "react-icons/md";
 import type {ProjectDetailsResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL} from "../consts.ts";
+import {AppIcon} from "../components/AppIcon.tsx";
 
-const ICON_BUCKET_URL = import.meta.env.VITE_S3_ICON_BUCKET;
 const MEDIA_BUCKET_URL = import.meta.env.VITE_S3_MEDIA_BUCKET;
 
 function resolveStorageUrl(bucketUrl: string, storageKey: string, extension = "") {
@@ -227,11 +227,7 @@ export default function ProjectPage() {
             <section className="rounded-2xl bg-[#C6C6C6] p-4 text-black sm:p-5">
                 <div className="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_auto] md:items-center md:gap-8 lg:gap-12">
                     <div className="flex min-w-0 items-center gap-3">
-                        <img
-                            src={resolveStorageUrl(ICON_BUCKET_URL, project.iconUrl, ".webp")}
-                            alt="App icon"
-                            className="h-15 w-15 aspect-square shrink-0 rounded-xl object-cover"
-                        />
+                        <AppIcon uri={project.iconUrl} width={80} />
                         <div className="min-w-0">
                             <h1 className="break-words text-xl font-bold font-headline">{project.name}</h1>
                             <p className="break-words text-sm font-copy">{project.subtitle}</p>

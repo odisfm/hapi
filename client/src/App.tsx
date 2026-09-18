@@ -48,7 +48,7 @@ export function App() {
                     </div>
                 </div>
             </div>
-            <main className={`h-full w-full flex flex-col items-center justify-center px-4 pb-12 pt-8`}>
+            <main className={`h-full w-full flex flex-col items-center justify-center px-4 pb-12 pt-8 bg-neutral-100`}>
                 <Outlet/>
             </main>
             {!isAdminPage &&

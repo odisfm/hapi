@@ -61,8 +61,11 @@ showcaseRouter.get("all", async (c) => {
         const records = await db.showcase.findMany({
             where: {
                 publishedDate: {
-                    lt: user?.role === "ADMIN" ? new Date("3000-01-01") : new Date(),
-                }
+                    ...(user?.role !== "ADMIN" && {
+                        lt: new Date(),
+                        not: null,
+                    }),
+                },
             }
         })
         return c.json({showcases: records} satisfies ShowcaseListResponse, 200)

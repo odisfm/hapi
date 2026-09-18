@@ -4,6 +4,7 @@ import {MdChevronLeft, MdChevronRight} from "react-icons/md";
 import type {ProjectDetailsResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL} from "../consts.ts";
 import {AppIcon} from "../components/AppIcon.tsx";
+import Markdown from "react-markdown";
 
 const MEDIA_BUCKET_URL = import.meta.env.VITE_S3_MEDIA_BUCKET;
 
@@ -323,12 +324,17 @@ export default function ProjectPage() {
                     )}
                 </div>
             </section>
-            <section className="mt-8 rounded-2xl bg-[#D9D9D9] px-6 pt-10 pb-4 text-black sm:px-7 sm:pt-12 sm:pb-5">
-                <h2 className="text-2xl font-bold">Meet {project.name}.</h2>
-                <div
-                    className={`overflow-hidden transition-[max-height] duration-500 ease-in-out ${descriptionExpanded ? "max-h-[2000px]" : "max-h-60"}`}
-                >
-                    <p className="mt-1 whitespace-pre-wrap text-xs leading-5">{project.description}</p>
+            <section className={`
+            project-description mt-8 rounded-2xl bg-[#D9D9D9] px-6 pt-4 pb-4 text-black sm:px-7
+            `}>
+                <div className={`
+                pr-6 md:pr-32 overflow-hidden
+                transition-[max-height] duration-200 ease-in-out 
+                ${descriptionExpanded ? "max-h-[2000px]" : "max-h-100"} sm:pb-5
+                `}>
+                    <Markdown>
+                        {project.description}
+                    </Markdown>
                 </div>
                 <button
                     type="button"

@@ -52,22 +52,27 @@ export function App() {
                 <Outlet/>
             </main>
             {!isAdminPage &&
-                <footer className={`w-full bg-[#D1D1D6] text-xs text-black`}>
-                    <div className={`mx-auto max-w-6xl px-5 py-12 sm:py-16`}>
-                        <div className={`max-w-sm`}>
-                            <div className={`flex items-start gap-2`}>
-                                <img src="/rmit-logo-red.png" alt="RMIT" className={`ml-2 h-6 w-6 object-contain`} />
-                                <div className={`max-w-xs`}>
-                                    <span className={`text-base font-bold`}>RMIT HAPI -</span>
-                                    <h2 className={`text-base font-bold`}>Hub for Apple Innovation.</h2>
-                                    <p className={`mt-2 leading-5`}>
-                                        HAPI enriches student experiences and empowers them to make impactful contributions to the tech industry.
-                                    </p>
-                                </div>
-                            </div>
+                <footer className="w-full bg-[#D1D1D6] text-xs text-black">
+                    <div className="mx-auto max-w-[1416px] px-10 py-12 sm:py-16">
+                        <div className="flex items-center gap-2">
+                            <img
+                                src="/rmit-logo-red.png"
+                                alt="RMIT"
+                                className="h-6 w-6 flex-shrink-0 object-contain"
+                            />
+                            <span className="text-base font-bold">
+                                RMIT HAPI -
+                            </span>
                         </div>
+                        <h2 className="text-base font-bold leading-tight">
+                            Hub for Apple Innovation.
+                        </h2>
+                        <p className="mt-2 max-w-[290px] leading-5">
+                            HAPI enriches student experiences and empowers them to make
+                            impactful contributions to the tech industry.
+                        </p>
                     </div>
-                    <div className={`h-6 w-full bg-[#000054]`} />
+                    <div className="h-6 w-full bg-[#000054]" />
                 </footer>
             }
         </div>

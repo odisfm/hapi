@@ -1,5 +1,6 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useParams} from "react-router";
+import {MdChevronLeft, MdChevronRight} from "react-icons/md";
 import type {ProjectDetailsResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL} from "../consts.ts";
 
@@ -50,11 +51,15 @@ function PlatformIcon({label, source, available}: {label: string, source: string
 export default function ProjectPage() {
     const {projectSlug} = useParams();
     const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+    const [canScrollMediaLeft, setCanScrollMediaLeft] = useState(false);
+    const [canScrollMediaRight, setCanScrollMediaRight] = useState(false);
+    const [carouselSidePadding, setCarouselSidePadding] = useState({left: 0, right: 0});
     const [state, setState] = useState<ProjectPageState>({
         project: null,
         error: null,
         loading: true,
     });
+    const mediaCarouselRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const projectRequestController = new AbortController();
@@ -99,6 +104,62 @@ export default function ProjectPage() {
         return () => projectRequestController.abort();
     }, [projectSlug]);
 
+    useEffect(() => {
+        const mediaCarousel = mediaCarouselRef.current;
+
+        if (!mediaCarousel) {
+            return;
+        }
+
+        const updateScrollState = () => {
+            setCanScrollMediaLeft(mediaCarousel.scrollLeft > 0);
+            setCanScrollMediaRight(
+                mediaCarousel.scrollLeft + mediaCarousel.clientWidth < mediaCarousel.scrollWidth - 1
+            );
+        };
+
+        updateScrollState();
+        mediaCarousel.addEventListener("scroll", updateScrollState);
+
+        return () => mediaCarousel.removeEventListener("scroll", updateScrollState);
+    }, [projectSlug, state.project?.media.length]);
+
+    useEffect(() => {
+        const mediaCarousel = mediaCarouselRef.current;
+
+        if (!mediaCarousel) {
+            return;
+        }
+
+        const updateCarouselPadding = () => {
+            const firstMediaItem = mediaCarousel.firstElementChild as HTMLElement | null;
+            const lastMediaItem = mediaCarousel.lastElementChild as HTMLElement | null;
+
+            if (!firstMediaItem || !lastMediaItem) {
+                setCarouselSidePadding({left: 0, right: 0});
+                return;
+            }
+
+            setCarouselSidePadding({
+                left: Math.max((mediaCarousel.clientWidth - firstMediaItem.offsetWidth) / 2, 0),
+                right: Math.max((mediaCarousel.clientWidth - lastMediaItem.offsetWidth) / 2, 0),
+            });
+        };
+
+        updateCarouselPadding();
+        const resizeObserver = new ResizeObserver(updateCarouselPadding);
+
+        resizeObserver.observe(mediaCarousel);
+
+        return () => resizeObserver.disconnect();
+    }, [projectSlug, state.project?.media.length]);
+
+    useEffect(() => {
+        const animationFrame = requestAnimationFrame(updateMediaScrollState);
+
+        return () => cancelAnimationFrame(animationFrame);
+    }, [carouselSidePadding]);
+
     if (state.loading) {
         return <p>Loading project...</p>;
     }
@@ -112,12 +173,54 @@ export default function ProjectPage() {
     }
 
     const {project} = state;
+    const screenshotMedia = project.media.filter((media) => media.mediaType === "SCREENSHOT");
     const availableDeviceTypes = [...new Set(
-        project.media
-            .filter((media) => media.mediaType === "SCREENSHOT")
+        screenshotMedia
             .map((media) => media.deviceType)
     )];
     const developerLabel = project.developers.length === 1 ? "Developer" : "Developers";
+
+    function updateMediaScrollState() {
+        const mediaCarousel = mediaCarouselRef.current;
+
+        if (!mediaCarousel) {
+            return;
+        }
+
+        setCanScrollMediaLeft(mediaCarousel.scrollLeft > 0);
+        setCanScrollMediaRight(
+            mediaCarousel.scrollLeft + mediaCarousel.clientWidth < mediaCarousel.scrollWidth - 1
+        );
+    }
+
+    function scrollMedia(direction: number) {
+        const mediaCarousel = mediaCarouselRef.current;
+
+        if (!mediaCarousel) {
+            return;
+        }
+
+        const mediaItems = Array.from(mediaCarousel.children) as HTMLElement[];
+        const carouselCenter = mediaCarousel.scrollLeft + mediaCarousel.clientWidth / 2;
+        const centeredItemIndex = mediaItems.reduce((closestIndex, mediaItem, itemIndex) => {
+            const itemCenter = mediaItem.offsetLeft + mediaItem.offsetWidth / 2;
+            const closestItemCenter = mediaItems[closestIndex].offsetLeft + mediaItems[closestIndex].offsetWidth / 2;
+
+            return Math.abs(itemCenter - carouselCenter) < Math.abs(closestItemCenter - carouselCenter)
+                ? itemIndex
+                : closestIndex;
+        }, 0);
+        const targetItem = mediaItems[centeredItemIndex + direction];
+
+        if (!targetItem) {
+            return;
+        }
+
+        mediaCarousel.scrollTo({
+            behavior: "smooth",
+            left: targetItem.offsetLeft - (mediaCarousel.clientWidth - targetItem.offsetWidth) / 2,
+        });
+    }
 
     return (
         <article className="w-full max-w-5xl">
@@ -134,10 +237,14 @@ export default function ProjectPage() {
                             <p className="break-words text-sm [font-family:'Helvetica Neue',Helvetica,sans-serif]">{project.subtitle}</p>
                         </div>
                     </div>
-                    <dl className="grid min-w-0 grid-cols-1 gap-y-3 text-xs sm:grid-cols-2 sm:gap-x-8 [font-family:'Helvetica Neue',Helvetica,sans-serif]">
+                    <dl className="grid min-w-0 grid-cols-1 gap-y-3 text-xs sm:grid-cols-3 sm:gap-x-8 [font-family:'Helvetica Neue',Helvetica,sans-serif]">
                         <div>
                             <dt className="font-bold">{developerLabel}</dt>
                             <dd>{project.developers.join(", ")}</dd>
+                        </div>
+                        <div>
+                            <dt className="font-bold">Category</dt>
+                            <dd>{project.category}</dd>
                         </div>
                         <div>
                             <dt className="font-bold">Available On</dt>
@@ -154,9 +261,11 @@ export default function ProjectPage() {
                         </div>
                     </dl>
                     <a
-                        href={project.links[0] || "#"}
-                        target={project.links[0] ? "_blank" : undefined}
-                        rel={project.links[0] ? "noreferrer" : undefined}
+                        href="#how-to-install"
+                        onClick={(event) => {
+                            event.preventDefault();
+                            document.getElementById("how-to-install")?.scrollIntoView({behavior: "smooth"});
+                        }}
                         className="min-w-48 shrink-0 rounded-full bg-[#000054] px-16 py-3 text-center text-sm font-bold text-white [font-family:'Helvetica Neue',Helvetica,sans-serif]"
                     >
                         GET
@@ -164,36 +273,76 @@ export default function ProjectPage() {
                 </div>
             </section>
             <section className="mt-8">
-                <h2 className="text-xl font-bold">Media</h2>
-                <div className="mt-2 grid gap-4 sm:grid-cols-2">
-                    {project.media
-                        .filter((media) => media.mediaType === "SCREENSHOT")
-                        .map((media) => (
-                            <img
-                                key={media.uri}
-                                src={resolveStorageUrl(MEDIA_BUCKET_URL, media.uri, ".webp")}
-                                alt={`${project.name} screenshot`}
-                                className="w-full rounded-lg object-cover"
-                            />
+                <div className="relative">
+                    <div
+                        ref={mediaCarouselRef}
+                        onScroll={updateMediaScrollState}
+                        style={{paddingLeft: carouselSidePadding.left, paddingRight: carouselSidePadding.right}}
+                        className="no-scrollbar flex h-80 snap-x snap-proximity gap-4 overflow-x-auto scroll-smooth"
+                    >
+                        {screenshotMedia.map((media) => (
+                            <div key={media.uri} className="h-full shrink-0 snap-center">
+                                <img
+                                    src={resolveStorageUrl(MEDIA_BUCKET_URL, media.uri, ".webp")}
+                                    alt={`${project.name} screenshot`}
+                                    onLoad={() => {
+                                        updateMediaScrollState();
+                                        const mediaCarousel = mediaCarouselRef.current;
+                                        const firstMediaItem = mediaCarousel?.firstElementChild as HTMLElement | null;
+                                        const lastMediaItem = mediaCarousel?.lastElementChild as HTMLElement | null;
+
+                                        if (mediaCarousel && firstMediaItem && lastMediaItem) {
+                                            setCarouselSidePadding({
+                                                left: Math.max((mediaCarousel.clientWidth - firstMediaItem.offsetWidth) / 2, 0),
+                                                right: Math.max((mediaCarousel.clientWidth - lastMediaItem.offsetWidth) / 2, 0),
+                                            });
+                                        }
+                                    }}
+                                    className="h-full w-auto max-w-none rounded-lg object-contain"
+                                />
+                            </div>
                         ))}
+                    </div>
+                    {(canScrollMediaLeft || canScrollMediaRight) && (
+                        <>
+                            <button
+                                type="button"
+                                aria-label="Previous screenshot"
+                                disabled={!canScrollMediaLeft}
+                                onClick={() => scrollMedia(-1)}
+                                className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1 text-2xl disabled:invisible"
+                            >
+                                <MdChevronLeft />
+                            </button>
+                            <button
+                                type="button"
+                                aria-label="Next screenshot"
+                                disabled={!canScrollMediaRight}
+                                onClick={() => scrollMedia(1)}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1 text-2xl disabled:invisible"
+                            >
+                                <MdChevronRight />
+                            </button>
+                        </>
+                    )}
                 </div>
             </section>
-            <section className="mt-8 rounded-2xl bg-[#D9D9D9] px-6 py-10 text-black sm:px-7 sm:py-12">
+            <section className="mt-8 rounded-2xl bg-[#D9D9D9] px-6 pt-10 pb-4 text-black sm:px-7 sm:pt-12 sm:pb-5">
                 <h2 className="text-2xl font-bold">Meet {project.name}.</h2>
                 <div
-                    className={`overflow-hidden transition-[max-height] duration-500 ease-in-out ${descriptionExpanded ? "max-h-[2000px]" : "max-h-40"}`}
+                    className={`overflow-hidden transition-[max-height] duration-500 ease-in-out ${descriptionExpanded ? "max-h-[2000px]" : "max-h-60"}`}
                 >
-                    <p className="mt-3 whitespace-pre-wrap text-xs leading-5">{project.description}</p>
+                    <p className="mt-1 whitespace-pre-wrap text-xs leading-5">{project.description}</p>
                 </div>
                 <button
                     type="button"
                     onClick={() => setDescriptionExpanded(!descriptionExpanded)}
-                    className="mt-8 block text-xs font-bold hover:text-r-red"
+                    className="mb-1 mt-8 block text-left  text-xs font-bold hover:text-r-red"
                 >
                     {descriptionExpanded ? "View Less ↑" : "View More ↓"}
                 </button>
             </section>
-            <section className="mt-8 rounded-2xl bg-[#D9D9D9] px-6 py-10 text-black sm:px-7 sm:py-12">
+            <section id="how-to-install" className="mt-8 rounded-2xl bg-[#D9D9D9] px-6 pb-16 pt-10 text-black sm:px-7 sm:pb-20 sm:pt-12">
                 <h2 className="text-2xl font-bold">How to Install</h2>
                 <div className="mt-3 text-xs leading-5">
                     <p className="font-bold">Available On:</p>
@@ -215,9 +364,15 @@ export default function ProjectPage() {
                     href={project.links[0] || "#"}
                     target={project.links[0] ? "_blank" : undefined}
                     rel={project.links[0] ? "noreferrer" : undefined}
-                    className="mt-5 inline-block rounded-full bg-[#000054] px-10 py-2 text-center text-sm font-bold text-white"
+                    className="mt-8 inline-block rounded-full bg-[#000054] px-10 py-2 text-center text-sm font-bold text-white"
                 >
                     DOWNLOAD
+                </a>
+                <a
+                    href="mailto:hapi@rmit.edu.au"
+                    className="ml-3 mt-8 inline-block rounded-full bg-[#909090] px-10 py-2 text-center text-sm font-bold text-white"
+                >
+                    CONTACT US
                 </a>
             </section>
         </article>

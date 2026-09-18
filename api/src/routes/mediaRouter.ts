@@ -97,7 +97,7 @@ mediaRouter.post("/screenshot", needsAuth, async (c) => {
 
     const uri = createUuid()
     const commandInput: PutObjectCommandInput = {
-        Bucket: process.env.BUCKET_SCREENSHOTS,
+        Bucket: process.env.BUCKET_MEDIA,
         Key: `${uri}.webp`,
         Body: webpBuffer,
         ContentType: "image/webp",

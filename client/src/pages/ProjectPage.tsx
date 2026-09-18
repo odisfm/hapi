@@ -233,11 +233,11 @@ export default function ProjectPage() {
                             className="h-15 w-15 aspect-square shrink-0 rounded-xl object-cover"
                         />
                         <div className="min-w-0">
-                            <h1 className="break-words text-xl font-bold [font-family:Museo,sans-serif]">{project.name}</h1>
-                            <p className="break-words text-sm [font-family:'Helvetica Neue',Helvetica,sans-serif]">{project.subtitle}</p>
+                            <h1 className="break-words text-xl font-bold font-headline">{project.name}</h1>
+                            <p className="break-words text-sm font-copy">{project.subtitle}</p>
                         </div>
                     </div>
-                    <dl className="grid min-w-0 grid-cols-1 gap-y-3 text-xs sm:grid-cols-3 sm:gap-x-8 [font-family:'Helvetica Neue',Helvetica,sans-serif]">
+                    <dl className="grid min-w-0 grid-cols-1 gap-y-3 text-xs sm:grid-cols-3 sm:gap-x-8 font-copy">
                         <div>
                             <dt className="font-bold">{developerLabel}</dt>
                             <dd>{project.developers.join(", ")}</dd>
@@ -266,7 +266,7 @@ export default function ProjectPage() {
                             event.preventDefault();
                             document.getElementById("how-to-install")?.scrollIntoView({behavior: "smooth"});
                         }}
-                        className="min-w-48 shrink-0 rounded-full bg-[#000054] px-16 py-3 text-center text-sm font-bold text-white [font-family:'Helvetica Neue',Helvetica,sans-serif]"
+                        className="min-w-48 shrink-0 rounded-full bg-[#000054] px-16 py-3 text-center text-sm font-bold text-white font-copy"
                     >
                         GET
                     </a>

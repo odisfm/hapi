@@ -16,8 +16,8 @@ const SEARCH_SCORE_CUTOFF = 0.6 // 0 - exact match, 1 - no match
 
 export const projectRouter = createHono()
 
-const MAX_SEARCH_LIMIT = 20
-const DEFAULT_SEARCH_LIMIT = 10
+export const MAX_SEARCH_LIMIT = 20
+export const DEFAULT_SEARCH_LIMIT = 10
 
 projectRouter.get("/search", async (c) => {
     const query = c.req.query()
@@ -32,6 +32,10 @@ projectRouter.get("/search", async (c) => {
     }
     if (query.limit) {
         try {
+            const limit = Number(query.limit)
+            if (isNaN(limit)) {
+                throw new Error("Why can I do this???")
+            }
             searchQuery.limit = Number(query.limit)
         }
         catch {
@@ -80,6 +84,7 @@ projectRouter.get("/search", async (c) => {
     let filteredRecords = records.filter(r => {
         if (userRole === "ADMIN") {
             if (searchQuery.published === "published") {
+
                 return r.showcase.publishedDate && r.showcase.publishedDate < now && r.published
             } else if (searchQuery.published === "unpublished") {
                 return !r.showcase.publishedDate || r.showcase.publishedDate > now || !r.published
@@ -200,7 +205,6 @@ projectRouter.get("/:projectSlug", async (c) => {
 
 projectRouter.get("/id/:projectId", needsAuth, async (c) => {
     const projectId = c.req.param("projectId")
-    console.log({projectId})
     try {
         const record = await db.project.findUnique({
             where: {id: projectId},

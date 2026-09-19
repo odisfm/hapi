@@ -162,15 +162,15 @@ export default function ProjectPage() {
     }, [carouselSidePadding]);
 
     if (state.loading) {
-        return <p>Loading project...</p>;
+        return <p className="font-copy">Loading project...</p>;
     }
 
     if (state.error) {
-        return <p role="alert">{state.error}</p>;
+        return <p className="font-copy" role="alert">{state.error}</p>;
     }
 
     if (!state.project) {
-        return <p role="alert">Project not found.</p>;
+        return <p className="font-copy" role="alert">Project not found.</p>;
     }
 
     const {project} = state;
@@ -224,13 +224,13 @@ export default function ProjectPage() {
     }
 
     return (
-        <article className="w-full max-w-5xl">
+        <article className="w-full max-w-5xl font-copy">
             <section className="rounded-2xl bg-[#C6C6C6] p-4 text-black sm:p-5">
                 <div className="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_auto] md:items-center md:gap-8 lg:gap-12">
                     <div className="flex min-w-0 items-center gap-3">
                         <AppIcon uri={project.iconUrl} width={80} />
                         <div className="min-w-0">
-                            <h1 className="break-words text-xl font-bold font-headline">{project.name}</h1>
+                            <h1 className="break-words text-xl font-bold">{project.name}</h1>
                             <p className="break-words text-sm font-copy">{project.subtitle}</p>
                         </div>
                     </div>
@@ -325,7 +325,7 @@ export default function ProjectPage() {
                 </div>
             </section>
             <section className={`
-            project-description mt-8 rounded-2xl bg-[#D9D9D9] px-6 pt-4 pb-4 text-black sm:px-7
+            project-description mt-8 rounded-2xl bg-[#D9D9D9] px-6 pt-10 pb-4 text-black sm:px-7
             `}>
                 <div className={`
                 pr-6 md:pr-32 overflow-hidden

@@ -4,13 +4,13 @@ import { RouterProvider } from "react-router/dom";
 import "./index.css"
 import App from "./App.tsx";
 import AdminLoginPage from "./pages/admin/AdminLoginPage.tsx";
-import TestApi from "./components/TestApi.tsx";
 import {AuthProvider} from "./contexts/auth/AuthProvider.tsx";
 import {AdminDashboard} from "./pages/admin/AdminDashboard.tsx";
 import ProjectPage from "./pages/ProjectPage.tsx";
 import {ProjectEditor} from "./components/ProjectEditor/ProjectEditor.tsx";
 import {ProjectList} from "./components/ProjectList/ProjectList.tsx";
 import {ModalProvider} from "./contexts/modal/ModalProvider.tsx";
+import HomePage from "./pages/HomePage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -19,7 +19,7 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <TestApi />
+                element: <HomePage />
             },
             {
                 path: "/admin-login",

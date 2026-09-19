@@ -2,6 +2,8 @@
 
 @theme {
   --color-r-red: #E61E2A; /* should never be tinted */
+  --color-section-grey: #D9D9D9;
+  --color-body-text-gray: #575757;
   --color-r-blue: #000054;
   --color-r-blue-950: #000054; /* 100% tint */
   --color-r-blue-700: #40407F; /* 70% tint */

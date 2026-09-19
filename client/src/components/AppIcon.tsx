@@ -10,7 +10,7 @@ export function AppIcon({uri, width}: Props) {
 
     return (
         <div
-            className={`bg-neutral-400 flex items-center justify-center`}
+            className={`bg-neutral-400 flex items-center justify-center aspect-square`}
             style={{
                 width: `${width}px`,
                 height: `${width}px`,

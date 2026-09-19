@@ -327,7 +327,6 @@ export default function ProjectPage() {
             <section className={`
             project-description mt-8 rounded-2xl bg-[#D9D9D9] px-6 pt-10 pb-4 text-black sm:px-7
             `}>
-                <h2 className="text-2xl !font-bold">Meet {project.name}</h2>
                 <div className={`
                 pr-6 md:pr-32 overflow-hidden
                 transition-[max-height] duration-200 ease-in-out 

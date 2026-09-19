@@ -8,10 +8,22 @@ export function App() {
     const isAdminPage = currentLocation.pathname === "/admin-login" || currentLocation.pathname === "/dashboard";
 
     return (
-        <div className={`w-full`}>
+        <div className={`w-full font-copy`}>
             <div
                 className={`w-full bg-[#D1D1D6] text-black`}
             >
+                {authenticationContext.user &&
+                    <div className={`flex items-center gap-2 px-4 py-2 bg-r-blue text-white`}>
+                        <span className={`ml-auto hidden text-sm md:inline`}>
+                            Hello, <span className={`font-bold`}>{authenticationContext.user.name}</span>
+                        </span>
+                        <Link
+                            to="/dashboard"
+                            className={`rounded-md bg-r-red px-2 py-1 text-sm font-bold text-white hover:bg-r-blue-700`}>
+                            dashboard
+                        </Link>
+                    </div>
+                }
                 <div className={`mx-auto flex w-full max-w-[calc(64rem+2rem)] items-center justify-between px-4 py-6 sm:grid sm:grid-cols-[1fr_auto_1fr]`}>
                     <Link to="/" className={`flex shrink-0 items-center gap-3`}>
                         <img
@@ -26,18 +38,6 @@ export function App() {
                         <Link to="/#categories" className={`hover:text-r-red`}>CATEGORIES</Link>
                     </nav>
                     <div className={`flex items-center gap-3 sm:w-full sm:justify-end`}>
-                        {authenticationContext.user &&
-                            <>
-                                <span className={`hidden text-sm md:inline`}>
-                                    Hello, <span className={`font-bold`}>{authenticationContext.user.name}</span>
-                                </span>
-                                <Link
-                                    to="/dashboard"
-                                    className={`rounded-md bg-r-blue px-2 py-1 text-sm font-bold text-white hover:bg-r-blue-700`}>
-                                    dashboard
-                                </Link>
-                            </>
-                        }
                         <button
                             type="button"
                             aria-label="Search"
@@ -48,7 +48,7 @@ export function App() {
                     </div>
                 </div>
             </div>
-            <main className={`h-full w-full flex flex-col items-center justify-center px-4 pb-12 pt-8`}>
+            <main className={`h-full w-full flex flex-col items-center justify-center px-4 pb-12 pt-8 bg-neutral-100`}>
                 <Outlet/>
             </main>
             {!isAdminPage &&

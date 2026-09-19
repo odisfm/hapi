@@ -5,6 +5,7 @@ import {API_URL} from "../../consts.ts";
 
 export function AuthProvider({children}: {children: React.ReactNode}) {
     const [userDetails, setUserDetails] = useState<UserDetails | null>(null)
+    const [authPending, setAuthPending] = useState<boolean>(true);
 
     useEffect(() => {
         (async () => {
@@ -22,6 +23,8 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
                 }
             } catch (e) {
                 console.error(e)
+            } finally {
+                setAuthPending(false);
             }
         })()
     }, [])
@@ -44,8 +47,9 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
             user: userDetails,
             setUserDetails,
             logOut,
+            authPending
         }
-    }, [userDetails, logOut])
+    }, [userDetails, logOut, authPending])
 
     return (
         <AuthContext.Provider value={value}>

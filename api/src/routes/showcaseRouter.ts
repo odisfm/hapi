@@ -1,7 +1,7 @@
 import {createHono} from "../helpers/createHono";
 import {db} from "@hapi/shared"
 import {filterShowcase} from "../utils/filters/filterShowcase.js";
-import {type ShowcaseFeaturedResponse} from "@hapi/shared/types/apiResponses"
+import {type ShowcaseFeaturedResponse, type ShowcaseListResponse} from "@hapi/shared/types/apiResponses"
 
 const NUM_FEATURED_SHOWCASES = 3
 const NUM_FEATURED_PROJECTS = 9
@@ -18,6 +18,9 @@ showcaseRouter.get("featured", async (c) => {
             take: NUM_FEATURED_SHOWCASES,
             include: {
                 projects: {
+                    where: {
+                      published: true
+                    },
                     take: NUM_FEATURED_PROJECTS,
                     include: {
                         media: true,
@@ -51,3 +54,23 @@ showcaseRouter.get("featured", async (c) => {
         } satisfies ShowcaseFeaturedResponse);
     }
 )
+
+showcaseRouter.get("all", async (c) => {
+    const user = c.get("user")
+    try {
+        const records = await db.showcase.findMany({
+            where: {
+                publishedDate: {
+                    ...(user?.role !== "ADMIN" && {
+                        lt: new Date(),
+                        not: null,
+                    }),
+                },
+            }
+        })
+        return c.json({showcases: records} satisfies ShowcaseListResponse, 200)
+    } catch (e) {
+        console.error(e)
+        return c.json({error: "Internal server error"}, 500)
+    }
+})

@@ -39,13 +39,21 @@ Create/start the database:
 
 ### Perform a database migration
 
-The first time you create the database, and any time the [database schema](../../shared/prisma/schema.prisma) changes, you will need to perform a database migration to update your local DB to match the new schema.
+The first time you create the database, and any time the [database schema](../../shared/prisma/schema.prisma) changes, you will need to update your local DB to match the new schema.
 
 To do so:
 ```shell
 cd shared
 npm run db:migrate:deploy
 ```
+
+If the new schema is incompatible with the current state of the DB, you will need to completely reset it with:
+
+```shell
+npm run db:reset
+```
+
+You can then [re-seed](#populating-the-database) the DB.
 
 After creating/migrating the database, you will need to [regenerate the Prisma client](https://www.prisma.io/docs/cli/v7/generate):
 
@@ -61,6 +69,8 @@ To populate the database with dummy data, from the repo root, run:
 `npm run db:populate --workspace shared`
 
 **Note:** this will truncate (delete) all data in the database and replace it with dummy data!
+
+If you have `DEFAULT_ADMIN_EMAIL` and `DEFAULT_ADMIN_PASSWORD` in your `.env`, an admin account will be created with these credentials.
 
 View the script [here](../../shared/src/scripts/populateDb/populateDb.ts).
 

@@ -9,6 +9,53 @@
   --color-r-blue-700: #40407F; /* 70% tint */
   --color-r-blue-500: #8080A9; /* 50% tint */
   --color-r-blue-300: #B3B3CC; /* 30% tint */
+  --color-r-yellow-500: #FAC800; /* 100% tint */
+  --color-r-yellow-400: #FBD740; /* 70% tint */
+  --color-r-yellow-300: #FCE27F; /* 50% tint */
+  --font-copy: "Helvetica Neue", Helvetica, sans-serif;
+  --font-headline: "Museo", serif
+}
+
+@font-face {
+  font-family: 'Museo';
+  src: url('./assets/fonts/museo-light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Museo';
+  src: url('./assets/fonts/museo-regular.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Museo';
+  src: url('./assets/fonts/museo-bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('./assets/fonts/helvetica-neue-light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('./assets/fonts/helvetica-neue-roman.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('./assets/fonts/helvetica-neue-heavy.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
 }
 
 :root {
@@ -44,3 +91,34 @@ body {
   display: none;
 }
 
+.mdxeditor, .project-description {
+  ul { list-style: disc; padding-left: 1.5rem; }
+  ol { list-style: decimal; padding-left: 1.5rem; }
+  h1, h2, h3 { font-weight: bold; font-family: 'Helvetica Neue', sans-serif; }
+  h1 {
+    font-weight: 700;
+    font-size: var(--text-3xl);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    line-height: 2rem;
+  }
+  h2 {
+    font-size: var(--text-2xl);
+    margin-bottom: .7rem;
+    font-weight: 500;
+  }
+  h3 {
+    font-size: var(--text-xl);
+    margin-bottom: .5rem;
+    font-weight: 300;
+  }
+  a {
+    text-decoration: underline;
+    color: var(--color-r-blue-700);
+    cursor: pointer;
+  }
+
+  p {
+    margin-top: 1rem;
+  }
+}

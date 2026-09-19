@@ -73,6 +73,7 @@ REJECTED REJECTED
     String rejectionReason "❓ only relevant when approvalStatus = REJECTED"
     String links "parsed on frontend (GitHub/App Store/etc.)"
     String order "❓ Lexo-rank"
+    Boolean published 
     }
   
 

@@ -1,10 +1,16 @@
 import * as z from "zod"
 import type {ShowcaseType} from "./showcase.js";
-import type {ProjectPreviewType, ProjectType} from "./project.js";
+import type {ProjectAdminType, ProjectPreviewType, ProjectType} from "./project.js";
 import type {Category} from "../generated/prisma/client.js";
+import type {ShowcaseGetPayload} from "../generated/prisma/models/Showcase";
+import type {ProjectMediaModel} from "../generated/prisma/models/ProjectMedia";
 
 export type ShowcaseFeaturedResponse = {
     showcases: ShowcaseType[]
+}
+
+export type ShowcaseListResponse = {
+    showcases: ShowcaseGetPayload<{}>[]
 }
 
 export type ProjectSearchResponse = {
@@ -12,7 +18,7 @@ export type ProjectSearchResponse = {
     info: SearchInfo
 }
 
-type SearchInfo = {
+export type SearchInfo = {
     totalResults: number
 }
 
@@ -22,6 +28,10 @@ export type CategoryResponse = {
 
 export type ProjectDetailsResponse = {
     project: ProjectType
+}
+
+export type ProjectDetailsAdminResponse = {
+    project: ProjectAdminType
 }
 
 export const UserDetailsSchema = z.object({
@@ -43,3 +53,6 @@ export const PasswordChangeFailureResponseSchema = z.object({
 
 export type PasswordChangeFailureResponse = z.infer<typeof PasswordChangeFailureResponseSchema>
 
+export type CreateProjectMediaResponse = {
+    projectMedia: ProjectMediaModel
+}

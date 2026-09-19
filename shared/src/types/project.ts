@@ -1,26 +1,37 @@
-import {type ApprovalStatus} from "../generated/prisma/enums.js";
-import {type ProjectMediaType} from "./projectMedia.js";
+import * as z from "zod"
+import {ApprovalStatus} from "../generated/prisma/enums.js";
+import {ProjectMediaSchema} from "./projectMedia.js";
 
-export type ProjectPreviewType = {
-    id: string,
-    name: string,
-    subtitle?: string,
-    iconUrl: string,
-    order: string,
-    slug: string
-}
 
-export type ProjectPublicType = ProjectPreviewType & {
-    category: string;
-    description: string,
-    developers: string[];
-    links: string[];
-    media: ProjectMediaType[]
-}
 
-export type ProjectAdminType = ProjectPublicType & {
-    approvalStatus: ApprovalStatus;
-    rejectionReason: string | null;
-}
+export const ProjectPreviewSchema = z.object({
+    id: z.uuidv4(),
+    name: z.string(),
+    subtitle: z.string().optional(),
+    iconUrl: z.string(),
+    order: z.string(),
+    slug: z.string(),
+    developers: z.array(z.string()),
+})
+
+export type ProjectPreviewType = z.infer<typeof ProjectPreviewSchema>
+
+export const ProjectPublicSchema = ProjectPreviewSchema.extend({
+    category: z.string(),
+    description: z.string(),
+    links: z.array(z.string()),
+    media: z.array(ProjectMediaSchema),
+    showcaseId: z.uuidv4()
+})
+
+export type ProjectPublicType = z.infer<typeof ProjectPublicSchema>
+
+export const ProjectAdminSchema = ProjectPublicSchema.extend({
+    approvalStatus: z.enum(ApprovalStatus),
+    rejectionReason: z.string().nullable(),
+    published: z.boolean()
+})
+
+export type ProjectAdminType = z.infer<typeof ProjectAdminSchema>
 
 export type ProjectType = ProjectPublicType

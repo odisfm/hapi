@@ -8,14 +8,14 @@ export const showcaseData: NewShowcaseType[] = [
         year: 2026,
         semester: 1,
         description: null,
-        publishedDate: new Date("2026-06-01")
+        publishedDate: new Date("2026-11-01")
     },
     {
         name: "Apple Foundation Program",
         year: 2025,
         semester: 2,
         description: null,
-        publishedDate: new Date("2026-01-01")
+        publishedDate: new Date("2025-07-13")
     },
     {
         name: "Apple Foundation Program",
@@ -24,6 +24,13 @@ export const showcaseData: NewShowcaseType[] = [
         description: null,
         publishedDate: new Date("2026-06-01")
     },
+    {
+        name: "RMIT Hackathon",
+        year: 2026,
+        semester: 0,
+        description: null,
+        publishedDate: new Date("2026-11-1")
+    }
 ]
 
 type NewCategoryType = Omit<Category, 'id'>
@@ -113,7 +120,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2025,
             semester: 2
-        }
+        },
+        published: true
     },
     {
         id: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
@@ -167,7 +175,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2025,
             semester: 2
-        }
+        },
+        published: true
     },
     {
         id: "f3cae66d-6c92-4d34-90fe-6e4afb889c55",
@@ -186,7 +195,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2025,
             semester: 2
-        }
+        },
+        published: false
     },
     {
         id: "e57666ab-186d-45ca-ba5b-b8a5703bea49",
@@ -229,7 +239,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2025,
             semester: 2
-        }
+        },
+        published: true
     },
     {
         id: "b5dadbc2-ef55-4201-8052-6bab1f12ed28",
@@ -251,7 +262,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2025,
             semester: 2
-        }
+        },
+        published: true
     },
     {
         id: "6ad331e6-910e-41e0-8cc1-595fe966faed",
@@ -285,7 +297,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2025,
             semester: 2
-        }
+        },
+        published: true
     },
     {
         id: "2713734f-e46f-46f3-8a2d-945b5b22ece2",
@@ -341,7 +354,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2025,
             semester: 2
-        }
+        },
+        published: true
     },
     {
         id: "601a6641-7d7d-436d-bf20-7b11902192aa",
@@ -381,7 +395,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2025,
             semester: 2
-        }
+        },
+        published: true
     },
     {
         id: "c6bc2e0e-4c29-472e-b0c4-1e353ea24d7c",
@@ -408,7 +423,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2025,
             semester: 2
-        }
+        },
+        published: true
     },
     {
         id: "d5d6d726-b382-47af-aa34-bf63ebfbc0a0",
@@ -442,7 +458,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2025,
             semester: 2
-        }
+        },
+        published: true
     },
     // Apple Foundation Program 2026 Sem 1
     {
@@ -501,7 +518,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "af217389-0fc5-4eae-aeba-6a1ebd313bb8",
@@ -560,7 +578,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2026,
             semester: 1
-        }
+        },
+        published: false
     },
     {
         id: "3ae40dc9-4321-45b2-a2a3-bd26292faaa9",
@@ -612,7 +631,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "181039d7-2674-464b-bc68-05a372f03558",
@@ -649,7 +669,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "4752beb8-e38f-409b-a6a1-469c66528ad1",
@@ -691,7 +712,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "714002cf-fda8-4ce3-98f7-f2b52b92fdf8",
@@ -765,7 +787,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2026,
             semester: 1
-        }
+        },
+        published: false
     },
     {
         id: "fd878b06-542c-48c1-be7e-42effb2adeb6",
@@ -810,7 +833,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "973fbf56-e4f3-48e0-b827-0cd0864a0398",
@@ -848,7 +872,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "43ec2b48-0d1e-4005-8b09-b5674fbd4f4f",
@@ -892,7 +917,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "cf1a1be5-25ed-4239-9b61-d9895c832dfb",
@@ -948,7 +974,8 @@ export const projectData: NewProjectType[] = [
             name: "Apple Foundation Program",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     // Capstone 2026 Sem 1
     {
@@ -992,7 +1019,8 @@ export const projectData: NewProjectType[] = [
             name: "Capstone",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "48a9a93c-e109-4c33-8675-f267b0fa880e",
@@ -1032,7 +1060,8 @@ export const projectData: NewProjectType[] = [
             name: "Capstone",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
@@ -1075,7 +1104,8 @@ export const projectData: NewProjectType[] = [
             name: "Capstone",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "480490ca-a41a-4b05-98b8-f8027a47c73b",
@@ -1117,7 +1147,8 @@ export const projectData: NewProjectType[] = [
             name: "Capstone",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "4c0ad5ee-d9ea-4d70-9842-a25f9e7ac777",
@@ -1169,7 +1200,8 @@ export const projectData: NewProjectType[] = [
             name: "Capstone",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "8b231bab-1711-456d-b957-6b36ca6db6f1",
@@ -1190,7 +1222,8 @@ export const projectData: NewProjectType[] = [
             name: "Capstone",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "508663c5-dce5-4e07-96ae-1300e6d96d88",
@@ -1251,7 +1284,8 @@ export const projectData: NewProjectType[] = [
             name: "Capstone",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     },
     {
         id: "e4c37641-e09a-4e0f-af84-01155cf8f943",
@@ -1326,7 +1360,8 @@ export const projectData: NewProjectType[] = [
             name: "Capstone",
             year: 2026,
             semester: 1
-        }
+        },
+        published: false
     },
     {
         id: "3ef625e2-3796-4756-831f-cda3d46114ab",
@@ -1359,7 +1394,8 @@ export const projectData: NewProjectType[] = [
             name: "Capstone",
             year: 2026,
             semester: 1
-        }
+        },
+        published: true
     }
 ]
 

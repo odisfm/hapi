@@ -18,8 +18,8 @@ import {UpdateProjectRequestSchema, type UpdateProjectRequestType} from "@hapi/s
 import {createUuid} from "../../utils/misc.ts";
 import {useModal} from "../../contexts/modal/useModal.ts";
 import {MediaEditor} from "./MediaEditor/MediaEditor.tsx";
-import {AppIcon} from "../AppIcon.tsx";
 import {RiImageUploadFill} from "react-icons/ri";
+import ProjectCard from "../ProjectCard.tsx";
 
 const legendStyles = `font-medium`
 const inputStyles = `p-1 rounded-md bg-neutral-200 px-2 py-1 font-light`
@@ -410,10 +410,12 @@ export function ProjectEditor() {
     return (
         <>
             { project && categories.length &&
-                <div className={"flex flex-col gap-2 w-full md:w-2/3 lg:w-2/5 mt-8"}>
-                    <div className={`flex gap-4`}>
-                        <div className={`flex flex-col gap-2`}>
-                            <AppIcon uri={project.iconUrl} width={80} />
+                <div className={"flex flex-col gap-2 w-full md:w-4/5 lg:w-2/5 mt-8"}>
+                    <div className={`flex gap-4 w-full`}>
+                        <div className={`flex flex-col gap-2 w-full`}>
+                            <div className={`pointer-events-none`}>
+                                <ProjectCard name={projectName} subtitle={subtitle} iconUrl={project.iconUrl} slug={""}/>
+                            </div>
                                 <form
                                     className={`flex flex-col gap-1 items-start`}
                                     encType="multipart/form-data"
@@ -430,7 +432,7 @@ export function ProjectEditor() {
                                     name={"iconInput"}
                                     className={'hidden'}
                                 />
-                                    <div className={`flex gap-2`}>
+                                    <div className={`flex gap-2 w-full`}>
                                         <button className={`
                                             bg-r-yellow-500 hover:bg-r-yellow-400 cursor-pointer
                                             flex items-center gap-2 p-2 rounded-full
@@ -441,33 +443,27 @@ export function ProjectEditor() {
                                         >
                                             <RiImageUploadFill />
                                         </button>
+                                        <button
+                                            type={"submit"}
+                                            onClick={() => submit()}
+                                            disabled={!hasChanged}
+                                            className={`
+                                                ml-auto self-start rounded-md px-2 py-1  flex gap-2 items-center
+                                                ${hasChanged ?
+                                                `bg-r-yellow-500 hover:bg-r-yellow-400 text-black cursor-pointer`
+                                                :
+                                                `bg-lime-600 text-white`
+                                                }
+                                                `}
+                                        >
+                                            {hasChanged ? <FaFloppyDisk/> : <></>}
+                                            {hasChanged ? "save" : "no changes"}
+                                        </button>
                                     </div>
                             </form>
                         </div>
-                        <div className={`flex flex-col gap-1 overflow-clip`}>
-                            <h1 className={`text-xl self-start`}>
-                                {projectName}
-                            </h1>
-                            <span className={`font-light`}>{subtitle}</span>
-                        </div>
-                        <button
-                            type={"submit"}
-                            onClick={() => submit()}
-                            disabled={!hasChanged}
-                            className={`
-                            ml-auto self-start rounded-md px-2 py-1  flex gap-2 items-center
-                            ${hasChanged ? 
-                                `bg-r-yellow-500 hover:bg-r-yellow-400 text-black cursor-pointer` 
-                                : 
-                                `bg-lime-600 text-white`
-                            }
-                            `}
-                        >
-                            { hasChanged ? <FaFloppyDisk /> : <></>}
-                            { hasChanged ? "save" : "no changes" }
-                        </button>
-                    </div>
 
+                    </div>
                     <form
                         className={`flex flex-col gap-4 mt-4`}
                         onSubmit={(e) => {

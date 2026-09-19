@@ -21,6 +21,8 @@ resource "aws_lambda_function" "api" {
       ENVIRONMENT = var.environment
       DATABASE_URL = var.lambda_db_url
       ALLOWED_CORS = "http://${aws_s3_bucket.frontend_bucket.bucket}.s3-website.${data.aws_region.current.name}.amazonaws.com"
+      BUCKET_ICONS = var.bucket_icons
+      BUCKET_MEDIA = var.bucket_media
     }
   }
 }

@@ -42,6 +42,8 @@ jobs:
           touch terraform.tfvars
           echo "environment = \"${{ inputs.environment }}\"" >> terraform.tfvars
           echo "lambda_db_url = \"${{ secrets.LAMBDA_DB_URL }}\"" >> terraform.tfvars
+          echo "bucket_icons = \"${{ secrets.BUCKET_ICONS }}\"" >> terraform.tfvars
+          echo "bucket_media = \"${{ secrets.BUCKET_MEDIA }}\"" >> terraform.tfvars
 
       - name: tofu init
         working-directory: infra

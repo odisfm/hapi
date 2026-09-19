@@ -26,7 +26,8 @@ jobs:
           node-version: 24
 
       - name: install dependencies
-        run: npm install
+        run: |
+          npm ci
 
       - name: apply db migration
         env:
@@ -56,7 +57,17 @@ jobs:
           npx prisma generate
           cd ../api
           npm run build:lambda
-          zip -j dist/lambda.zip dist/lambda.mjs
+          
+          # we need this process to bundle the node package sharp, used for processing images in the API
+
+          rm -rf /tmp/pkg && mkdir -p /tmp/pkg
+          cp dist/lambda.mjs /tmp/pkg/
+          cd /tmp/pkg
+          npm init -y > /dev/null
+          npm install --omit=dev --cpu=x64 --os=linux --libc=glibc sharp@0.35.4
+          rm -f package.json package-lock.json
+          zip -r "$GITHUB_WORKSPACE/api/dist/lambda.zip" .
+          unzip -l "$GITHUB_WORKSPACE/api/dist/lambda.zip" | grep -q @img || { echo "sharp binary missing"; exit 1; }
 
       - name: deploy aws
         id: deploy_aws
@@ -70,6 +81,8 @@ jobs:
         working-directory: client
         env:
           VITE_API_URL: ${{ steps.deploy_aws.outputs.api_url }}
+          VITE_S3_ICON_BUCKET: ${{ secrets.VITE_S3_ICON_BUCKET }}
+          VITE_S3_MEDIA_BUCKET: ${{ secrets.VITE_S3_MEDIA_BUCKET }}
         run: |
           npx vite build
 

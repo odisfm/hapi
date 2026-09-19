@@ -70,6 +70,8 @@ jobs:
         working-directory: client
         env:
           VITE_API_URL: ${{ steps.deploy_aws.outputs.api_url }}
+          VITE_S3_ICON_BUCKET: ${{ secrets.VITE_S3_ICON_BUCKET }}
+          VITE_S3_MEDIA_BUCKET: ${{ secrets.VITE_S3_MEDIA_BUCKET }}
         run: |
           npx vite build
 

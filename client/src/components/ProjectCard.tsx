@@ -6,12 +6,12 @@ const ICON_BUCKET_URL = import.meta.env.VITE_S3_ICON_BUCKET;
 
 type ProjectCardProps = Pick<ProjectPreviewType, "name" | "subtitle" | "iconUrl" | "slug">;
 
-function resolveIconUrl(iconUrl: string) {
-    if (iconUrl.startsWith("http://") || iconUrl.startsWith("https://")) {
-        return iconUrl;
+function resolveStorageUrl(bucketUrl: string, storageKey: string, extension = "") {
+    if (storageKey.startsWith("http://") || storageKey.startsWith("https://")) {
+        return storageKey;
     }
 
-    return `${ICON_BUCKET_URL}${iconUrl}.webp`;
+    return `${bucketUrl}${storageKey}${extension}`;
 }
 
 export default function ProjectCard({name, subtitle, iconUrl, slug}: ProjectCardProps) {
@@ -26,7 +26,7 @@ export default function ProjectCard({name, subtitle, iconUrl, slug}: ProjectCard
                 <span className="h-12 w-12 shrink-0 rounded-lg bg-r-red" aria-hidden="true" />
             ) : (
                 <img
-                    src={resolveIconUrl(iconUrl)}
+                    src={resolveStorageUrl(ICON_BUCKET_URL, iconUrl, ".webp")}
                     alt={`${name} icon`}
                     className="h-12 w-12 shrink-0 rounded-lg object-cover"
                     onError={() => setIconFailed(true)}

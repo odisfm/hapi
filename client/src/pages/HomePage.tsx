@@ -3,14 +3,14 @@ import type {ProjectSearchResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL} from "../consts.ts";
 import ProjectCard from "../components/ProjectCard.tsx";
 
-type ProjectListState = {
+type HomePageState = {
     projects: ProjectSearchResponse["projects"];
     error: string | null;
     loading: boolean;
 };
 
 export default function HomePage() {
-    const [state, setState] = useState<ProjectListState>({
+    const [state, setState] = useState<HomePageState>({
         projects: [],
         error: null,
         loading: true,
@@ -76,7 +76,7 @@ export default function HomePage() {
                         <h2 className="text-[1.25rem] font-bold leading-[1.3] tracking-normal">PROJECTS</h2>
                         <button
                             type="button"
-                            className="flex cursor-pointer items-center font-bold gap-1 p-0 text-[0.8rem] uppercase leading-[1.3] tracking-normal text-black"
+                            className="flex cursor-pointer items-center gap-1 p-0 text-[0.8rem] font-bold uppercase leading-[1.3] tracking-normal text-black"
                         >
                             VIEW MORE <span aria-hidden="true">→</span>
                         </button>

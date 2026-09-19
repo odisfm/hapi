@@ -1,4 +1,52 @@
+import {useEffect, useState} from "react";
+import type {ProjectSearchResponse} from "@hapi/shared/types/apiResponses";
+import {API_URL} from "../consts.ts";
+import ProjectCard from "../components/ProjectCard.tsx";
+
+type ProjectListState = {
+    projects: ProjectSearchResponse["projects"];
+    error: string | null;
+    loading: boolean;
+};
+
 export default function HomePage() {
+    const [state, setState] = useState<ProjectListState>({
+        projects: [],
+        error: null,
+        loading: true,
+    });
+
+    useEffect(() => {
+        const projectRequestController = new AbortController();
+
+        async function loadProjects() {
+            try {
+                const projectResponse = await fetch(
+                    `${API_URL}/project/search?limit=12`,
+                    {signal: projectRequestController.signal}
+                );
+
+                if (!projectResponse.ok) {
+                    setState({projects: [], error: "Unable to load projects.", loading: false});
+                    return;
+                }
+
+                const projectResponseBody = await projectResponse.json() as ProjectSearchResponse;
+                setState({projects: projectResponseBody.projects, error: null, loading: false});
+            } catch (error) {
+                if (error instanceof DOMException && error.name === "AbortError") {
+                    return;
+                }
+
+                setState({projects: [], error: "Unable to load projects.", loading: false});
+            }
+        }
+
+        void loadProjects();
+
+        return () => projectRequestController.abort();
+    }, []);
+
     return (
         <div className="-mt-8 w-full">
             <section className="relative left-1/2 h-[22.5rem] w-screen -translate-x-1/2 overflow-hidden bg-r-red">
@@ -19,6 +67,39 @@ export default function HomePage() {
                             HAPI is a vibrant centre for both teaching and research. We offer a unique curriculum that integrates Apple&apos;s latest design frameworks and developer tools, providing students with hands-on opportunities to develop expertise in app development and design for Apple platforms. Our teaching efforts are encapsulated in the &apos;Design &amp; Develop for Apple Platforms&apos; minor, featuring courses like &quot;UI and UX for Apple Platforms&quot; and &quot;Getting started with iOS App Development&quot;, which are available to all undergraduate students across RMIT.
                         </p>
                     </div>
+                </div>
+            </section>
+
+            <section className="w-full bg-white pb-12 pt-12 text-black sm:pb-40 sm:pt-40">
+                <div className="mx-auto w-full max-w-5xl">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-[1.25rem] font-bold leading-[1.3] tracking-normal">PROJECTS</h2>
+                        <button
+                            type="button"
+                            className="flex cursor-pointer items-center font-bold gap-1 p-0 text-[0.8rem] uppercase leading-[1.3] tracking-normal text-black"
+                        >
+                            VIEW MORE <span aria-hidden="true">→</span>
+                        </button>
+                    </div>
+                    {state.loading ? (
+                        <p className="mt-6">Loading projects...</p>
+                    ) : state.error ? (
+                        <p className="mt-6" role="alert">{state.error}</p>
+                    ) : state.projects.length === 0 ? (
+                        <p className="mt-6">No projects found.</p>
+                    ) : (
+                        <div className="mt-6 grid grid-cols-3 gap-6">
+                            {state.projects.map((project) => (
+                                <ProjectCard
+                                    key={project.id}
+                                    name={project.name}
+                                    subtitle={project.subtitle}
+                                    iconUrl={project.iconUrl}
+                                    slug={project.slug}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
         </div>

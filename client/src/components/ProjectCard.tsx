@@ -33,10 +33,10 @@ export default function ProjectCard({name, subtitle, iconUrl, slug}: ProjectCard
                 />
             )}
             <div className="min-w-0">
-                <h3 className="line-clamp-2 text-[1.125rem] font-bold leading-[1.3] tracking-normal">
+                <h3 className="font-copy line-clamp-2 text-[1rem] font-bold leading-[1.3] tracking-normal">
                     {name}
                 </h3>
-                <p className="line-clamp-2 text-[0.875rem] uppercase leading-[1.3] tracking-normal">
+                <p className="font-copy line-clamp-2 text-[0.7rem] font-medium uppercase leading-[1.3] tracking-normal">
                     {subtitle}
                 </p>
             </div>

@@ -55,11 +55,11 @@ export default function HomePage() {
 
             <section className="w-full bg-white py-12 text-black sm:py-16">
                 <div className="mx-auto grid w-full max-w-5xl gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:gap-16">
-                    <h1 className="text-[3.5rem] font-bold leading-[1.1] tracking-[-0.02em]">
+                    <h1 className="font-headline text-[3.5rem] font-bold leading-[1.1] tracking-[-0.02em]">
                         Hub for Apple Platform Innovation (HAPI) <br className="hidden lg:block" />@ RMIT
                     </h1>
 
-                    <div className="text-[1rem] leading-[1.3] tracking-normal text-body-text-gray">
+                    <div className="font-copy text-[1rem] font-medium leading-[1.3] tracking-normal text-body-text-gray">
                         <p>
                             Welcome to RMIT&apos;s Hub for Apple Platform Innovation (HAPI), where cutting-edge technology meets transformative learning. Nestled at the intersection of education and industry, HAPI is dedicated to exploring novel computing platforms and mastering the mobile app economy. By fostering a collaborative environment that works closely with Apple and its partners, HAPI enriches student experiences and empowers them to make impactful contributions in the tech industry.
                         </p>
@@ -73,10 +73,10 @@ export default function HomePage() {
             <section className="w-full bg-white pb-12 pt-12 text-black sm:pb-40 sm:pt-40">
                 <div className="mx-auto w-full max-w-5xl">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-[1.25rem] font-bold leading-[1.3] tracking-normal">PROJECTS</h2>
+                        <h2 className="font-copy text-[1.25rem] font-bold leading-[1.3] tracking-normal">PROJECTS</h2>
                         <button
                             type="button"
-                            className="flex cursor-pointer items-center gap-1 p-0 text-[0.8rem] font-bold uppercase leading-[1.3] tracking-normal text-black"
+                            className="font-copy flex cursor-pointer items-center gap-1 p-0 text-[0.8rem] font-bold uppercase leading-[1.3] tracking-normal text-black"
                         >
                             VIEW MORE <span aria-hidden="true">→</span>
                         </button>

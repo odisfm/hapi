@@ -7,6 +7,7 @@ build({
     target: 'node20',
     outfile: 'dist/lambda.mjs',
     format: 'esm',
+    external: ['sharp'],
     banner: {
         js: [
             `import { createRequire as __lambdaCreateRequire } from 'node:module';`,

@@ -83,7 +83,25 @@ body {
 }
 
 main {
-  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body {
+  min-height: 100%;
+  background: linear-gradient(
+          to bottom,
+          var(--color-r-blue) 0%,
+          var(--color-r-blue) 50%,
+          #D1D1D6 50%,
+          #D1D1D6 100%
+  );
+  background-attachment: local;
+  background-color: var(--color-r-blue);
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
 }
 
 .no-scrollbar {

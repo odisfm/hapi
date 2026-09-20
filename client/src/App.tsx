@@ -27,7 +27,7 @@ export function App() {
                 <div className={`mx-auto flex w-full max-w-[calc(64rem+2rem)] items-center justify-between px-4 py-6 sm:grid sm:grid-cols-[1fr_auto_1fr]`}>
                     <Link to="/" className={`flex shrink-0 items-center gap-3`}>
                         <img
-                            src="/rmit-logo.png"
+                            src="/rmit-logo-red.png"
                             alt="RMIT"
                             className={`h-8 w-8 object-contain`}
                         />

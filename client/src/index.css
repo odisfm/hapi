@@ -82,6 +82,10 @@ body {
 
 }
 
+main {
+  min-height: 100vh;
+}
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

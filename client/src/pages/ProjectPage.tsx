@@ -161,6 +161,11 @@ export default function ProjectPage() {
         return () => cancelAnimationFrame(animationFrame);
     }, [carouselSidePadding]);
 
+    useEffect(() => {
+        if (!document.scrollingElement) return
+        document.scrollingElement.scrollTop = 0
+    }, []);
+
     if (state.loading) {
         return <p className="font-copy">Loading project...</p>;
     }

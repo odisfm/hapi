@@ -55,6 +55,11 @@ export function ProjectEditor() {
     const [detailsTab, setDetailsTab] = useState<DetailsTab>("description");
     const iconUploadRef = useRef<HTMLInputElement | null>(null);
 
+    useEffect(() => {
+        if (!document.scrollingElement) return
+        document.scrollingElement.scrollTop = 0
+    }, []);
+
     async function createNewProject() {
         try {
 

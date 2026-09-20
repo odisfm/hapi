@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import type {ProjectSearchResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL} from "../consts.ts";
 import ProjectCard from "../components/ProjectCard.tsx";
+import {FaSpinner} from "react-icons/fa";
 
 type HomePageState = {
     projects: ProjectSearchResponse["projects"];
@@ -76,7 +77,16 @@ export default function HomePage() {
             <section className="w-full pb-12 pt-12 text-black sm:pb-40 sm:pt-20">
                 <div className="mx-auto w-full max-w-5xl">
                     <div className="flex items-center justify-between">
-                        <h2 className="font-copy text-[1.25rem] font-bold leading-[1.3] tracking-normal">PROJECTS</h2>
+                        <div className={`flex gap-2 items-center`}>
+                            <h2
+                                className="font-copy text-2xl font-bold leading-[1.3] tracking-normal"
+                            >
+                                PROJECTS
+                            </h2>
+                            { state.loading &&
+                                <FaSpinner className={`animate-spin text-2xl`} />
+                            }
+                        </div>
                         <button
                             type="button"
                             className="font-copy flex cursor-pointer items-center gap-1 p-0 text-[0.8rem] font-bold uppercase leading-[1.3] tracking-normal text-black"
@@ -84,13 +94,13 @@ export default function HomePage() {
                             VIEW MORE <span aria-hidden="true">→</span>
                         </button>
                     </div>
-                    {state.loading ? (
-                        <p className="mt-6">Loading projects...</p>
-                    ) : state.error ? (
+                    { state.error ? (
                         <p className="mt-6" role="alert">{state.error}</p>
-                    ) : state.projects.length === 0 ? (
+                    ) : state.loading ? (
+                        <div className={"h-30"}></div>
+                    ) :  state.projects.length === 0 && !state.loading ? (
                         <p className="mt-6">No projects found.</p>
-                    ) : (
+                    ) :  (
                         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
                             {state.projects.map((project) => (
                                 <ProjectCard

@@ -23,7 +23,10 @@ export default function HomePage() {
             try {
                 const projectResponse = await fetch(
                     `${API_URL}/project/search?limit=12`,
-                    {signal: projectRequestController.signal}
+                    {
+                        signal: projectRequestController.signal,
+                        credentials: "omit"
+                    }
                 );
 
                 if (!projectResponse.ok) {

@@ -10,10 +10,10 @@ export default function ProjectCard({name, subtitle, iconUrl, slug}: ProjectCard
     return (
         <Link
             to={`/project/${encodeURIComponent(slug)}`}
-            className="flex w-full items-center gap-4 rounded-2xl bg-section-grey px-4 pt-4 min-h-25 text-black"
+            className="flex w-full items-center gap-4 rounded-2xl bg-section-grey px-4 pt-4 h-25 text-black"
         >
-            <div className={`grid grid-rows-[12fr_6fr]`}>
-                <AppIcon uri={iconUrl} width={70}/>
+            <div className={`grid grid-rows-[13fr_6fr]`}>
+                <AppIcon uri={iconUrl} width={50}/>
                 <div></div>
             </div>
             <div className="min-w-0 h-full grid grid-rows-[1fr_1fr] gap-1">

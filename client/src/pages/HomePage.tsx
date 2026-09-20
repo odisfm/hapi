@@ -70,7 +70,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <section className="w-full bg-white pb-12 pt-12 text-black sm:pb-40 sm:pt-40">
+            <section className="w-full bg-white pb-12 pt-12 text-black sm:pb-40 sm:pt-20">
                 <div className="mx-auto w-full max-w-5xl">
                     <div className="flex items-center justify-between">
                         <h2 className="font-copy text-[1.25rem] font-bold leading-[1.3] tracking-normal">PROJECTS</h2>

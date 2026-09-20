@@ -53,7 +53,7 @@ export default function AdminLoginPage() {
         }, [authContext])
 
     return (
-        <div className={`flex flex-col gap-2 mt-6`}>
+        <div className={`flex flex-col gap-2 justify-self-start mt-24`}>
             <h1 className={`text-xl font-bold`}>Admin Login</h1>
             <form onSubmit={(e) => {logIn(e)}}>
                 {errorText &&

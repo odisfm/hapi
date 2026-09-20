@@ -21,7 +21,7 @@ jobs:
       - uses: opentofu/setup-opentofu@v1
 
       - name: setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 24
 
@@ -42,8 +42,6 @@ jobs:
           touch terraform.tfvars
           echo "environment = \"${{ inputs.environment }}\"" >> terraform.tfvars
           echo "lambda_db_url = \"${{ secrets.LAMBDA_DB_URL }}\"" >> terraform.tfvars
-          echo "bucket_icons = \"${{ secrets.BUCKET_ICONS }}\"" >> terraform.tfvars
-          echo "bucket_media = \"${{ secrets.BUCKET_MEDIA }}\"" >> terraform.tfvars
 
       - name: tofu init
         working-directory: infra
@@ -76,15 +74,18 @@ jobs:
         working-directory: infra
         run: |
           tofu apply -auto-approve
-          echo "api_url=$(tofu output -raw api_url)" >> "$GITHUB_OUTPUT"
+          echo "cloudfront_url=$(tofu output -raw cloudfront_url)" >> "$GITHUB_OUTPUT"
+          echo "cloudfront_id=$(tofu output -raw cloudfront_id)" >> "$GITHUB_OUTPUT"
           echo "frontend_bucket=$(tofu output -raw frontend_bucket_name)" >> "$GITHUB_OUTPUT"
+          echo "icon_bucket_url=$(tofu output -raw icon_bucket_url)" >> "$GITHUB_OUTPUT"
+          echo "media_bucket_url=$(tofu output -raw media_bucket_url)" >> "$GITHUB_OUTPUT"
 
       - name: build frontend
         working-directory: client
         env:
-          VITE_API_URL: ${{ steps.deploy_aws.outputs.api_url }}
-          VITE_S3_ICON_BUCKET: ${{ secrets.VITE_S3_ICON_BUCKET }}
-          VITE_S3_MEDIA_BUCKET: ${{ secrets.VITE_S3_MEDIA_BUCKET }}
+          VITE_API_URL: /api
+          VITE_S3_ICON_BUCKET: ${{ steps.deploy_aws.outputs.icon_bucket_url }}
+          VITE_S3_MEDIA_BUCKET: ${{ steps.deploy_aws.outputs.media_bucket_url }}
         run: |
           npx vite build
 
@@ -93,3 +94,8 @@ jobs:
         run: |
           aws s3 sync dist/ "s3://${{ steps.deploy_aws.outputs.frontend_bucket }}" --delete
 
+      - name: invalidate cloudfront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ steps.deploy_aws.outputs.cloudfront_id }}" \
+            --paths "/index.html"

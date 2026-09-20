@@ -17,7 +17,7 @@ The site is built by GitHub actions as part of our [CI/CD process](../processes/
 It is also a cheap solution, at well under $1USD per month.
 
 The bucket is physically located in Melbourne, as presumably that will be where the majority of our visitors are located.
-We may later explore placing the frontend behind [Amazon CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html), which will reduce latency to visitors around the world, but this will increase cost and may not be worthwhile.
+The bucket is behind an [Amazon CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html) distribution, which will reduce latency to visitors around the world, and provide additional features.
 
 ## Serving the API
 
@@ -34,6 +34,7 @@ Due to the relatively low anticipated access patterns, I also estimate backend c
 To run a self-managed server on [AWS EC2](https://aws.amazon.com/ec2/), we would likely be looking at a minimum of several USD for one server, plus upwards of $15USD for an [application load balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) to facilitate spinning up additional servers in periods of higher demand (plus the cost of those additional servers).
 
 The backend is behind an [API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html), simplifying some operations and providing a level of defence against malicious actions like DDoS attacks.
+The API gateway is also behinf the previously mentioned CloudFront distribution.
 
 ## Database
 

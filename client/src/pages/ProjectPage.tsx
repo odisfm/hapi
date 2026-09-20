@@ -5,6 +5,7 @@ import type {ProjectDetailsResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL} from "../consts.ts";
 import {AppIcon} from "../components/AppIcon.tsx";
 import Markdown from "react-markdown";
+import { FaSpinner } from "react-icons/fa";
 
 const MEDIA_BUCKET_URL = import.meta.env.VITE_S3_MEDIA_BUCKET;
 
@@ -167,7 +168,7 @@ export default function ProjectPage() {
     }, []);
 
     if (state.loading) {
-        return <p className="font-copy">Loading project...</p>;
+        return <FaSpinner className={`text-[5rem] mt-20 animate-spin`}/>;
     }
 
     if (state.error) {

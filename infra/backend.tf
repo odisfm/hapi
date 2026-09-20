@@ -18,11 +18,11 @@ resource "aws_lambda_function" "api" {
 
   environment {
     variables = {
-      ENVIRONMENT = var.environment
+      ENVIRONMENT  = var.environment
       DATABASE_URL = var.lambda_db_url
-      ALLOWED_CORS = "http://${aws_s3_bucket.frontend_bucket.bucket}.s3-website.${data.aws_region.current.name}.amazonaws.com"
-      BUCKET_ICONS = var.bucket_icons
-      BUCKET_MEDIA = var.bucket_media
+
+      BUCKET_ICONS       = aws_s3_bucket.icons_bucket.bucket
+      BUCKET_MEDIA = aws_s3_bucket.screenshots_bucket.bucket
     }
   }
 }
@@ -30,12 +30,6 @@ resource "aws_lambda_function" "api" {
 resource "aws_apigatewayv2_api" "http" {
   name          = "api-gateway-${var.environment}"
   protocol_type = "HTTP"
-  cors_configuration {
-    allow_origins     = ["http://${aws_s3_bucket.frontend_bucket.bucket}.s3-website.${data.aws_region.current.name}.amazonaws.com"]
-    allow_credentials = true
-    allow_methods     = ["GET", "POST", "PUT", "PATCH", "DELETE"]
-    allow_headers     = ["*"]
-  }
 
 }
 
@@ -66,7 +60,7 @@ resource "aws_lambda_permission" "apigw" {
   source_arn    = "${aws_apigatewayv2_api.http.execution_arn}/*/*"
 }
 
-output "api_url" {
-  description = "Public invoke URL for the HTTP API"
+output "api_direct_url" {
+  description = "Direct API Gateway invoke URL, bypassing CloudFront"
   value       = aws_apigatewayv2_stage.default.invoke_url
 }

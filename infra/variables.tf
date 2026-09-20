@@ -6,10 +6,3 @@
    type = string
  }
 
- variable "bucket_icons" {
-   type = string
- }
-
- variable "bucket_media" {
-   type = string
- }

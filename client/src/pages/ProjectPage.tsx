@@ -345,7 +345,7 @@ export default function ProjectPage() {
                 <button
                     type="button"
                     onClick={() => setDescriptionExpanded(!descriptionExpanded)}
-                    className="mb-1 mt-8 block text-left  text-xs font-bold hover:text-r-red"
+                    className="mb-1 mt-8 block text-left  text-xs font-bold hover:text-r-red cursor-pointer"
                 >
                     {descriptionExpanded ? "View Less ↑" : "View More ↓"}
                 </button>

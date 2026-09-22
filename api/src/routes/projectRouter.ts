@@ -15,6 +15,7 @@ import type {
 import Fuse from "fuse.js"
 import {needsAuth} from "../middleware/needsAuth";
 import type {ProjectAdminType} from "@hapi/shared/types/project";
+import {Prisma} from "@hapi/shared/prisma/client";
 
 const SEARCH_SCORE_CUTOFF = 0.6 // 0 - exact match, 1 - no match
 
@@ -327,6 +328,77 @@ projectRouter.delete("/:projectId", needsAuth, async (c) => {
         return c.json({}, 200)
     } catch (e) {
         console.error(e)
+        return c.json({error: "Internal server error"}, 500)
+    }
+})
+
+projectRouter.get("/id/:projectId/slug", needsAuth, async (c) => {
+    const projectId = c.req.param("projectId")
+    try {
+        const record = await db.project.findUnique({
+            where: {
+                id: projectId
+            },
+            include: {
+                slugs: {
+                    orderBy: {assignedDate: "desc"}
+                }
+            }
+        })
+        if (!record) return c.json({error: "Project not found"}, 404)
+
+        return c.json({slugs: record.slugs} satisfies ProjectGetSlugsResponse, 200)
+
+    } catch (e) {
+        return c.json({error: "Internal server error"}, 500)
+    }
+})
+
+projectRouter.post("/id/:projectId/slug", needsAuth, async (c) => {
+    const projectId = c.req.param("projectId")
+    let body
+    try {
+        body = AlterProjectSlugRequestSchema.parse(await c.req.json())
+    } catch {
+        return c.json({error: "Malformed data"}, 400)
+    }
+    try {
+        await db.projectSlug.create({
+            data: {
+                projectId,
+                slug: body.slug,
+                assignedDate: new Date()
+            }
+        })
+        return c.json({}, 200)
+    } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+            const existingSlugRecord = await db.projectSlug.findUnique({
+                where: {slug: body.slug}, include: {project: true}
+            })
+            return c.json({
+                error: `Slug already taken by project with name "${existingSlugRecord!.project.name}"`}
+            , 409)
+
+        }
+        return c.json({error: "Internal server error"}, 500)
+    }
+})
+
+projectRouter.delete("/id/:projectId/slug", needsAuth, async (c) => {
+    const projectId = c.req.param("projectId")
+    let body
+    try {
+        body = AlterProjectSlugRequestSchema.parse(await c.req.json())
+    } catch {
+        return c.json({error: "Malformed data"}, 400)
+    }
+    try {
+        await db.projectSlug.delete({
+            where: {slug: body.slug, projectId: projectId}
+        })
+        return c.json({}, 200)
+    } catch (e) {
         return c.json({error: "Internal server error"}, 500)
     }
 })

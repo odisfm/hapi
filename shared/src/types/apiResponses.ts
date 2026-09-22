@@ -56,3 +56,17 @@ export type PasswordChangeFailureResponse = z.infer<typeof PasswordChangeFailure
 export type CreateProjectMediaResponse = {
     projectMedia: ProjectMediaModel
 }
+
+export const ProjectSlugSchema = z.object({
+    slug: z.string(),
+    assignedDate: z.coerce.date(),
+    projectId: z.uuidv4()
+})
+
+export type ProjectSlugType = z.infer<typeof ProjectSlugSchema>
+
+export const ProjectGetSlugsResponseSchema = z.object({
+    slugs: z.array(ProjectSlugSchema)
+})
+
+export type ProjectGetSlugsResponse = z.infer<typeof ProjectGetSlugsResponseSchema>

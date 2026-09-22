@@ -29,9 +29,10 @@ mediaRouter.post("/icon", needsAuth, async (c) => {
     }
     let webpBuffer: Buffer
     try {
-        webpBuffer = await image.toFormat("webp").resize({
-            width: ICON_LONG_EDGE, height: ICON_LONG_EDGE
-        }).toBuffer()
+        webpBuffer = await image.toFormat("webp").rotate()
+            .resize({ width: ICON_LONG_EDGE, height: ICON_LONG_EDGE })
+            .webp()
+            .toBuffer()
     } catch (e) {
         console.error(e)
         return c.json({error: "Internal server error"}, 500)
@@ -83,13 +84,17 @@ mediaRouter.post("/screenshot", needsAuth, async (c) => {
     if (!metadata.width || !metadata.height) {
         return c.json({ error: "Could not read image dimensions" }, 400)
     }
-    const isWide = metadata.width >= metadata.height
     let webpBuffer: Buffer
     try {
-        webpBuffer = await image.toFormat("webp").resize({
-            ...(isWide && {width: SCREENSHOT_LONG_EDGE}),
-            ...(!isWide && {height: SCREENSHOT_LONG_EDGE})
-        }).toBuffer()
+        webpBuffer = await image
+            .rotate()
+            .resize({
+                width: SCREENSHOT_LONG_EDGE,
+                height: SCREENSHOT_LONG_EDGE,
+                fit: "inside",
+            })
+            .webp()
+            .toBuffer()
     } catch (e) {
         console.error(e)
         return c.json({error: "Internal server error"}, 500)

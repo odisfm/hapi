@@ -20,6 +20,7 @@ import {useModal} from "../../contexts/modal/useModal.ts";
 import {MediaEditor} from "./MediaEditor/MediaEditor.tsx";
 import {RiImageUploadFill} from "react-icons/ri";
 import ProjectCard from "../ProjectCard.tsx";
+import {SlugEditor} from "./SlugEditor.tsx";
 
 const legendStyles = `font-medium`
 const inputStyles = `p-1 rounded-md bg-neutral-200 px-2 py-1 font-light`
@@ -628,6 +629,10 @@ export function ProjectEditor() {
                                     return z.validate(z.url(), value)
                                 }}
                             />
+                        </fieldset>
+                        <fieldset>
+                            <legend className={legendStyles}>Slugs</legend>
+                            <SlugEditor projectId={project.id}/>
                         </fieldset>
 
                         <div className={`mt-4 flex flex-col gap-2`}>

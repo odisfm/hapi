@@ -54,6 +54,10 @@ projectRouter.get("/search", async (c) => {
     const user = c.get("user")
     const userRole = user?.role || null
 
+    if (userRole !== "ADMIN") {
+        searchQuery.limit = Math.min(searchQuery.limit, MAX_SEARCH_LIMIT)
+    }
+
     if (userRole !== "ADMIN" && searchQuery.approvalStatus) {
         searchQuery.approvalStatus = undefined
     }

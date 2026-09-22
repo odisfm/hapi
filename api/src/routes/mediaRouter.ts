@@ -74,7 +74,7 @@ mediaRouter.post("/screenshot", needsAuth, async (c) => {
         }
         data = CreateProjectMediaRequestSchema.parse(JSON.parse(rawData))
     } catch (e) {
-        return c.json({error: "Malformed 'data' field"})
+        return c.json({error: "Malformed 'data' field"}, 400)
     }
 
     const arrayBuffer = await file.arrayBuffer()

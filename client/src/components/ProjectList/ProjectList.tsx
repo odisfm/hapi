@@ -12,7 +12,7 @@ import {ProjectListItem} from "./ProjectListItem.tsx";
 import {Paginator} from "../ProjectEditor/Paginator.tsx";
 import {FaPlus, FaSearch, FaSpinner} from "react-icons/fa";
 import {MdCancel} from "react-icons/md";
-import type {Category, Showcase} from "@hapi/shared/prisma/client.ts";
+import type {Category, Showcase} from "@hapi/shared/prisma/client";
 import {FilterSection} from "./FilterSection.tsx";
 import {Link} from "react-router";
 

@@ -9,7 +9,7 @@ import type {
     ProjectDetailsAdminResponse,
     ShowcaseListResponse
 } from "@hapi/shared/types/apiResponses";
-import type {Category, Showcase} from "@hapi/shared/prisma/client.ts";
+import type {Category, Showcase} from "@hapi/shared/prisma/client";
 import {TextItemEditor} from "./TextItemEditor.tsx";
 import {formatDate, formatDistance} from "date-fns";
 import {FaSpinner, FaTrash} from "react-icons/fa";

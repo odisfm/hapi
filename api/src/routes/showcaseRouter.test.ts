@@ -10,7 +10,7 @@ vi.mock("@hapi/shared", () => ({
 }))
 
 import { db } from "@hapi/shared"
-import type {ShowcaseGetPayload} from "@hapi/shared/prisma/models/Showcase.js";
+import type {ShowcaseGetPayload} from "@hapi/shared/prisma/models/Showcase";
 import type {ShowcaseFeaturedResponse} from "@hapi/shared/types/apiResponses";
 
 beforeEach(() => {

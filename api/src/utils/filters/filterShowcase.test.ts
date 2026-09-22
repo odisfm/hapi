@@ -1,5 +1,5 @@
 import {describe, test, expect} from "vitest";
-import {type ShowcaseGetPayload} from "@hapi/shared/prisma/models/Showcase.js";
+import {type ShowcaseGetPayload} from "@hapi/shared/prisma/models";
 import {filterShowcase} from "./filterShowcase.js";
 
 type ShowcasePayload = ShowcaseGetPayload<{

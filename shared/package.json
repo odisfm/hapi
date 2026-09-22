@@ -6,7 +6,7 @@
     ".": "./src/index.ts",
     "./db": "./src/db.ts",
     "./types/*": "./src/types/*.ts",
-    "./prisma/*": "./src/generated/prisma/*",
+    "./prisma/*": "./src/generated/prisma/*.ts",
     "./utils/*": "./src/utils/*.ts"
   },
   "scripts": {

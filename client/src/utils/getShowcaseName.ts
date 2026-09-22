@@ -1,4 +1,4 @@
-import type {Showcase} from "@hapi/shared/prisma/client.ts";
+import type {Showcase} from "@hapi/shared/prisma/client";
 
 export function getShowcaseName(showcase: Showcase): string {
     let text = ''

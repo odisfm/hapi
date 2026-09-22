@@ -9,8 +9,8 @@ import {authCookieOptions} from "../utils/cookieOptions";
 import { needsAuth } from "../middleware/needsAuth";
 import {PasswordSchema} from "@hapi/shared/types/password";
 import * as z from "zod";
-import type {UserRole} from "@hapi/shared/prisma/enums.js";
-import {Prisma} from "@hapi/shared/prisma/client.js";
+import type {UserRole} from "@hapi/shared/prisma/enums";
+import {Prisma} from "@hapi/shared/prisma/client";
 
 export const authRouter = createHono()
 

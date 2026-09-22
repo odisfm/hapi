@@ -20,7 +20,7 @@ export function FeaturedProjectsEditor() {
     const getProjects = useCallback(async () => {
         let res: Response
         try {
-            res = await fetch(`${API_URL}/project/search?limit=100000&published=true`)
+            res = await fetch(`${API_URL}/project/search?limit=100000&published=published`)
             if (!res.ok) {
                 console.error(res)
                 throw new Error(res.statusText)

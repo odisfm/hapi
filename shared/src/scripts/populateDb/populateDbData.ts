@@ -113,7 +113,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Frantzisko Monifa", "Earl Sue"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://apps.apple.com/au/app/rmit-app/id1584926663",
+            "https://example.com/",
+            "https://github.com/odisfm/hapi"
+        ],
         order: null,
         categoryName: "Social Media",
         showcase: {
@@ -168,7 +172,9 @@ export const projectData: NewProjectType[] = [
         developers: ["Orion Nestan"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: ["https://www.example.com"],
+        links: [
+            "https://example.com/"
+        ],
         order: null,
         categoryName: "Finance",
         showcase: {
@@ -188,7 +194,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Iouri Bilal", "Sven Ameer"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://testflight.apple.com/join/xxxxxx",
+            "https://example.com/",
+            "https://github.com/odisfm/hapi"
+        ],
         order: null,
         categoryName: "News",
         showcase: {
@@ -232,7 +242,9 @@ export const projectData: NewProjectType[] = [
         developers: ["Nazaire Sa'dia", "Disha Anu", "Olympas Iuppiter"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://testflight.apple.com/join/xxxxxx"
+        ],
         order: null,
         categoryName: "Entertainment",
         showcase: {
@@ -255,7 +267,10 @@ export const projectData: NewProjectType[] = [
         developers: ["Yoel Dileep", "Zoila Sara"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://apps.apple.com/au/app/rmit-app/id1584926663",
+            "https://github.com/odisfm/hapi"
+        ],
         order: null,
         categoryName: "Entertainment",
         showcase: {
@@ -290,7 +305,12 @@ export const projectData: NewProjectType[] = [
         developers: ["Liss Azize"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://testflight.apple.com/join/xxxxxx",
+            "https://apps.apple.com/au/app/rmit-app/id1584926663",
+            "https://github.com/odisfm/hapi",
+            "https://example.com/"
+        ],
         order: null,
         categoryName: "Social Media",
         showcase: {
@@ -347,7 +367,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Erik Astrid"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://github.com/odisfm/hapi",
+            "https://example.com/",
+            "https://apps.apple.com/au/app/rmit-app/id1584926663"
+        ],
         order: null,
         categoryName: "Entertainment",
         showcase: {
@@ -388,7 +412,10 @@ export const projectData: NewProjectType[] = [
         developers: ["Jaska Arend", "Elsa Grozdana", "Ramzan Alam"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://example.com/",
+            "https://testflight.apple.com/join/xxxxxx"
+        ],
         order: null,
         categoryName: "Social Media",
         showcase: {
@@ -416,7 +443,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Tina Nora", "Misi Meena", "Reuel Liberato"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://example.com/",
+            "https://testflight.apple.com/join/xxxxxx",
+            "https://apps.apple.com/au/app/rmit-app/id1584926663"
+        ],
         order: null,
         categoryName: "Entertainment",
         showcase: {
@@ -451,7 +482,10 @@ export const projectData: NewProjectType[] = [
         developers: ["Viktorie Haiyang", "Natalija Zoilus"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://testflight.apple.com/join/xxxxxx",
+            "https://apps.apple.com/au/app/rmit-app/id1584926663"
+        ],
         order: null,
         categoryName: "Games",
         showcase: {
@@ -511,7 +545,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Märyäm Agapitos", "Aisha Anand"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://apps.apple.com/au/app/rmit-app/id1584926663",
+            "https://testflight.apple.com/join/xxxxxx",
+            "https://example.com/"
+        ],
         order: null,
         categoryName: "Education",
         showcase: {
@@ -624,7 +662,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Giosuè Rollie", "Víkingr Ela"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://example.com/",
+            "https://testflight.apple.com/join/xxxxxx",
+            "https://github.com/odisfm/hapi"
+        ],
         order: null,
         categoryName: "Education",
         showcase: {
@@ -662,7 +704,9 @@ export const projectData: NewProjectType[] = [
         developers: ["Aucaman Krystiana", "Zabulon Nindaanis", "Su-bin Barak"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://apps.apple.com/au/app/rmit-app/id1584926663"
+        ],
         order: null,
         categoryName: "Education",
         showcase: {
@@ -705,7 +749,9 @@ export const projectData: NewProjectType[] = [
         developers: ["Geno Ceallach", "Deasún Ron"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://github.com/odisfm/hapi"
+        ],
         order: null,
         categoryName: "Games",
         showcase: {
@@ -780,7 +826,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Jitender Yannick", "Sachiko Yuliy"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://example.com/",
+            "https://apps.apple.com/au/app/rmit-app/id1584926663",
+            "https://github.com/odisfm/hapi"
+        ],
         order: null,
         categoryName: "Finance",
         showcase: {
@@ -826,7 +876,10 @@ export const projectData: NewProjectType[] = [
         developers: ["Yami Briggs", "Czarek Nina"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://apps.apple.com/au/app/rmit-app/id1584926663",
+            "https://example.com/"
+        ],
         order: null,
         categoryName: "Health",
         showcase: {
@@ -865,7 +918,10 @@ export const projectData: NewProjectType[] = [
         developers: ["Sawsan Victoria", "Chip Sharia"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://example.com/",
+            "https://apps.apple.com/au/app/rmit-app/id1584926663"
+        ],
         order: null,
         categoryName: "Photo & Video",
         showcase: {
@@ -910,7 +966,9 @@ export const projectData: NewProjectType[] = [
         developers: ["Ariadna Subramanian", "Regin Anselma"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://testflight.apple.com/join/xxxxxx"
+        ],
         order: null,
         categoryName: "Business",
         showcase: {
@@ -967,7 +1025,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Cyra Favour", "Elkan Starla"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://example.com/",
+            "https://testflight.apple.com/join/xxxxxx",
+            "https://apps.apple.com/au/app/rmit-app/id1584926663"
+        ],
         order: null,
         categoryName: "Social Media",
         showcase: {
@@ -1012,7 +1074,10 @@ export const projectData: NewProjectType[] = [
         developers: ["Laurentino Wulfric"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://github.com/odisfm/hapi",
+            "https://example.com/"
+        ],
         order: null,
         categoryName: "Utilities",
         showcase: {
@@ -1053,7 +1118,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Arushi Dechen", "Gautam Audrius"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://testflight.apple.com/join/xxxxxx",
+            "https://github.com/odisfm/hapi",
+            "https://apps.apple.com/au/app/rmit-app/id1584926663"
+        ],
         order: null,
         categoryName: "Health",
         showcase: {
@@ -1097,7 +1166,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Osiris Zigmantas", "Ophiuchus Semisi", "Muzaffar Adeyemi"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://apps.apple.com/au/app/rmit-app/id1584926663",
+            "https://testflight.apple.com/join/xxxxxx",
+            "https://example.com/"
+        ],
         order: null,
         categoryName: "Entertainment",
         showcase: {
@@ -1140,7 +1213,12 @@ export const projectData: NewProjectType[] = [
         developers: ["Silvia Brage", "Þórgunnr Raginfrid", "Heidi Serafina"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://github.com/odisfm/hapi",
+            "https://example.com/",
+            "https://apps.apple.com/au/app/rmit-app/id1584926663",
+            "https://testflight.apple.com/join/xxxxxx"
+        ],
         order: null,
         categoryName: "Social Media",
         showcase: {
@@ -1193,7 +1271,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Tutku Magnus"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://example.com/",
+            "https://testflight.apple.com/join/xxxxxx",
+            "https://apps.apple.com/au/app/rmit-app/id1584926663"
+        ],
         order: null,
         categoryName: "Utilities",
         showcase: {
@@ -1215,7 +1297,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Myranda Onouphrios", "Raz Aoede"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://testflight.apple.com/join/xxxxxx",
+            "https://apps.apple.com/au/app/rmit-app/id1584926663",
+            "https://github.com/odisfm/hapi"
+        ],
         order: null,
         categoryName: "Entertainment",
         showcase: {
@@ -1277,7 +1363,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Gunta Ingulf"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://apps.apple.com/au/app/rmit-app/id1584926663",
+            "https://testflight.apple.com/join/xxxxxx",
+            "https://example.com/"
+        ],
         order: null,
         categoryName: "Utilities",
         showcase: {
@@ -1353,7 +1443,9 @@ export const projectData: NewProjectType[] = [
         developers: ["Emiliya Aada"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://github.com/odisfm/hapi"
+        ],
         order: null,
         categoryName: "Health",
         showcase: {
@@ -1387,7 +1479,10 @@ export const projectData: NewProjectType[] = [
         developers: ["Muireann Onnophris", "Mira Nontle"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
-        links: [],
+        links: [
+            "https://apps.apple.com/au/app/rmit-app/id1584926663",
+            "https://testflight.apple.com/join/xxxxxx"
+        ],
         order: null,
         categoryName: "Social Media",
         showcase: {

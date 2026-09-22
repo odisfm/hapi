@@ -1,7 +1,7 @@
 import * as z from "zod"
 import {DescriptionEditor} from "./DescriptionEditor.tsx";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useNavigate, useParams} from "react-router";
+import {useBlocker, useNavigate, useParams} from "react-router";
 import type {ProjectAdminType} from "@hapi/shared/types/project";
 import {API_URL} from "../../consts.ts";
 import type {
@@ -54,6 +54,10 @@ export function ProjectEditor() {
     const modalContext = useModal();
     const [detailsTab, setDetailsTab] = useState<DetailsTab>("description");
     const iconUploadRef = useRef<HTMLInputElement | null>(null);
+    const blocker = useBlocker(
+        ({ currentLocation, nextLocation }) =>
+            hasChanged && currentLocation.pathname !== nextLocation.pathname
+    );
 
     useEffect(() => {
         if (!document.scrollingElement) return
@@ -402,7 +406,19 @@ export function ProjectEditor() {
             window.removeEventListener("beforeunload", preventUnload)
         }
 
+        return () => {
+            window.removeEventListener("beforeunload", preventUnload)
+        }
+
     }, [preventUnload, hasChanged]);
+
+    useEffect(() => {
+        if (blocker.state === "blocked") {
+            const confirm = window.confirm("You have unsaved changes. Leave anyway?")
+            if (confirm) blocker.proceed()
+            else blocker.reset();
+        }
+    }, [blocker]);
 
     if (loading) return (
         <>

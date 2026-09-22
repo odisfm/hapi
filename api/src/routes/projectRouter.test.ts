@@ -45,7 +45,7 @@ type SlugWithProject = ProjectSlugGetPayload<{
                 showcase: true
                 media: true
                 category: true
-                ProjectSlug: true
+                slugs: true
             }
         }
     }
@@ -55,7 +55,7 @@ type ProjectFindMany = ProjectGetPayload<{
     include: {
         media: true,
         category: true
-        ProjectSlug: true
+        slugs: true
         showcase: true
     }
 }>[]
@@ -63,7 +63,7 @@ type ProjectFindMany = ProjectGetPayload<{
 const validFindUnique = {
     id: "a",
     name: "Cool game app",
-    ProjectSlug: [
+    slugs: [
         {slug: "my-cool-app"},
     ],
     media: [],
@@ -85,7 +85,7 @@ describe("GET /project", async () => {
                 media: [],
                 category: {name: "Games"},
                 published: true,
-                ProjectSlug: [
+                slugs: [
                     {slug: "my-cool-app"},
                 ],
             },
@@ -110,7 +110,7 @@ describe("GET /project", async () => {
                 media: [],
                 published: true,
                 category: {name: "Games"},
-                ProjectSlug: [
+                slugs: [
                     {slug: "my-cool-app"},
                 ],
             },
@@ -136,7 +136,7 @@ describe("GET /project/search", async () => {
             },
             {
                 name: "We hate fun",
-                ProjectSlug: [
+                slugs: [
                     {slug: "we-hate-fun"}
                 ],
                 media: [],
@@ -162,7 +162,7 @@ describe("GET /project/search", async () => {
             {
                 id: "a",
                 name: "Cool game app",
-                ProjectSlug: [
+                slugs: [
                     {slug: "my-cool-app"},
                 ],
                 media: [],
@@ -175,7 +175,7 @@ describe("GET /project/search", async () => {
             {
                 id: "b",
                 name: "We hate fun",
-                ProjectSlug: [
+                slugs: [
                     {slug: "we-hate-fun"}
                 ],
                 media: [],
@@ -188,7 +188,7 @@ describe("GET /project/search", async () => {
             {
                 id: "c",
                 name: "Yet another app",
-                ProjectSlug: [
+                slugs: [
                     {slug: "yaa"}
                 ],
                 media: [],
@@ -270,7 +270,7 @@ describe("GET /project/search", async () => {
         vi.mocked(db.project.findMany).mockResolvedValue([{
             id: "a",
             name: "Cool game app",
-            ProjectSlug: [
+            slugs: [
                 {slug: "my-cool-app"},
             ],
             media: [],
@@ -293,7 +293,7 @@ describe("GET /project/search", async () => {
         vi.mocked(db.project.findMany).mockResolvedValue([{
             id: "a",
             name: "Cool game app",
-            ProjectSlug: [
+            slugs: [
                 {slug: "my-cool-app"},
             ],
             media: [],
@@ -306,7 +306,7 @@ describe("GET /project/search", async () => {
             {
             id: "b",
             name: "Cool game app",
-            ProjectSlug: [
+            slugs: [
                 {slug: "my-cool-app"},
             ],
             media: [],

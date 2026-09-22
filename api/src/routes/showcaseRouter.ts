@@ -26,7 +26,7 @@ showcaseRouter.get("featured", async (c) => {
                         media: true,
                         category: true,
                         showcase: true,
-                        ProjectSlug: {
+                        slugs: {
                             take: 1,
                             orderBy: {
                                 assignedDate: "desc"

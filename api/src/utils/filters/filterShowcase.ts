@@ -10,7 +10,7 @@ type ShowcasePayload = ShowcaseGetPayload<{
                 category: true,
                 media: true,
                 showcase: true,
-                ProjectSlug: true
+                slugs: true
             }
         }
     }

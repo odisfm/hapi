@@ -4,7 +4,7 @@ import {filterShowcase} from "./filterShowcase.js";
 
 type ShowcasePayload = ShowcaseGetPayload<{
     include: {
-        projects: {include: {media: true, category: true, showcase: true, ProjectSlug: true}};
+        projects: {include: {media: true, category: true, showcase: true, slugs: true}};
     }
 }>
 

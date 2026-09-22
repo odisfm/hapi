@@ -7,7 +7,7 @@ type ProjectPayload = ProjectGetPayload<{
         media: true,
         category: true,
         showcase: true,
-        ProjectSlug: true
+        slugs: true
     }
 }>
 
@@ -37,12 +37,11 @@ const mockPayload: ProjectPayload = {
         semester: 0,
         publishedDate: null
     },
-    ProjectSlug: [
+    slugs: [
         {
             assignedDate: new Date(),
             slug: "test-project",
             projectId: "",
-            id: ""
         }
     ]
 }

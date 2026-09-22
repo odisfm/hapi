@@ -87,8 +87,7 @@ REJECTED REJECTED
   
 
   "ProjectSlug" {
-    String id "🗝️"
-    String slug "🔒"
+    String slug "🗝️"
     DateTime assignedDate 
     }
   

@@ -67,7 +67,7 @@ projectRouter.get("/search", async (c) => {
             showcase: true,
             category: true,
             media: true,
-            ProjectSlug: {
+            slugs: {
                 take: 1,
                 orderBy: {
                     assignedDate: "desc"
@@ -173,7 +173,7 @@ projectRouter.get("/:projectSlug", async (c) => {
                         showcase: true,
                         media: true,
                         category: true,
-                        ProjectSlug: {
+                        slugs: {
                             take: 1,
                             orderBy: {
                                 assignedDate: "desc"
@@ -212,7 +212,7 @@ projectRouter.get("/id/:projectId", needsAuth, async (c) => {
                 media: true,
                 category: true,
                 showcase: true,
-                ProjectSlug: true
+                slugs: true
             }
         })
 
@@ -299,7 +299,7 @@ projectRouter.post("/", needsAuth, async (c) => {
         // need another query to get the `includes`
         const record = await db.project.findUnique({
             where: {id: project.id},
-            include: {showcase: true, media: true, category: true, ProjectSlug: {take: 1, orderBy: {assignedDate: "desc"}}}
+            include: {showcase: true, media: true, category: true, slugs: {take: 1, orderBy: {assignedDate: "desc"}}}
         })
 
         const p = filterProject(record!, user.role) as ProjectAdminType

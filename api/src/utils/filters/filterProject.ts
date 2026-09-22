@@ -3,8 +3,8 @@ import {
     type ProjectPreviewType,
     type ProjectAdminType,
 } from "@hapi/shared/types/project";
-import {type ProjectGetPayload} from "@hapi/shared/prisma/models/Project.js";
-import {type UserRole} from "@hapi/shared/prisma/enums.js";
+import {type ProjectGetPayload} from "@hapi/shared/prisma/models";
+import {type UserRole} from "@hapi/shared/prisma/enums";
 
 const DEFAULT_ORDER = "zzzzzzzzzzzzz"
 

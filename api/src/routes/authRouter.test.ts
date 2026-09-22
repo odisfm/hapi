@@ -15,13 +15,13 @@ vi.mock("@hapi/shared", () => ({
 }))
 
 import { db } from "@hapi/shared"
-import type {UserGetPayload} from "@hapi/shared/prisma/models/User.js";
+import type {UserGetPayload} from "@hapi/shared/prisma/models/User";
 import {hashPassword} from "../helpers/password";
 import {authRouter} from "./authRouter";
 import {LoginSuccessResponseSchema, UserDetailsSchema} from "@hapi/shared/types/apiResponses";
-import type {SessionGetPayload} from "@hapi/shared/prisma/models/Session.js";
+import type {SessionGetPayload} from "@hapi/shared/prisma/models/Session";
 import {app} from "../index";
-import type {UserRole} from "@hapi/shared/prisma/enums.js";
+import type {UserRole} from "@hapi/shared/prisma/enums";
 
 beforeEach(() => {
     vi.clearAllMocks()

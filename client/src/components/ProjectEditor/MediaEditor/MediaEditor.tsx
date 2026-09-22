@@ -1,6 +1,6 @@
 import type {ProjectMediaType} from "@hapi/shared/types/projectMedia";
 import {MediaGroup} from "./MediaGroup.tsx";
-import type {DeviceType} from "@hapi/shared/prisma/enums.ts";
+import type {DeviceType} from "@hapi/shared/prisma/enums";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {sortByLexorank} from "@hapi/shared/utils/sortByLexoRank";
 import {LexoRank} from "@dalet-oss/lexorank";

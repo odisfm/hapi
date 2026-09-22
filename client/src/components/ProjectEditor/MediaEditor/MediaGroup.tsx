@@ -3,7 +3,7 @@ import {useEffect} from "react";
 import {monitorForElements} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import {extractClosestEdge} from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
 import {MediaTile} from "./MediaTile.tsx";
-import type {DeviceType} from "@hapi/shared/prisma/enums.ts";
+import type {DeviceType} from "@hapi/shared/prisma/enums";
 
 type Props = {
     media: ProjectMediaType[]

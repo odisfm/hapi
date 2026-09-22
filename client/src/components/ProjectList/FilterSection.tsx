@@ -1,5 +1,5 @@
 import type {ProjectSearchQuery} from "@hapi/shared/types/apiRequests";
-import type {Category, Showcase} from "@hapi/shared/prisma/client.ts";
+import type {Category, Showcase} from "@hapi/shared/prisma/client";
 import {getShowcaseName} from "../../utils/getShowcaseName.ts";
 
 type Props = {

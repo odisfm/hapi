@@ -25,13 +25,13 @@ vi.mock("../middleware/session", () => ({
 
 import { db } from "@hapi/shared"
 import {DEFAULT_SEARCH_LIMIT, MAX_SEARCH_LIMIT, projectRouter} from "./projectRouter";
-import type {ProjectSlugGetPayload} from "@hapi/shared/prisma/models/ProjectSlug.js";
+import type {ProjectSlugGetPayload} from "@hapi/shared/prisma/models/ProjectSlug";
 import type {
     ProjectDetailsAdminResponse,
     ProjectDetailsResponse,
     ProjectSearchResponse
 } from "@hapi/shared/types/apiResponses";
-import type {ProjectGetPayload} from "@hapi/shared/prisma/models/Project.js";
+import type {ProjectGetPayload} from "@hapi/shared/prisma/models/Project";
 import {app} from "../index";
 
 beforeEach(() => {

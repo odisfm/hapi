@@ -23,7 +23,7 @@ export default function HomePage() {
         async function loadProjects() {
             try {
                 const projectResponse = await fetch(
-                    `${API_URL}/project/search?limit=12`,
+                    `${API_URL}/project/featured`,
                     {
                         signal: projectRequestController.signal,
                         credentials: "omit"
@@ -81,7 +81,7 @@ export default function HomePage() {
                             <h2
                                 className="font-copy text-2xl font-bold leading-[1.3] tracking-normal"
                             >
-                                PROJECTS
+                                FEATURED PROJECTS
                             </h2>
                             { state.loading &&
                                 <FaSpinner className={`animate-spin text-2xl`} />

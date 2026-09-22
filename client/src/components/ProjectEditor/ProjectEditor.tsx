@@ -13,7 +13,6 @@ import type {Category, Showcase} from "@hapi/shared/prisma/client";
 import {TextItemEditor} from "./TextItemEditor.tsx";
 import {formatDate, formatDistance} from "date-fns";
 import {FaSpinner, FaTrash} from "react-icons/fa";
-import {FaFloppyDisk} from "react-icons/fa6";
 import {UpdateProjectRequestSchema, type UpdateProjectRequestType} from "@hapi/shared/types/apiRequests";
 import {createUuid} from "../../utils/misc.ts";
 import {useModal} from "../../contexts/modal/useModal.ts";
@@ -21,6 +20,7 @@ import {MediaEditor} from "./MediaEditor/MediaEditor.tsx";
 import {RiImageUploadFill} from "react-icons/ri";
 import ProjectCard from "../ProjectCard.tsx";
 import {SlugEditor} from "./SlugEditor.tsx";
+import {SaveButton} from "../generic/SaveButton.tsx";
 
 const legendStyles = `font-medium`
 const inputStyles = `p-1 rounded-md bg-neutral-200 px-2 py-1 font-light`
@@ -465,22 +465,7 @@ export function ProjectEditor() {
                                         >
                                             <RiImageUploadFill />
                                         </button>
-                                        <button
-                                            type={"submit"}
-                                            onClick={() => submit()}
-                                            disabled={!hasChanged}
-                                            className={`
-                                                ml-auto self-start rounded-md px-2 py-1  flex gap-2 items-center
-                                                ${hasChanged ?
-                                                `bg-r-yellow-500 hover:bg-r-yellow-400 text-black cursor-pointer`
-                                                :
-                                                `bg-lime-600 text-white`
-                                                }
-                                                `}
-                                        >
-                                            {hasChanged ? <FaFloppyDisk/> : <></>}
-                                            {hasChanged ? "save" : "no changes"}
-                                        </button>
+                                        <SaveButton onClick={() => submit()} hasChanged={hasChanged} />
                                     </div>
                             </form>
                         </div>

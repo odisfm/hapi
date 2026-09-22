@@ -25,7 +25,8 @@ export function filterProjectPreview(project: ProjectPayload): ProjectPreviewTyp
         order: project.order || DEFAULT_ORDER,
         subtitle: project.subtitle || "",
         slug: project.slugs[0].slug,
-        developers: project.developers
+        developers: project.developers,
+        featured: project.featured,
     }
 }
 
@@ -38,6 +39,7 @@ export function filterProject(project: ProjectPayload, role: UserRole | null): P
         order: project.order || DEFAULT_ORDER,
         links: project.links,
         subtitle: project.subtitle || "",
+        featured: project.featured,
         media: project.media.map(media => {
             return {
                 id: media.id,

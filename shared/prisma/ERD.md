@@ -74,6 +74,7 @@ REJECTED REJECTED
     String links "parsed on frontend (GitHub/App Store/etc.)"
     String order "❓ Lexo-rank"
     Boolean published 
+    Boolean featured 
     }
   
 

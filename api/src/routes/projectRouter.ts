@@ -24,6 +24,38 @@ export const projectRouter = createHono()
 export const MAX_SEARCH_LIMIT = 20
 export const DEFAULT_SEARCH_LIMIT = 10
 
+projectRouter.get("/featured", async (c) => {
+    try {
+        const records = await db.project.findMany({
+            where: {
+                featured: true,
+                published: true,
+                showcase: {
+                    publishedDate: {
+                        not: null,
+                        lt: new Date()
+                    }
+                }
+            },
+            orderBy: {order: "asc"},
+            include: {
+                showcase: true,
+                category: true,
+                media: true,
+                slugs: true
+            }
+        })
+
+        const projects = records.map((r) => filterProjectPreview(r))
+
+        return c.json({projects: projects, info: {totalResults: projects.length}} satisfies ProjectSearchResponse)
+
+    } catch (e) {
+        console.error(e)
+        return c.json({error: "Internal server error"}, 500)
+    }
+})
+
 projectRouter.get("/search", async (c) => {
     const query = c.req.query()
     const searchQuery: ProjectSearchQuery = {
@@ -49,7 +81,6 @@ projectRouter.get("/search", async (c) => {
     } else {
         searchQuery.limit = DEFAULT_SEARCH_LIMIT
     }
-    searchQuery.limit = Math.min(searchQuery.limit, MAX_SEARCH_LIMIT)
 
     const user = c.get("user")
     const userRole = user?.role || null
@@ -251,7 +282,8 @@ projectRouter.patch("/", needsAuth, async (c) => {
         await db.project.upsert({
             where: {id: project.id},
             create: {
-                ...project
+                ...project,
+                featured: false
             },
             update: {
                 ...project
@@ -295,7 +327,8 @@ projectRouter.post("/", needsAuth, async (c) => {
         const { media, ...project } = body.project;
         await db.project.create({
             data: {
-                ...project
+                ...project,
+                featured: false
             },
         })
         await db.projectSlug.create({
@@ -403,6 +436,31 @@ projectRouter.delete("/id/:projectId/slug", needsAuth, async (c) => {
         })
         return c.json({}, 200)
     } catch (e) {
+        return c.json({error: "Internal server error"}, 500)
+    }
+})
+
+projectRouter.patch("/batch", needsAuth, async (c) => {
+    try {
+        const user = c.get("user")!
+        if (user.role !== "ADMIN") return c.json({error: "Unauthorised"}, 403)
+        const body = await c.req.json()
+        const updates = body.projects
+
+        console.log(updates)
+
+        await db.$transaction(
+            updates.map(({ id, ...data }: { id: string } & Prisma.ProjectUpdateInput) =>
+                db.project.update({
+                    where: { id },
+                    data,
+                })
+            )
+        )
+        return c.json({}, 200)
+
+    } catch (e) {
+        console.error(e)
         return c.json({error: "Internal server error"}, 500)
     }
 })

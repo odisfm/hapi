@@ -79,10 +79,12 @@ type ShowcaseSearch = {
     semester: number,
 }
 
-type NewProjectType = Omit<Project, 'categoryId' | 'showcaseId'> & {
+type NewProjectType = Omit<Project, 'categoryId' | 'showcaseId' | 'order' | 'featured'> & {
     categoryName: string,
     showcase: ShowcaseSearch,
-    slug: string
+    slug: string,
+    featured?: boolean,
+
 }
 
 export const projectData: NewProjectType[] = [
@@ -118,7 +120,7 @@ export const projectData: NewProjectType[] = [
             "https://example.com/",
             "https://github.com/odisfm/hapi"
         ],
-        order: null,
+        featured: true,
         categoryName: "Social Media",
         showcase: {
             name: "Apple Foundation Program",
@@ -182,7 +184,6 @@ export const projectData: NewProjectType[] = [
         links: [
             "https://example.com/"
         ],
-        order: null,
         categoryName: "Finance",
         showcase: {
             name: "Apple Foundation Program",
@@ -206,7 +207,6 @@ export const projectData: NewProjectType[] = [
             "https://example.com/",
             "https://github.com/odisfm/hapi"
         ],
-        order: null,
         categoryName: "News",
         showcase: {
             name: "Apple Foundation Program",
@@ -244,7 +244,7 @@ export const projectData: NewProjectType[] = [
         links: [
             "https://testflight.apple.com/join/xxxxxx"
         ],
-        order: null,
+        featured: true,
         categoryName: "Entertainment",
         showcase: {
             name: "Apple Foundation Program",
@@ -270,7 +270,6 @@ export const projectData: NewProjectType[] = [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
             "https://github.com/odisfm/hapi"
         ],
-        order: null,
         categoryName: "Entertainment",
         showcase: {
             name: "Apple Foundation Program",
@@ -310,7 +309,6 @@ export const projectData: NewProjectType[] = [
             "https://github.com/odisfm/hapi",
             "https://example.com/"
         ],
-        order: null,
         categoryName: "Social Media",
         showcase: {
             name: "Apple Foundation Program",
@@ -373,7 +371,7 @@ export const projectData: NewProjectType[] = [
             "https://example.com/",
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
-        order: null,
+        featured: true,
         categoryName: "Entertainment",
         showcase: {
             name: "Apple Foundation Program",
@@ -427,7 +425,7 @@ export const projectData: NewProjectType[] = [
             "https://example.com/",
             "https://testflight.apple.com/join/xxxxxx"
         ],
-        order: null,
+        featured: true,
         categoryName: "Social Media",
         showcase: {
             name: "Apple Foundation Program",
@@ -461,7 +459,6 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx",
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
-        order: null,
         categoryName: "Entertainment",
         showcase: {
             name: "Apple Foundation Program",
@@ -509,7 +506,7 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx",
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
-        order: null,
+        featured: true,
         categoryName: "Games",
         showcase: {
             name: "Apple Foundation Program",
@@ -572,7 +569,7 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx",
             "https://example.com/"
         ],
-        order: null,
+        featured: true,
         categoryName: "Education",
         showcase: {
             name: "Apple Foundation Program",
@@ -613,7 +610,6 @@ export const projectData: NewProjectType[] = [
         approvalStatus: "APPROVED",
         rejectionReason: null,
         links: [],
-        order: null,
         categoryName: "Education",
         showcase: {
             name: "Apple Foundation Program",
@@ -670,7 +666,7 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx",
             "https://github.com/odisfm/hapi"
         ],
-        order: null,
+        featured: true,
         categoryName: "Education",
         showcase: {
             name: "Apple Foundation Program",
@@ -712,7 +708,7 @@ export const projectData: NewProjectType[] = [
         links: [
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
-        order: null,
+        featured: true,
         categoryName: "Education",
         showcase: {
             name: "Apple Foundation Program",
@@ -759,7 +755,7 @@ export const projectData: NewProjectType[] = [
         links: [
             "https://github.com/odisfm/hapi"
         ],
-        order: null,
+        featured: true,
         categoryName: "Games",
         showcase: {
             name: "Apple Foundation Program",
@@ -837,7 +833,6 @@ export const projectData: NewProjectType[] = [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
             "https://github.com/odisfm/hapi"
         ],
-        order: null,
         categoryName: "Finance",
         showcase: {
             name: "Apple Foundation Program",
@@ -885,11 +880,11 @@ export const projectData: NewProjectType[] = [
         developers: ["Yami Briggs", "Czarek Nina"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
+        featured: true,
         links: [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
             "https://example.com/"
         ],
-        order: null,
         categoryName: "Health",
         showcase: {
             name: "Apple Foundation Program",
@@ -938,7 +933,6 @@ export const projectData: NewProjectType[] = [
             "https://example.com/",
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
-        order: null,
         categoryName: "Photo & Video",
         showcase: {
             name: "Apple Foundation Program",
@@ -988,7 +982,6 @@ export const projectData: NewProjectType[] = [
         links: [
             "https://testflight.apple.com/join/xxxxxx"
         ],
-        order: null,
         categoryName: "Business",
         showcase: {
             name: "Apple Foundation Program",
@@ -1054,7 +1047,6 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx",
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
-        order: null,
         categoryName: "Social Media",
         showcase: {
             name: "Apple Foundation Program",
@@ -1106,7 +1098,6 @@ export const projectData: NewProjectType[] = [
             "https://github.com/odisfm/hapi",
             "https://example.com/"
         ],
-        order: null,
         categoryName: "Utilities",
         showcase: {
             name: "Capstone",
@@ -1152,7 +1143,6 @@ export const projectData: NewProjectType[] = [
             "https://github.com/odisfm/hapi",
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
-        order: null,
         categoryName: "Health",
         showcase: {
             name: "Capstone",
@@ -1205,7 +1195,6 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx",
             "https://example.com/"
         ],
-        order: null,
         categoryName: "Entertainment",
         showcase: {
             name: "Capstone",
@@ -1258,7 +1247,7 @@ export const projectData: NewProjectType[] = [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
             "https://testflight.apple.com/join/xxxxxx"
         ],
-        order: null,
+        featured: true,
         categoryName: "Social Media",
         showcase: {
             name: "Capstone",
@@ -1321,7 +1310,6 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx",
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
-        order: null,
         categoryName: "Utilities",
         showcase: {
             name: "Capstone",
@@ -1347,7 +1335,6 @@ export const projectData: NewProjectType[] = [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
             "https://github.com/odisfm/hapi"
         ],
-        order: null,
         categoryName: "Entertainment",
         showcase: {
             name: "Capstone",
@@ -1423,7 +1410,7 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx",
             "https://example.com/"
         ],
-        order: null,
+        featured: true,
         categoryName: "Utilities",
         showcase: {
             name: "Capstone",
@@ -1490,7 +1477,6 @@ export const projectData: NewProjectType[] = [
         links: [
             "https://github.com/odisfm/hapi"
         ],
-        order: null,
         categoryName: "Health",
         showcase: {
             name: "Capstone",
@@ -1525,7 +1511,6 @@ export const projectData: NewProjectType[] = [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
             "https://testflight.apple.com/join/xxxxxx"
         ],
-        order: null,
         categoryName: "Social Media",
         showcase: {
             name: "Capstone",

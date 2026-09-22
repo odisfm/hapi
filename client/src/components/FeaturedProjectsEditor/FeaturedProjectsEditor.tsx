@@ -141,19 +141,16 @@ export function FeaturedProjectsEditor() {
 
     return (
         <div className={`flex flex-col gap-2 items-start`}>
-            <h2 className={`font-headline text-5xl mb-12`}>
-                Edit featured projects
-            </h2>
 
             <div className={`flex items-center gap-6`}>
                 <h3
-                    className={h3Styles}
+                    className={`font-bold text-3xl`}
                 >
                     FEATURED PROJECTS
                 </h3>
                 <SaveButton onClick={() => {batchUpdateProjects()}} hasChanged={alteredProjects.length > 0} styles={``} />
             </div>
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 self-center isolate md:min-w-250">
                 {featuredProjectList.map((p) => {
                     return (
                         <ProjectCard name={p.name} iconUrl={p.iconUrl} slug={p.slug} subtitle={p.subtitle} />

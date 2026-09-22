@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter } from "react-router";
+import {createBrowserRouter, Navigate} from "react-router";
 import { RouterProvider } from "react-router/dom";
 import "./index.css"
 import App from "./App.tsx";
@@ -12,6 +12,7 @@ import {ProjectEditor} from "./components/ProjectEditor/ProjectEditor.tsx";
 import {ProjectList} from "./components/ProjectList/ProjectList.tsx";
 import {ModalProvider} from "./contexts/modal/ModalProvider.tsx";
 import {FeaturedProjectsEditor} from "./components/FeaturedProjectsEditor/FeaturedProjectsEditor.tsx";
+import {UnderConstruction} from "./components/generic/UnderConstruction.tsx";
 
 const router = createBrowserRouter([
     {
@@ -32,17 +33,37 @@ const router = createBrowserRouter([
                 children: [
                     {
                       index: true,
-                      element: <ProjectList />
+                      element: <Navigate to={"/dashboard/projects"} />
                     },
                     {
-                        path: "/dashboard/project/:projectId",
-                        element: <ProjectEditor />
+                      path: "/dashboard/projects",
+                      element: <ProjectList />
                     },
                     {
                         path: "/dashboard/featured-projects",
                         element: <FeaturedProjectsEditor />
+                    },
+                    {
+                        path: "/dashboard/showcases",
+                        element: <UnderConstruction />
+                    },
+                    {
+                        path: "/dashboard/categories",
+                        element: <UnderConstruction />
+                    },
+                    {
+                        path: "/dashboard/users",
+                        element: <UnderConstruction />
+                    },
+                    {
+                        path: "/dashboard/analytics",
+                        element: <UnderConstruction />
                     }
                 ]
+            },
+            {
+                path: "/dashboard/project/:projectId",
+                element: <ProjectEditor />
             },
             {
                 path: "/project/:projectSlug",

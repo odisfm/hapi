@@ -160,11 +160,11 @@ export function ProjectList() {
     }
 
     return (
-        <div className={`flex flex-col gap-4 w-full md:w-2/3`}>
+        <div className={`flex flex-col gap-4 w-full`}>
 
             <div className={`flex items-center`}>
                 <div className={`flex gap-2 items-center`}>
-                    <h2 className={`font-headline font-bold text-3xl`}>Projects</h2>
+                    <h2 className={`font-bold text-3xl`}>PROJECTS</h2>
                     {loading && <FaSpinner className={`animate-spin`}/>}
                 </div>
 

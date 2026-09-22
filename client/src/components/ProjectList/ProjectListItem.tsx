@@ -17,13 +17,13 @@ export function ProjectListItem({project}: {project: ProjectPreviewType}) {
         <li className={`flex gap-4 items-center w-full p-2 rounded-md bg-white mb-2`}>
             <AppIcon uri={project.iconUrl} width={50} />
             <div className={`flex flex-col gap-0.5`}>
-                <Link to={`project/${project.id}`} className={`hover:underline`}>{project.name}</Link>
+                <Link to={`/dashboard/project/${project.id}`} className={`hover:underline`}>{project.name}</Link>
                 <span className={`font-light`}>
                     {developerText}
                 </span>
             </div>
             <Link
-                to={`project/${project.id}`}
+                to={`/dashboard/project/${project.id}`}
                 className={`
                 ml-auto px-6 py-1 rounded-md 
                 bg-r-blue-700 hover:bg-r-blue cursor-pointer text-white

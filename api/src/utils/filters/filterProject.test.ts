@@ -30,6 +30,7 @@ const mockPayload: ProjectPayload = {
     subtitle: "",
     media: [],
     published: true,
+    featured: false,
     showcase: {
         name: "",
         id: "",

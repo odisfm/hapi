@@ -12,6 +12,7 @@ export const ProjectPreviewSchema = z.object({
     order: z.string(),
     slug: z.string(),
     developers: z.array(z.string()),
+    featured: z.boolean(),
 })
 
 export type ProjectPreviewType = z.infer<typeof ProjectPreviewSchema>

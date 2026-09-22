@@ -2,6 +2,7 @@ import commandLineArgs from 'command-line-args'
 import {db} from "../../db.js"
 import {categoryData, projectData, projectMediaData, showcaseData} from "./populateDbData.js";
 import {hashPassword} from "@hapi/api/src/helpers/password";
+import {LexoRank} from "@dalet-oss/lexorank";
 
 const cliArgDefinitions = [
     { name: "use-external-db", type: Boolean }
@@ -71,6 +72,7 @@ for (const category of categoryData) {
 console.log(`Done`)
 
 console.log(`Populating table Project`)
+let lastLexoRank = LexoRank.middle()
 for (const project of projectData) {
     try {
         let showcaseId: string
@@ -105,10 +107,15 @@ for (const project of projectData) {
                 approvalStatus: project.approvalStatus,
                 rejectionReason: project.rejectionReason,
                 links: project.links,
-                order: project.order,
+                order: (() => {
+                    if (!project.featured) return ""
+                    lastLexoRank = lastLexoRank.genNext()
+                    return lastLexoRank["value"]
+                })(),
                 categoryId,
                 showcaseId,
-                published: project.published
+                published: project.published,
+                featured: project.featured === true,
             }
         })
 

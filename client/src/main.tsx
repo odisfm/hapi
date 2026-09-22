@@ -11,6 +11,7 @@ import HomePage from "./pages/HomePage.tsx";
 import {ProjectEditor} from "./components/ProjectEditor/ProjectEditor.tsx";
 import {ProjectList} from "./components/ProjectList/ProjectList.tsx";
 import {ModalProvider} from "./contexts/modal/ModalProvider.tsx";
+import {FeaturedProjectsEditor} from "./components/FeaturedProjectsEditor/FeaturedProjectsEditor.tsx";
 
 const router = createBrowserRouter([
     {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
                     {
                         path: "/dashboard/project/:projectId",
                         element: <ProjectEditor />
+                    },
+                    {
+                        path: "/dashboard/featured-projects",
+                        element: <FeaturedProjectsEditor />
                     }
                 ]
             },

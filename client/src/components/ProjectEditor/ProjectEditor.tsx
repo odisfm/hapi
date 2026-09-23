@@ -1,5 +1,5 @@
 import * as z from "zod"
-import {DescriptionEditor} from "./DescriptionEditor.tsx";
+import {MarkdownEditor} from "../generic/MarkdownEditor.tsx";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useBlocker, useNavigate, useParams} from "react-router";
 import type {ProjectAdminType} from "@hapi/shared/types/project";
@@ -644,7 +644,7 @@ export function ProjectEditor() {
                                 </button>
                             </div>
                             {detailsTab === "description" &&
-                                <DescriptionEditor
+                                <MarkdownEditor
                                     initText={project.description}
                                     setHasChanged={setHasChanged}
                                     markdownRef={descriptionRef}

@@ -1,5 +1,5 @@
 import * as z from "zod"
-import type {ShowcaseType} from "./showcase.js";
+import type {ShowcaseAdminType, ShowcaseType} from "./showcase.js";
 import type {ProjectAdminType, ProjectPreviewType, ProjectType} from "./project.js";
 import type {Category} from "../generated/prisma/client.js";
 import type {ShowcaseGetPayload} from "../generated/prisma/models/Showcase";
@@ -9,8 +9,18 @@ export type ShowcaseFeaturedResponse = {
     showcases: ShowcaseType[]
 }
 
+export type ShowcaseListResponseItem = ShowcaseGetPayload<{include: {_count: {select: { projects: true }}}}>
+
 export type ShowcaseListResponse = {
-    showcases: ShowcaseGetPayload<{}>[]
+    showcases: ShowcaseListResponseItem[]
+}
+
+export type ShowcaseAdminDetailsResponse = {
+    showcase: ShowcaseAdminType
+}
+
+export type ShowcasePublicDetailsResponse = {
+    showcase: ShowcaseType
 }
 
 export type ProjectSearchResponse = {

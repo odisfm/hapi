@@ -13,6 +13,8 @@ import {ProjectList} from "./components/ProjectList/ProjectList.tsx";
 import {ModalProvider} from "./contexts/modal/ModalProvider.tsx";
 import {FeaturedProjectsEditor} from "./components/FeaturedProjectsEditor/FeaturedProjectsEditor.tsx";
 import {UnderConstruction} from "./components/generic/UnderConstruction.tsx";
+import {ShowcaseList} from "./components/ShowcaseEditor/ShowcaseList.tsx";
+import {ShowcaseEditor} from "./components/ShowcaseEditor/ShowcaseEditor.tsx";
 
 const router = createBrowserRouter([
     {
@@ -45,7 +47,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "/dashboard/showcases",
-                        element: <UnderConstruction />
+                        element: <ShowcaseList />
                     },
                     {
                         path: "/dashboard/categories",
@@ -64,6 +66,10 @@ const router = createBrowserRouter([
             {
                 path: "/dashboard/project/:projectId",
                 element: <ProjectEditor />
+            },
+            {
+                path: "/dashboard/showcase/:showcaseId",
+                element: <ShowcaseEditor />
             },
             {
                 path: "/project/:projectSlug",

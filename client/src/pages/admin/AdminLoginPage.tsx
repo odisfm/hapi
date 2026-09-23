@@ -1,6 +1,6 @@
 import {useAuth} from "../../contexts/auth/useAuth.ts";
 import {useCallback, useEffect, useRef, useState} from "react";
-import {useNavigate} from "react-router";
+import {Link, useNavigate} from "react-router";
 import type {LoginSuccessResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL} from "../../consts.ts";
 
@@ -88,6 +88,7 @@ export default function AdminLoginPage() {
                 >
                     Log in
                 </button>
+                <Link className={'block mt-6 hover:underline'} to={"/reset-password/request"}>Forgot password?</Link>
             </form>
         </div>
     );

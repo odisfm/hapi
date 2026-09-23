@@ -36,7 +36,8 @@ describe("login", () => {
             password: passwordHash,
             name: "Test User",
             role: "ADMIN",
-            id: "test-user"
+            id: "test-user",
+            needsPasswordReset: false,
 
         } as unknown as UserGetPayload<any>)
         vi.mocked(db.session.create).mockResolvedValue({
@@ -105,7 +106,8 @@ describe("create new user", () => {
             name: "",
             email: "",
             role: "ADMIN",
-            password: ""
+            password: "",
+            needsPasswordReset: false
         })
         const res = await app.request("/auth/create", {
             method: "POST",
@@ -150,6 +152,7 @@ describe("/me", () => {
                 name: "Admin User",
                 email: "a@eexample.com",
                 role: "ADMIN",
+                needsPasswordReset: false
             }
         } as unknown as SessionGetPayload<{include: {user: true}}>)
         const res = await app.request("/auth/me", {

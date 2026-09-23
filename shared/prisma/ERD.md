@@ -53,6 +53,7 @@ REJECTED REJECTED
     String password 
     String name 
     UserRole role 
+    Boolean needsPasswordReset 
     }
   
 
@@ -92,6 +93,13 @@ REJECTED REJECTED
     DateTime assignedDate 
     }
   
+
+  "PasswordResetRequest" {
+    String id "🗝️"
+    DateTime expiry "❓"
+    String code 
+    }
+  
     "User" |o--|| "UserRole" : "enum:role"
     "Session" }o--|| "User" : "user"
     "Project" |o--|| "ApprovalStatus" : "enum:approvalStatus"
@@ -101,4 +109,5 @@ REJECTED REJECTED
     "ProjectMedia" |o--|| "MediaType" : "enum:mediaType"
     "ProjectMedia" |o--|| "DeviceType" : "enum:deviceType"
     "ProjectSlug" }o--|| "Project" : "project"
+    "PasswordResetRequest" }o--|| "User" : "user"
 ```

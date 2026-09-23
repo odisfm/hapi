@@ -15,6 +15,7 @@ import {FeaturedProjectsEditor} from "./components/FeaturedProjectsEditor/Featur
 import {UnderConstruction} from "./components/generic/UnderConstruction.tsx";
 import {ShowcaseList} from "./components/ShowcaseEditor/ShowcaseList.tsx";
 import {ShowcaseEditor} from "./components/ShowcaseEditor/ShowcaseEditor.tsx";
+import {PasswordReset} from "./pages/admin/PasswordReset/PasswordReset.tsx";
 
 const router = createBrowserRouter([
     {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
             {
                 path: "/admin-login",
                 element: <AdminLoginPage />
+            },
+            {
+                path: "/reset-password/:stage",
+                element: <PasswordReset />
             },
             {
                 path: "/dashboard",
@@ -86,5 +91,5 @@ ReactDOM.createRoot(root).render(
     <ModalProvider>
     <RouterProvider router={router} />
     </ModalProvider>
-    </AuthProvider>
+    </AuthProvider>,
 );

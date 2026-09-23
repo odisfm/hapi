@@ -15,6 +15,7 @@ import {FeaturedProjectsEditor} from "./components/FeaturedProjectsEditor/Featur
 import {UnderConstruction} from "./components/generic/UnderConstruction.tsx";
 import {ShowcaseList} from "./components/ShowcaseEditor/ShowcaseList.tsx";
 import {ShowcaseEditor} from "./components/ShowcaseEditor/ShowcaseEditor.tsx";
+import SearchResultsPage from "./pages/SearchResultsPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
             {
                 index: true,
                 element: <HomePage />
+            },
+            {
+                path: "/search",
+                element: <SearchResultsPage />
             },
             {
                 path: "/admin-login",

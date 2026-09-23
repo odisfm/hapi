@@ -1,7 +1,7 @@
 import * as z from "zod"
 import type {ShowcaseAdminType, ShowcaseType} from "./showcase.js";
 import type {ProjectAdminType, ProjectPreviewType, ProjectType} from "./project.js";
-import type {Category} from "../generated/prisma/client.js";
+import {type Category, UserRole} from "../generated/prisma/client.js";
 import type {ShowcaseGetPayload} from "../generated/prisma/models/Showcase";
 import type {ProjectMediaModel} from "../generated/prisma/models/ProjectMedia";
 
@@ -47,6 +47,8 @@ export type ProjectDetailsAdminResponse = {
 export const UserDetailsSchema = z.object({
     email: z.email(),
     name: z.string(),
+    needsPasswordReset: z.boolean(),
+    role: z.enum(UserRole),
 })
 
 export type UserDetails = z.infer<typeof UserDetailsSchema>

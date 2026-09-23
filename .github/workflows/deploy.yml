@@ -42,6 +42,8 @@ jobs:
           touch terraform.tfvars
           echo "environment = \"${{ inputs.environment }}\"" >> terraform.tfvars
           echo "lambda_db_url = \"${{ secrets.LAMBDA_DB_URL }}\"" >> terraform.tfvars
+          echo "mailgun_domain = \"${{ secrets.MAILGUN_DOMAIN }}\"" >> terraform.tfvars
+          echo "mailgun_key = \"${{ secrets.MAILGUN_KEY }}\"" >> terraform.tfvars
 
       - name: tofu init
         working-directory: infra

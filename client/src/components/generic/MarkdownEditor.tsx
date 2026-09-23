@@ -18,11 +18,13 @@ import {
 import '@mdxeditor/editor/style.css'
 import {useCallback, useEffect, useRef} from "react";
 
-export function DescriptionEditor({initText, setHasChanged, markdownRef, setDescription}: {
+export function MarkdownEditor({initText, setHasChanged, markdownRef, setDescription, contentStyles, containerStyles}: {
     initText: string,
     setHasChanged: (value: boolean) => void,
     markdownRef: React.RefObject<string>;
     setDescription: (value: string) => void,
+    containerStyles?: string,
+    contentStyles?: string,
 }) {
     const hasMounted = useRef(false)
 
@@ -42,9 +44,9 @@ export function DescriptionEditor({initText, setHasChanged, markdownRef, setDesc
     }, [initText, markdownRef])
 
     return (
-        <div className={`self-center`}>
+        <div className={`self-center ${containerStyles}`}>
             <MDXEditor markdown={initText || ""}
-                       contentEditableClassName={`min-h-120 bg-white font-copy font-regular`}
+                       contentEditableClassName={`min-h-120 bg-white font-copy font-regular ${contentStyles}`}
                        onChange={onChange}
                        plugins={[
                            headingsPlugin({

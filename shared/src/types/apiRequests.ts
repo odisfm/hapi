@@ -3,6 +3,7 @@ import {type ApprovalStatus, DeviceType, UserRole} from "../generated/prisma/enu
 import {PasswordSchema} from "./password";
 import {ProjectAdminSchema} from "./project";
 import {ProjectMediaSchema} from "./projectMedia";
+import {ShowcaseAdminSchema} from "./showcase";
 
 export type ProjectSearchQuery = {
     searchTerm?: string,
@@ -61,3 +62,9 @@ export const AlterProjectSlugRequestSchema = z.object({
 })
 
 export type AlterProjectSlugRequestType = z.infer<typeof AlterProjectSlugRequestSchema>
+
+export const UpdateShowcaseRequestSchema = z.object({
+    showcase: ShowcaseAdminSchema.omit({projects: true}),
+})
+
+export type UpdateShowcaseRequestType = z.infer<typeof UpdateShowcaseRequestSchema>

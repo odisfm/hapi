@@ -153,17 +153,6 @@ export default function SearchResultsPage() {
         setSearchQuery(query)
     }
 
-    useEffect(() => {
-        const searchTerm = new URLSearchParams(location.search).get("q") ?? "";
-        if (searchTerm !== searchQuery.searchTerm) {
-            mutateSearchQuery({
-                ...searchQuery,
-                page: 0,
-                searchTerm
-            });
-        }
-    }, [location.search, searchQuery.searchTerm]);
-
     const activeFilterName = searchQuery.category
         ? categories.find((category) => category.id === searchQuery.category)?.name
         : searchQuery.showcase

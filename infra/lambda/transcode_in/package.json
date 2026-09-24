@@ -1,0 +1,19 @@
+{
+  "name": "@hapi/transcode_in",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:lambda": "node esbuild.config.ts"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.163"
+  },
+  "dependencies": {
+    "@aws-sdk/client-mediaconvert": "^3.1138.0"
+  }
+}

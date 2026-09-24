@@ -1,4 +1,4 @@
-import {MediaType, DeviceType} from "../generated/prisma/enums.js";
+import {MediaType, DeviceType, MediaStatus} from "../generated/prisma/enums.js";
 import * as z from "zod";
 
 export const ProjectMediaSchema = z.object({
@@ -7,6 +7,7 @@ export const ProjectMediaSchema = z.object({
     mediaType: z.enum(MediaType),
     deviceType: z.enum(DeviceType),
     order: z.string(),
+    status: z.enum(MediaStatus)
 })
 
 export type ProjectMediaType = z.infer<typeof ProjectMediaSchema>;

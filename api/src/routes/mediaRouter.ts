@@ -1,12 +1,12 @@
 import { createHono } from "../helpers/createHono";
 import {needsAuth} from "../middleware/needsAuth";
 import {PutObjectCommand, type PutObjectCommandInput} from "@aws-sdk/client-s3";
-import {s3} from "../services/s3";
+import {createVideoUploadUrl, s3} from "../services/s3";
 import {v4 as createUuid} from "uuid"
 import sharp from 'sharp'
 import {db} from "@hapi/shared";
 import {CreateProjectMediaRequestSchema} from "@hapi/shared/types/apiRequests";
-import type {CreateProjectMediaResponse} from "@hapi/shared/types/apiResponses";
+import type {CreateProjectMediaResponse, CreateProjectVideoResponse} from "@hapi/shared/types/apiResponses";
 
 const ICON_LONG_EDGE = 400 // px
 const SCREENSHOT_LONG_EDGE = 1920 // px
@@ -116,6 +116,7 @@ mediaRouter.post("/screenshot", needsAuth, async (c) => {
                 mediaType: "SCREENSHOT",
                 projectId: data.projectId,
                 deviceType: data.deviceType,
+                status: "AVAILABLE",
                 order: ""
             }
         })
@@ -132,6 +133,51 @@ mediaRouter.delete("/screenshot/:mediaId", needsAuth, async (c) => {
     const mediaId = c.req.param("mediaId")
     try {
         await db.projectMedia.delete({where: {id: mediaId}})
+        return c.json({}, 200)
+    } catch (e) {
+        console.error(e)
+        return c.json({error: "Internal server error"}, 500)
+    }
+})
+
+mediaRouter.post("/video", needsAuth, async(c) => {
+    const body = await c.req.json()
+    const projectId = body?.projectId
+    if (!projectId) {
+        return c.json({error: "Malformed input"}, 400)
+    }
+    try {
+        const uri = createUuid()
+        const record = await db.projectMedia.create({
+            data: {
+                mediaUrl: uri,
+                status: "PENDING",
+                projectId: projectId,
+                deviceType: "PHONE",
+                mediaType: "VIDEO",
+                order: ""
+            }
+        })
+
+        const presignedUrl = await createVideoUploadUrl(uri)
+
+        return c.json({
+            presignedUrl
+        } satisfies CreateProjectVideoResponse, 200)
+
+    } catch (e) {
+        console.error(e)
+        return c.json({error: "Internal server error"}, 500)
+    }
+})
+
+mediaRouter.delete("/video/:mediaId", needsAuth, async(c) => {
+    try {
+        const mediaId = c.req.param("mediaId")
+        await db.projectMedia.delete({
+            where: {mediaType: "VIDEO", id: mediaId}
+        })
+
         return c.json({}, 200)
     } catch (e) {
         console.error(e)

@@ -47,6 +47,7 @@ export function filterProject(project: ProjectPayload, role: UserRole | null): P
                 order: media.order,
                 mediaType: media.mediaType,
                 deviceType: media.deviceType,
+                status: media.status,
             }
         }),
         developers: project.developers,

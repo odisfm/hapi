@@ -13,3 +13,7 @@ variable "mailgun_key" {
 variable "mailgun_domain" {
   type = string
 }
+
+variable "transcode_role_arn" {
+ type = string
+}

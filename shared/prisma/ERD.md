@@ -14,6 +14,14 @@ VIDEO VIDEO
     
 
 
+        MediaStatus {
+            AVAILABLE AVAILABLE
+PENDING PENDING
+FAILED FAILED
+        }
+    
+
+
         DeviceType {
             PHONE PHONE
 TABLET TABLET
@@ -81,10 +89,11 @@ REJECTED REJECTED
 
   "ProjectMedia" {
     String id "🗝️"
-    String mediaUrl 
+    String mediaUrl "🔒"
     MediaType mediaType 
     DeviceType deviceType 
     String order "Lexo-rank"
+    MediaStatus status 
     }
   
 
@@ -108,6 +117,7 @@ REJECTED REJECTED
     "ProjectMedia" }o--|| "Project" : "project"
     "ProjectMedia" |o--|| "MediaType" : "enum:mediaType"
     "ProjectMedia" |o--|| "DeviceType" : "enum:deviceType"
+    "ProjectMedia" |o--|| "MediaStatus" : "enum:status"
     "ProjectSlug" }o--|| "Project" : "project"
     "PasswordResetRequest" }o--|| "User" : "user"
 ```

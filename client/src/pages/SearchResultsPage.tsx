@@ -123,7 +123,8 @@ export default function SearchResultsPage() {
     const pageCount: number = useMemo(() => {
         if (!projects) return 0
         if (!searchResultInfo?.totalResults) return 0
-        return Math.ceil(searchResultInfo.totalResults! / searchQuery.limit!)
+        const count = Math.ceil(searchResultInfo.totalResults! / (searchQuery?.limit || 0))
+        return count === Infinity ? 1 : count
     }, [searchResultInfo, searchQuery.limit, projects])
 
     function _setPageNumber(pageNumber: number): void {

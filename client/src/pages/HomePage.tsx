@@ -3,6 +3,7 @@ import type {ProjectSearchResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL} from "../consts.ts";
 import ProjectCard from "../components/ProjectCard.tsx";
 import {FaSpinner} from "react-icons/fa";
+import {Link} from "react-router";
 
 type HomePageState = {
     projects: ProjectSearchResponse["projects"];
@@ -87,12 +88,16 @@ export default function HomePage() {
                                 <FaSpinner className={`animate-spin text-2xl`} />
                             }
                         </div>
-                        <button
+                        <Link
+                            to={"/search"}
                             type="button"
-                            className="font-copy flex cursor-pointer items-center gap-1 p-0 text-[0.8rem] font-bold uppercase leading-[1.3] tracking-normal text-black"
+                            className={`
+                            font-copy flex cursor-pointer items-center gap-1 p-0 text-[0.8rem] 
+                            font-bold uppercase leading-[1.3] tracking-normal text-black hover:text-r-red
+                            `}
                         >
                             VIEW MORE <span aria-hidden="true">→</span>
-                        </button>
+                        </Link>
                     </div>
                     { state.error ? (
                         <p className="mt-6" role="alert">{state.error}</p>

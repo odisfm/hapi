@@ -101,7 +101,7 @@ projectRouter.get("/search", async (c) => {
             ...(searchQuery.showcase && {showcaseId: searchQuery.showcase}),
             ...(searchQuery.category && {categoryId: searchQuery.category}),
             ...(searchQuery.approvalStatus && {approvalStatus: searchQuery.approvalStatus}),
-            ...(userRole !== "ADMIN" && {published: true}),
+            ...(userRole !== "ADMIN" && {published: true, showcase: {publishedDate: {lt: new Date()}}}),
         },
         include: {
             showcase: true,

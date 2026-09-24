@@ -11,6 +11,10 @@ import {PasswordSchema} from "@hapi/shared/types/password";
 import * as z from "zod";
 import type {UserRole} from "@hapi/shared/prisma/enums";
 import {Prisma} from "@hapi/shared/prisma/client";
+import {generateResetCode} from "../helpers/generateResetCode";
+import {sendEmail} from "../helpers/sendEmail";
+
+const PASSWORD_RESET_TIMEOUT = 15 // minutes
 
 export const authRouter = createHono()
 
@@ -20,7 +24,13 @@ authRouter.post("/login", async (c) => {
         return c.json(
             {
                 user:
-                    {name: user.name, email: user.email}
+                    {
+                        name: user.name,
+                        email: user.email,
+                        needsPasswordReset:
+                        user.needsPasswordReset,
+                        role: user.role
+                    }
             } satisfies LoginSuccessResponse, 200)
     }
 
@@ -51,7 +61,10 @@ authRouter.post("/login", async (c) => {
 
         return c.json({
             user: {
-                email: userRecord.email, name: userRecord.name
+                email: userRecord.email,
+                name: userRecord.name,
+                needsPasswordReset: userRecord.needsPasswordReset,
+                role: userRecord.role
             }
         } satisfies LoginSuccessResponse, 200)
 
@@ -181,7 +194,119 @@ authRouter.post("/create", needsAuth, async (c) => {
 authRouter.get("/me", needsAuth, (c) => {
     return c.json({
         user: {
-            email: c.get("user")!.email, name: c.get("user")!.name
+            email: c.get("user")!.email,
+            name: c.get("user")!.name,
+            needsPasswordReset: c.get("user")!.needsPasswordReset,
+            role: c.get("user")!.role
         }
     } satisfies LoginSuccessResponse, 200)
 })
+
+authRouter.post("/forgot-password", async (c) => {
+    const body = await c.req.json()
+    const email = body.email
+    if (!email) {
+        return c.json({error: "Malformed data"}, 400)
+    }
+    try {
+        let code = generateResetCode()
+        code = code.toUpperCase()
+        const userRecord = await db.user.findUnique({
+            where: {email: email}
+        })
+        if (!userRecord) {
+            return c.json({}, 200)
+        }
+        // invalidate all other requests, but keep them for audit
+        await db.passwordResetRequest.updateMany({
+            where: {
+                userId: userRecord.id
+            },
+            data: {
+                expiry: null
+            }
+        })
+
+        const record = await db.passwordResetRequest.create({
+            data: {
+                userId: userRecord.id,
+                code: await hashPassword(code),
+                expiry: new Date(Date.now() + (1000 * 60 * PASSWORD_RESET_TIMEOUT))
+            }
+        })
+
+        await sendEmail(userRecord.email, "Reset your HAPI showcase account",
+            "Your code is:\n\n" +
+            `${code}\n\n` +
+            `It will expire in ${PASSWORD_RESET_TIMEOUT} minutes.`
+        )
+
+        return c.json({}, 200)
+
+    } catch (e) {
+        console.error(e)
+        return c.json({error: "Internal server error"}, 500)
+    }
+})
+
+authRouter.post("/forgot-password/verify", async (c) => {
+    const body = await c.req.json()
+    const email = body.email
+    const code = body.code
+    if (!email || !code) {
+        return c.json({error: "Malformed input"}, 400)
+    }
+
+    try {
+        const record = await db.user.findUnique({
+            where: {email: email},
+            include: {
+                passwordResetRequest: {
+                    where: {
+                        expiry: {
+                            gt: new Date()
+                        }
+                    }
+                }
+            }
+        })
+
+        if (!record) {
+            return c.json({error: "Invalid input"}, 400)
+        }
+        if (!record.passwordResetRequest.length) {
+            return c.json({error: "Invalid input"}, 400)
+        }
+        if (!(await checkPassword(code.toUpperCase(), record.passwordResetRequest[0].code))) {
+            return c.json({error: "Invalid input"}, 400)
+        }
+
+        const session = await db.session.create({
+            data: {
+                userId: record.id,
+                expiry: new Date(Date.now() + SESSION_EXPIRY)
+            }
+        })
+
+        await db.user.update({
+            where: {id: record.id},
+            data: {needsPasswordReset: true}
+        })
+
+        const sessionId = session.id
+        setCookie(c, "sessionId", sessionId, authCookieOptions)
+
+        return c.json({
+            user: {
+                name: record.name,
+                email: record.email,
+                role: record.role,
+                needsPasswordReset: true
+            }
+        } satisfies LoginSuccessResponse, 200)
+
+    } catch (e) {
+        return c.json({error: "Internal server error"}, 500)
+    }
+})
+

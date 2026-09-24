@@ -42,12 +42,14 @@ model Showcase {
 }
 
 model User {
-  id       String    @id @default(uuid()) @db.Uuid
-  email    String    @unique
-  password String
-  name     String
-  role     UserRole
-  Session  Session[]
+  id                   String                 @id @default(uuid()) @db.Uuid
+  email                String                 @unique
+  password             String
+  name                 String
+  role                 UserRole
+  needsPasswordReset   Boolean                @default(false)
+  Session              Session[]
+  passwordResetRequest PasswordResetRequest[]
 }
 
 enum UserRole {
@@ -98,6 +100,14 @@ model ProjectSlug {
   projectId    String   @db.Uuid
   project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   assignedDate DateTime @db.Timestamptz()
+}
+
+model PasswordResetRequest {
+  id     String    @id @default(uuid()) @db.Uuid
+  userId String    @db.Uuid
+  user   User      @relation(fields: [userId], references: [id])
+  expiry DateTime?
+  code   String
 }
 
 enum MediaType {

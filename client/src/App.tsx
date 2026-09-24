@@ -1,16 +1,23 @@
 import {Link, Outlet, useLocation} from "react-router";
 import {MdSearch} from "react-icons/md";
+import {useEffect, useState} from "react";
 import {useAuth} from "./contexts/auth/useAuth.ts";
+import SearchOverlay from "./components/SearchOverlay.tsx";
 
 export function App() {
     const authenticationContext = useAuth()
     const currentLocation = useLocation();
+    const [searchOpen, setSearchOpen] = useState(false);
     const isAdminPage = currentLocation.pathname === "/admin-login" || currentLocation.pathname === "/dashboard";
+
+    useEffect(() => {
+        setSearchOpen(false);
+    }, [currentLocation.pathname]);
 
     return (
         <div className={`w-full font-copy`}>
             <div
-                className={`w-full bg-[#D1D1D6] text-black`}
+                className={`sticky top-0 z-30 w-full bg-[#D1D1D6] text-black`}
             >
                 {authenticationContext.user &&
                     <div className={`flex items-center gap-2 px-4 py-2 bg-r-blue text-white`}>
@@ -41,11 +48,13 @@ export function App() {
                         <button
                             type="button"
                             aria-label="Search"
+                            onClick={() => setSearchOpen(!searchOpen)}
                             className={`text-4xl hover:text-r-red`}
                         >
                             <MdSearch />
                         </button>
                     </div>
+                    {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
                 </div>
             </div>
             <main className={`h-full w-full flex flex-col items-center px-4 pb-12 pt-8 bg-neutral-100`}>

@@ -153,6 +153,11 @@ export default function SearchResultsPage() {
         setSearchQuery(query)
     }
 
+    useEffect(() => {
+        if (!document.scrollingElement) return
+        document.scrollingElement.scrollTop = 0
+    }, []);
+
     const activeFilterName = searchQuery.category
         ? categories.find((category) => category.id === searchQuery.category)?.name
         : searchQuery.showcase

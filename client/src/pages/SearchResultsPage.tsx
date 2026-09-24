@@ -173,10 +173,12 @@ export default function SearchResultsPage() {
     return (
         <div className={`flex w-full max-w-5xl flex-col gap-6`}>
             <div>
-                <h1 className={`max-w-xl font-headline text-3xl font-bold leading-tight text-r-blue`}>
-                    Search Results for:<br />
-                    {searchQuery.searchTerm}
-                </h1>
+                {searchQuery.searchTerm &&
+                    <h1 className={`max-w-xl font-headline text-3xl font-bold leading-tight text-r-blue`}>
+                        Search Results for:<br/>
+                        {searchQuery.searchTerm}
+                    </h1>
+                }
                 <p className={`mt-3 text-sm text-body-text-gray`}>
                     {loading ? "Loading..." : `${searchResultInfo?.totalResults ?? 0} results found`}
                 </p>

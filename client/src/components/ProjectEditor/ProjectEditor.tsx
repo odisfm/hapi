@@ -289,7 +289,8 @@ export function ProjectEditor() {
                     approvalStatus: "APPROVED",
                     rejectionReason: null,
                     iconUrl: submitProject!.iconUrl,
-                    published: submitProject.published
+                    published: submitProject.published,
+                    featured: submitProject.featured,
                 },
             })
         } catch (e) {

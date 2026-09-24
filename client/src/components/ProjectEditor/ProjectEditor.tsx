@@ -21,6 +21,8 @@ import {RiImageUploadFill} from "react-icons/ri";
 import ProjectCard from "../ProjectCard.tsx";
 import {SlugEditor} from "./SlugEditor.tsx";
 import {SaveButton} from "../generic/SaveButton.tsx";
+import { VideoEditor } from "./VideoEditor.tsx";
+import type {ProjectMediaType} from "@hapi/shared/types/projectMedia";
 
 const legendStyles = `font-medium`
 const inputStyles = `p-1 rounded-md bg-neutral-200 px-2 py-1 font-light`
@@ -32,7 +34,7 @@ type ShowcaseListItem = {
     date: Date | null
 }
 
-type DetailsTab = "description" | "media"
+type DetailsTab = "description" | "media" | "video"
 
 
 export function ProjectEditor() {
@@ -422,6 +424,17 @@ export function ProjectEditor() {
         }
     }, [blocker]);
 
+    const updateScreenshots = useCallback((newScreenshots: ProjectMediaType[]) => {
+        if (!project) return
+        const videos = project.media.filter(
+            m => {return m.mediaType === "VIDEO"}
+        )
+        setProject({
+            ...project,
+            media: [...videos, ...newScreenshots]
+        })
+    }, [project])
+
     if (loading) return (
         <>
             <FaSpinner className={`animate-spin`}/>
@@ -643,6 +656,16 @@ export function ProjectEditor() {
                                 >
                                     Screenshots
                                 </button>
+                                <button
+                                    type={"button"}
+                                    className={`
+                                    px-4 py-2 rounded-md text-white
+                                    ${detailsTab === "video" ? `bg-r-blue-700` : `bg-r-blue-500 hover:bg-r-blue-700 cursor-pointer`}
+                                    `}
+                                    onClick={() => setDetailsTab("video")}
+                                >
+                                    Video
+                                </button>
                             </div>
                             {detailsTab === "description" &&
                                 <MarkdownEditor
@@ -656,13 +679,22 @@ export function ProjectEditor() {
                             }
                             {detailsTab === "media" &&
                                 <MediaEditor
-                                    media={project.media}
+                                    media={project.media.filter(
+                                        m => {return m.mediaType === "SCREENSHOT"}
+                                    )}
                                     setHasChanged={setHasChanged}
-                                    setMedia={(media) => {
-                                        setProject({...project, media})
-                                    }}
+                                    setMedia={updateScreenshots}
                                     project={project}
                                     submitProject={submit}
+                                />
+                            }
+                            {
+                                detailsTab === "video" &&
+                                <VideoEditor
+                                    media={project.media.
+                                    filter(m => {return m.mediaType === "VIDEO"}
+                                    )}
+                                    project={project}
                                 />
                             }
                         </div>
@@ -672,7 +704,7 @@ export function ProjectEditor() {
                     <button
                         onClick={deleteProject}
                         className={`
-                        bg-red-700 hover:bg-red-500 text-white rounded-md px-4 py-2 flex gap-2 items-center self-start cursor-pointer
+                        mt-12 bg-red-700 hover:bg-red-500 text-white rounded-md px-4 py-2 flex gap-2 items-center self-start cursor-pointer
                         `}>
                         <FaTrash /> <span>Delete project</span>
                     </button>

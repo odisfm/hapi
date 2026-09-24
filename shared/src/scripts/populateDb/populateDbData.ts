@@ -1583,13 +1583,6 @@ export const projectMediaData: NewProjectMediaType[] = [
     {
         order: "",
         projectId: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
-        mediaUrl: "3e06ad3e-f992-4d12-808b-9ae346c6d653",
-        mediaType: "SCREENSHOT",
-        deviceType: "PHONE"
-    },
-    {
-        order: "",
-        projectId: "92e52aa6-92ae-44a6-90de-e04d4dc1f4c6",
         mediaUrl: "4d520f57-73b6-4620-a072-7ab1c0611264",
         mediaType: "SCREENSHOT",
         deviceType: "PHONE"
@@ -2009,13 +2002,6 @@ export const projectMediaData: NewProjectMediaType[] = [
     },
     {
         order: "",
-        projectId: "bccbeeea-dc23-45f6-b2c4-d5a4525df803",
-        mediaUrl: "e1e4f5e4-08d0-4eb4-8808-412fe12975ea",
-        mediaType: "SCREENSHOT",
-        deviceType: "PHONE"
-    },
-    {
-        order: "",
         projectId: "48a9a93c-e109-4c33-8675-f267b0fa880e",
         mediaUrl: "880ef0ad-9d31-4510-aa60-3f2f2c10f6bc",
         mediaType: "SCREENSHOT",
@@ -2034,13 +2020,6 @@ export const projectMediaData: NewProjectMediaType[] = [
         mediaUrl: "63cd773b-19cf-4bfd-a992-a8847f063c58",
         mediaType: "SCREENSHOT",
         deviceType: "WATCH"
-    },
-    {
-        order: "",
-        projectId: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
-        mediaUrl: "2e1c5e5c-d75b-4e80-9965-4bc456092ba5",
-        mediaType: "SCREENSHOT",
-        deviceType: "PHONE"
     },
     {
         order: "",
@@ -2139,13 +2118,6 @@ export const projectMediaData: NewProjectMediaType[] = [
         mediaUrl: "c363524f-0d20-4551-9023-0a43ef97332e",
         mediaType: "SCREENSHOT",
         deviceType: "DESKTOP"
-    },
-    {
-        order: "",
-        projectId: "508663c5-dce5-4e07-96ae-1300e6d96d88",
-        mediaUrl: "c363524f-0d20-4551-9023-0a43ef97332e",
-        mediaType: "SCREENSHOT",
-        deviceType: "PHONE"
     },
     {
         order: "",

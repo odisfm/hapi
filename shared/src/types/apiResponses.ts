@@ -69,6 +69,10 @@ export type CreateProjectMediaResponse = {
     projectMedia: ProjectMediaModel
 }
 
+export type CreateProjectVideoResponse = {
+    presignedUrl: string
+}
+
 export const ProjectSlugSchema = z.object({
     slug: z.string(),
     assignedDate: z.coerce.date(),

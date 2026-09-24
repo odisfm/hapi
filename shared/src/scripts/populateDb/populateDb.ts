@@ -144,7 +144,8 @@ for (const media of projectMediaData) {
                 mediaType: media.mediaType,
                 projectId: media.projectId,
                 deviceType: media.deviceType,
-                order: media.order
+                order: media.order,
+                status: "AVAILABLE"
             }
         })
     } catch (e) {

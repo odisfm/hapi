@@ -44,6 +44,7 @@ jobs:
           echo "lambda_db_url = \"${{ secrets.LAMBDA_DB_URL }}\"" >> terraform.tfvars
           echo "mailgun_domain = \"${{ secrets.MAILGUN_DOMAIN }}\"" >> terraform.tfvars
           echo "mailgun_key = \"${{ secrets.MAILGUN_KEY }}\"" >> terraform.tfvars
+          echo "transcode_role_arn = \"${{ secrets.TRANSCODE_ROLE_ARN }}\"" >> terraform.tfvars
 
       - name: tofu init
         working-directory: infra
@@ -70,6 +71,18 @@ jobs:
           rm -f package.json package-lock.json
           zip -r "$GITHUB_WORKSPACE/api/dist/lambda.zip" .
           unzip -l "$GITHUB_WORKSPACE/api/dist/lambda.zip" | grep -q @img || { echo "sharp binary missing"; exit 1; }
+
+      - name: build miscellaneous lambdas
+        run: |
+          cd infra/lambda
+          
+          cd transcode_in
+          npm run build:lambda
+          cd ..
+          
+          cd transcode_out
+          npm run build:lambda
+          cd ..
 
       - name: deploy aws
         id: deploy_aws

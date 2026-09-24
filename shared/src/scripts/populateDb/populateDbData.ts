@@ -1521,7 +1521,7 @@ export const projectData: NewProjectType[] = [
     }
 ]
 
-type NewProjectMediaType = Omit<ProjectMedia, "id">
+type NewProjectMediaType = Omit<ProjectMedia, "id" | "status">
 
 export const projectMediaData: NewProjectMediaType[] = [
     {
@@ -1551,6 +1551,13 @@ export const projectMediaData: NewProjectMediaType[] = [
         mediaUrl: "f50c81e0-dbf3-4fb7-9e87-bffb848d9c9d",
         mediaType: "SCREENSHOT",
         deviceType: "TABLET"
+    },
+    {
+        order: "",
+        projectId: "69064039-8d63-4fe2-b4c5-0fa46086da39",
+        mediaUrl: "111ba621-af81-4dc7-b8a6-563a05994c70",
+        mediaType: "VIDEO",
+        deviceType: "PHONE"
     },
     {
         order: "",

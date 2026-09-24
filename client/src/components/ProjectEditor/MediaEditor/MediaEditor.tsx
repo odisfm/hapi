@@ -183,6 +183,7 @@ export function MediaEditor({media, setMedia, setHasChanged, project, submitProj
                 order: "",
                 mediaType: "SCREENSHOT",
                 id: record.id,
+                status: record.status
 
             }])
             await submitProject()

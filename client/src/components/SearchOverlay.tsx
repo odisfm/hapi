@@ -24,7 +24,7 @@ export default function SearchOverlay({onClose}: {onClose: () => void}) {
         <>
             <div className={`absolute inset-x-0 top-full z-20 h-[22.5rem] bg-r-blue px-4 pb-8 pt-20 text-white`}>
                 <form onSubmit={submitSearch} className={`mx-auto flex w-full max-w-[calc(64rem+2rem)] translate-x-[2%] items-center gap-3 sm:translate-x-[5%]`}>
-                    <button type="submit" aria-label="Submit search" className={`text-4xl hover:text-r-red`}>
+                    <button type="submit" aria-label="Submit search" className={`text-4xl hover:text-r-red cursor-pointer`}>
                         <MdSearch />
                     </button>
                     <input
@@ -43,7 +43,7 @@ export default function SearchOverlay({onClose}: {onClose: () => void}) {
                                 key={term}
                                 type="button"
                                 onClick={() => searchQuickLink(term)}
-                                className={`text-white hover:text-r-red`}
+                                className={`text-white hover:text-r-red cursor-pointer`}
                             >
                                 {term}
                             </button>

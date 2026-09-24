@@ -52,7 +52,7 @@ export function App() {
                             type="button"
                             aria-label="Search"
                             onClick={() => setSearchOpen(!searchOpen)}
-                            className={`text-4xl hover:text-r-red`}
+                            className={`text-4xl hover:text-r-red cursor-pointer`}
                         >
                             <MdSearch />
                         </button>

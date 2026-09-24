@@ -190,7 +190,7 @@ export default function SearchResultsPage() {
                     type="button"
                     aria-expanded={filtersOpen}
                     onClick={toggleFilters}
-                    className={`flex items-center gap-2 text-sm font-bold text-black hover:text-r-red`}
+                    className={`flex items-center gap-2 text-sm font-bold text-black hover:text-r-red cursor-pointer`}
                 >
                     <img src="/icons/filter.svg" alt="" className={`h-4 w-4`} />
                     Filter

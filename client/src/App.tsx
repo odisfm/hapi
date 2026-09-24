@@ -11,7 +11,10 @@ export function App() {
     const isAdminPage = currentLocation.pathname === "/admin-login" || currentLocation.pathname === "/dashboard";
 
     useEffect(() => {
-        setSearchOpen(false);
+        if (searchOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setSearchOpen(false);
+        }
     }, [currentLocation.pathname]);
 
     return (

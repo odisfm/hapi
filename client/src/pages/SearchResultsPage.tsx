@@ -15,6 +15,7 @@ import {Paginator} from "../components/ProjectEditor/Paginator.tsx";
 import {PublicFilterSection} from "../components/ProjectList/PublicFilterSection.tsx";
 import {getShowcaseName} from "../utils/getShowcaseName.ts";
 import {FaSearch} from "react-icons/fa";
+import {MdCancel} from "react-icons/md";
 
 export default function SearchResultsPage() {
     const location = useLocation();
@@ -33,6 +34,8 @@ export default function SearchResultsPage() {
     const [showcases, setShowcases] = useState<Showcase[]>([]);
     const [filtersOpen, setFiltersOpen] = useState<boolean>(false);
     const anchorIndexRef = useRef<number>(0);
+    const searchBarRef = useRef<HTMLInputElement | null>(null);
+    const [searchBarText, setSearchBarText] = useState<string>("");
 
     function toggleFilters(): void {
         const nextFiltersOpen = !filtersOpen;
@@ -184,6 +187,42 @@ export default function SearchResultsPage() {
                     {loading ? "Loading..." : `${searchResultInfo?.totalResults ?? 0} results found`}
                 </p>
             </div>
+
+            <form className={`flex items-center gap-2`} onSubmit={((e) => {
+                e.preventDefault();
+                mutateSearchQuery({
+                    ...searchQuery, searchTerm: searchBarText
+                })
+            })}>
+                <input
+                    name={"searchBar"}
+                    className={`bg-neutral-200 rounded-lg p-2 flex-1`}
+                    placeholder={"search by project name, description, developers"}
+                    ref={searchBarRef}
+                    onChange={(e) => {setSearchBarText(e.target.value)}}
+                />
+                {searchBarText.length > 0 &&
+                    <button
+                        type={"button"}
+                        className={`p-3 rounded-md bg-r-yellow-500 hover:bg-r-yellow-400 cursor-pointer text-black`}
+                        onClick={() => {
+                            setSearchBarText("")
+                            searchBarRef.current!.value = ""
+                        }}
+                    >
+                        <MdCancel/>
+                    </button>
+                }
+                <button
+                    type={"submit"}
+                    className={`
+                    bg-r-red hover:bg-r-yellow-500 text-white hover:text-black px-4 py-2 rounded-xl flex items-center gap-2
+                    cursor-pointer transition-colors
+                    `}>
+                    <FaSearch />
+                    <span>Search</span>
+                </button>
+            </form>
 
             <div className={`flex items-center justify-between`}>
                 <button

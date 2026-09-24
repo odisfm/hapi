@@ -82,7 +82,7 @@ export default function SearchResultsPage() {
         (async () => {
            let res: Response
            try {
-               res = await fetch(`${API_URL}/category`, {credentials: "include"})
+               res = await fetch(`${API_URL}/category`)
                if (!res.ok) {
                    console.error(res)
                    throw new Error("Failed to get category")
@@ -99,7 +99,7 @@ export default function SearchResultsPage() {
         (async () => {
             let res: Response
             try {
-                res = await fetch(`${API_URL}/showcase/all`, {credentials: "include"})
+                res = await fetch(`${API_URL}/showcase/all`)
                 if (!res.ok) {
                     console.error(res)
                     throw new Error("Failed to get showcases")

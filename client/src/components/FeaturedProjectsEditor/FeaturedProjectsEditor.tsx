@@ -101,7 +101,7 @@ export function FeaturedProjectsEditor() {
 
     const toggleFeaturedProject = useCallback((id: string) => {
         const projectIdx = allProjects.findIndex((project) => project.id === id)
-        if (!projectIdx) return // can't happen
+        if (projectIdx === -1) return // can't happen
         const project = allProjects[projectIdx]
         setAllProjects([...allProjects.toSpliced(projectIdx, 1), {...project, featured: !project.featured}])
         if (!alteredProjects.includes(project.id)) {

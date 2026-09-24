@@ -60,7 +60,6 @@ export default function SearchResultsPage() {
                         )
                     );
                     res = await fetch(`${API_URL}/project/search?${params}`, {
-                        credentials: "include",
                     })
                     if (!res.ok) {
                         console.error(res)

@@ -23,6 +23,7 @@ import {SlugEditor} from "./SlugEditor.tsx";
 import {SaveButton} from "../generic/SaveButton.tsx";
 import { VideoEditor } from "./VideoEditor.tsx";
 import type {ProjectMediaType} from "@hapi/shared/types/projectMedia";
+import {Button} from "../generic/Button.tsx";
 
 const legendStyles = `font-medium`
 const inputStyles = `p-1 rounded-md bg-neutral-200 px-2 py-1 font-light`
@@ -472,7 +473,7 @@ export function ProjectEditor() {
                                     <div className={`flex gap-2 w-full`}>
                                         <button className={`
                                             bg-r-yellow-500 hover:bg-r-yellow-400 cursor-pointer
-                                            flex items-center gap-2 p-2 rounded-full
+                                            flex items-center gap-2 p-3 rounded-full
                                             `}
                                             onClick={() => {
                                                 iconUploadRef.current!.click()
@@ -637,36 +638,30 @@ export function ProjectEditor() {
 
                         <div className={`mt-4 flex flex-col gap-2`}>
                             <div className={`flex gap-2`}>
-                                <button
-                                    type={"button"}
-                                    className={`
-                                    px-4 py-2 rounded-md text-white
-                                    ${detailsTab === "description" ? `bg-r-blue-700` : `bg-r-blue-500 hover:bg-r-blue-700 cursor-pointer`}
-                                    `}
+                                <Button
+                                    buttonType={"button"}
+                                    color={detailsTab === "description" ? "blue" : "light-blue"}
+                                    active={detailsTab === "description"}
                                     onClick={() => setDetailsTab("description")}
                                 >
                                     Description
-                                </button>
-                                <button
-                                    type={"button"}
-                                    className={`
-                                    px-4 py-2 rounded-md text-white
-                                    ${detailsTab === "media" ? `bg-r-blue-700` : `bg-r-blue-500 hover:bg-r-blue-700 cursor-pointer`}
-                                    `}
+                                </Button>
+                                <Button
+                                    buttonType={"button"}
+                                    color={detailsTab === "media" ? "blue" : "light-blue"}
+                                    active={detailsTab === "media"}
                                     onClick={() => setDetailsTab("media")}
                                 >
                                     Screenshots
-                                </button>
-                                <button
-                                    type={"button"}
-                                    className={`
-                                    px-4 py-2 rounded-md text-white
-                                    ${detailsTab === "video" ? `bg-r-blue-700` : `bg-r-blue-500 hover:bg-r-blue-700 cursor-pointer`}
-                                    `}
+                                </Button>
+                                <Button
+                                    buttonType={"button"}
+                                    color={detailsTab === "video" ? "blue" : "light-blue"}
+                                    active={detailsTab === "video"}
                                     onClick={() => setDetailsTab("video")}
                                 >
                                     Video
-                                </button>
+                                </Button>
                             </div>
                             {detailsTab === "description" &&
                                 <MarkdownEditor
@@ -702,13 +697,13 @@ export function ProjectEditor() {
                     </form>
 
 
-                    <button
+                    <Button
                         onClick={deleteProject}
-                        className={`
-                        mt-12 bg-red-700 hover:bg-red-500 text-white rounded-md px-4 py-2 flex gap-2 items-center self-start cursor-pointer
-                        `}>
+                        color={"danger"}
+                        styles={`self-start`}
+                        >
                         <FaTrash /> <span>Delete project</span>
-                    </button>
+                    </Button>
                 </div>
             }
         </>

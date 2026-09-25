@@ -6,8 +6,8 @@ import {API_URL} from "../../../consts.ts";
 import {useModal} from "../../../contexts/modal/useModal.ts";
 import type {LoginSuccessResponse} from "@hapi/shared/types/apiResponses";
 import {useAuth} from "../../../contexts/auth/useAuth.ts";
+import {Button} from "../../../components/generic/Button.tsx";
 
-const buttonStyles = `px-6 py-2 rounded-md text-white bg-r-blue-700 hover:bg-r-blue self-start cursor-pointer`
 const fieldsetStyles = `flex flex-col gap-2 mt-6`
 
 type Stage = "request" | "verify" | "new-password" | "force-reset"
@@ -175,9 +175,9 @@ export function PasswordReset() {
                             <p className={`w-80`}>
                                 You must set a new password before proceeding.
                             </p>
-                            <button className={buttonStyles}>
+                            <Button>
                                 Log out and return home
-                            </button>
+                            </Button>
                         </>
                     }
 
@@ -249,9 +249,10 @@ export function PasswordReset() {
                     }
 
                     {
-                        <button
-                        type={"submit"}
-                        className={`${buttonStyles} mt-12`}
+                        <Button
+                            buttonType={"submit"}
+                            color={"blue"}
+                            styles={` mt-12`}
                         >
                             {(() => {
                                 if (stage === "request") {
@@ -263,7 +264,7 @@ export function PasswordReset() {
                                 }
                                 return ""
                             })()}
-                        </button>
+                        </Button>
                     }
                 </form>
         </div>

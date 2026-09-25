@@ -1,8 +1,10 @@
-import {isRouteErrorResponse, Link, useRouteError} from "react-router";
+import {isRouteErrorResponse, Link, useNavigate, useRouteError} from "react-router";
 import App from "../App.tsx";
+import {Button} from "./generic/Button.tsx";
 
 export function RootErrorBoundary() {
     const error = useRouteError()
+    const navigate = useNavigate();
     if (isRouteErrorResponse(error)) {
         return (
             <App>
@@ -17,15 +19,12 @@ export function RootErrorBoundary() {
                         <br/>
                         Let's take you back.
                     </p>
-                    <Link
-                        to={"/"}
-                        className={`
-                        min-w-48 shrink-0 rounded-full bg-r-blue px-16 py-3 text-center text-sm 
-                        font-bold text-white font-copy cursor-pointer
-                        `}
+                    <Button
+                        onClick={() => navigate("/")}
+                        variant={"hero"}
                     >
                         HOME PAGE
-                    </Link>
+                    </Button>
                 </div>
             </App>
         )

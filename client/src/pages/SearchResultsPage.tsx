@@ -16,6 +16,7 @@ import {PublicFilterSection} from "../components/ProjectList/PublicFilterSection
 import {getShowcaseName} from "../utils/getShowcaseName.ts";
 import {FaSearch} from "react-icons/fa";
 import {MdCancel} from "react-icons/md";
+import {Button} from "../components/generic/Button.tsx";
 
 export default function SearchResultsPage() {
     const location = useLocation();
@@ -198,26 +199,25 @@ export default function SearchResultsPage() {
                     onChange={(e) => {setSearchBarText(e.target.value)}}
                 />
                 {searchBarText.length > 0 &&
-                    <button
-                        type={"button"}
-                        className={`p-3 rounded-md bg-r-yellow-500 hover:bg-r-yellow-400 cursor-pointer text-black`}
+                    <Button
+                        buttonType={"button"}
+                        styles={`!p-3`}
                         onClick={() => {
                             setSearchBarText("")
                             searchBarRef.current!.value = ""
                         }}
                     >
                         <MdCancel/>
-                    </button>
+                    </Button>
                 }
-                <button
-                    type={"submit"}
-                    className={`
-                    bg-r-red hover:bg-r-yellow-500 text-white hover:text-black px-4 py-2 rounded-xl flex items-center gap-2
-                    cursor-pointer transition-colors
-                    `}>
+                <Button
+                    buttonType={"submit"}
+                    color={"red"}
+                    styles={`hover:!bg-r-yellow-500`}
+                >
                     <FaSearch />
                     <span>Search</span>
-                </button>
+                </Button>
             </form>
 
             <div className={`flex items-center justify-between`}>

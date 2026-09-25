@@ -383,7 +383,7 @@ export default function ProjectPage() {
                 </button>
             </section>
             <section id="how-to-install" className="mt-8 rounded-2xl bg-[#D9D9D9] px-6 pb-16 pt-10 text-black sm:px-7 sm:pb-20 sm:pt-12">
-                <h2 className="text-2xl font-bold">How to Install</h2>
+                <h2 className="text-2xl font-bold">Get {project.name}</h2>
                 <div className="mt-3 text-xs leading-5">
                     <p className="font-bold">Available On:</p>
                     <div className="mt-2 flex items-center gap-1">
@@ -397,9 +397,6 @@ export default function ProjectPage() {
                         ))}
                     </div>
                 </div>
-                <p className="mt-4 text-xs leading-5">Join the {project.name} Beta with a single tap.</p>
-                <p className="mt-2 text-xs leading-5">Choose your device and select TestFlight to begin.</p>
-                <p className="mt-2 text-xs leading-5">After installation, open {project.name} from your Home Screen and follow the quick onboarding steps to unlock immersive focus tracking and real-time alerts.</p>
                 {detectedLinkTypes.length <= 1 ? (
                     <a
                         href={project.links[0] || "#"}

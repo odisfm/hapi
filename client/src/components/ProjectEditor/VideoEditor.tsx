@@ -6,6 +6,7 @@ import {LuReplace} from "react-icons/lu";
 import {FaCloudUploadAlt, FaSpinner, FaTrash} from "react-icons/fa";
 import type {ProjectAdminType} from "@hapi/shared/types/project";
 import type {CreateProjectVideoResponse} from "@hapi/shared/types/apiResponses";
+import {Button} from "../generic/Button.tsx";
 
 type Props = {
     media: ProjectMediaType[]
@@ -148,33 +149,28 @@ export function VideoEditor({media, project}: Props) {
                 <div className={`flex gap-2`}>
                 {
                     pendingUrls.length === 0 && !videoUploading &&
-                    <button className={`
-                        px-4 py-2 rounded-md bg-r-blue-700 hover:bg-r-blue text-white cursor-pointer self-start
-                        flex items-center gap-2
-                        `}
-                            onClick={() => {
-                                if (!videoPickerRef.current) return
-                                videoPickerRef.current.click()
-                            }}
+                    <Button
+                        onClick={() => {
+                            if (!videoPickerRef.current) return
+                            videoPickerRef.current.click()
+                        }}
                     >
                         {!currentVideoUrl ?
-                            <><FaCloudUploadAlt/><span>Replace video</span></>
+                            <><FaCloudUploadAlt/><span>Upload video</span></>
                             : <><LuReplace/><span>Replace video</span></>
                         }
-                    </button>
+                    </Button>
                 }
                 {
                     currentVideoUrl &&
-                    <button className={`
-                        px-4 py-2 rounded-md bg-red-700 hover:bg-red-600 text-white cursor-pointer self-start
-                        flex items-center gap-2
-                        `}
-                            onClick={() => {
-                                deleteVideo(currentVideoUrl, true)
-                            }}
+                    <Button
+                        color={"danger"}
+                        onClick={() => {
+                            deleteVideo(currentVideoUrl, true)
+                        }}
                     >
                         <FaTrash/><span>Delete video</span>
-                    </button>
+                    </Button>
                 }
             </div>
                 :

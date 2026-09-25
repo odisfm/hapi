@@ -51,27 +51,29 @@ export function MediaCarousel({media, videoUrl, projectName}: Props) {
             return;
         }
 
-        const updateCarouselPadding = () => {
-            const firstMediaItem = mediaCarousel.firstElementChild as HTMLElement | null;
-            const lastMediaItem = mediaCarousel.lastElementChild as HTMLElement | null;
+        return // legacy code, keeping if needed later
 
-            if (!firstMediaItem || !lastMediaItem) {
-                setCarouselSidePadding({left: 0, right: 0});
-                return;
-            }
-
-            setCarouselSidePadding({
-                left: Math.max((mediaCarousel.clientWidth - firstMediaItem.offsetWidth) / 2, 0),
-                right: Math.max((mediaCarousel.clientWidth - lastMediaItem.offsetWidth) / 2, 0),
-            });
-        };
-
-        updateCarouselPadding();
-        const resizeObserver = new ResizeObserver(updateCarouselPadding);
-
-        resizeObserver.observe(mediaCarousel);
-
-        return () => resizeObserver.disconnect();
+        // const updateCarouselPadding = () => {
+        //     const firstMediaItem = mediaCarousel.firstElementChild as HTMLElement | null;
+        //     const lastMediaItem = mediaCarousel.lastElementChild as HTMLElement | null;
+        //
+        //     if (!firstMediaItem || !lastMediaItem) {
+        //         setCarouselSidePadding({left: 0, right: 0});
+        //         return;
+        //     }
+        //
+        //     setCarouselSidePadding({
+        //         left: Math.max((mediaCarousel.clientWidth - firstMediaItem.offsetWidth) / 2, 0),
+        //         right: Math.max((mediaCarousel.clientWidth - lastMediaItem.offsetWidth) / 2, 0),
+        //     });
+        // };
+        //
+        // updateCarouselPadding();
+        // const resizeObserver = new ResizeObserver(updateCarouselPadding);
+        //
+        // resizeObserver.observe(mediaCarousel);
+        //
+        // return () => resizeObserver.disconnect();
     }, [media.length]);
 
     useEffect(() => {
@@ -128,8 +130,15 @@ export function MediaCarousel({media, videoUrl, projectName}: Props) {
                 ref={mediaCarouselRef}
                 onScroll={updateMediaScrollState}
                 style={{paddingLeft: 0, paddingRight: 0}}
-                className="no-scrollbar flex h-80 snap-x snap-proximity gap-4 overflow-x-auto scroll-smooth"
+                className="no-scrollbar flex h-80 gap-4 overflow-x-auto scroll-smooth"
             >
+                {videoUrl &&
+                    <video
+                        controls={true}
+                        src={resolveStorageUrl(MEDIA_BUCKET_URL, videoUrl, ".webm")}
+                        className={``}
+                    />
+                }
                 {media.map((m) => (
                     <div key={m.uri} className="h-full shrink-0 snap-center">
                         <img

@@ -5,8 +5,9 @@ import type {ProjectDetailsResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL, deviceEnumFriendly} from "../consts.ts";
 import {AppIcon} from "../components/AppIcon.tsx";
 import Markdown from "react-markdown";
-import { FaSpinner } from "react-icons/fa";
+import {FaApple, FaSpinner } from "react-icons/fa";
 import {MediaCarousel} from "../components/MediaCarousel.tsx";
+import type {DeviceType} from "@hapi/shared/prisma/enums";
 
 
 function getLinkType(url: string) {
@@ -71,7 +72,7 @@ function PlatformIcon({label, source, available, selected = false}: {label: stri
 export default function ProjectPage() {
     const {projectSlug} = useParams();
     const [descriptionExpanded, setDescriptionExpanded] = useState(false);
-    const [selectedDeviceType, setSelectedDeviceType] = useState<string | null>(null);
+    const [selectedDeviceType, setSelectedDeviceType] = useState<DeviceType | null>(null);
     const [deviceFilterOpen, setDeviceFilterOpen] = useState(false);
     const [selectedLinkType, setSelectedLinkType] = useState<string | null>(null);
     const [linkDropdownOpen, setLinkDropdownOpen] = useState(false);
@@ -325,7 +326,7 @@ export default function ProjectPage() {
                                 aria-expanded={deviceFilterOpen}
                                 aria-haspopup="menu"
                                 onClick={() => setDeviceFilterOpen(!deviceFilterOpen)}
-                                className="flex items-center gap-2 text-xs font-bold"
+                                className="flex items-center gap-2 text-xs font-bold cursor-pointer"
                             >
                                 <span className="flex items-center gap-1">
                                     {mediaPlatformIcons.map((platformIcon) => (
@@ -337,13 +338,28 @@ export default function ProjectPage() {
                                         />
                                     ))}
                                 </span>
-                                <span>View All Devices</span>
+                                <span>
+                                    Showing {selectedDeviceType ? deviceEnumFriendly[selectedDeviceType] : "all devices"
+                                }</span>
                             </button>
                             {deviceFilterOpen && (
                                 <div
                                     role="menu"
-                                    className="absolute left-0 top-full z-10 mt-2 w-full rounded-lg bg-white p-1 shadow-lg"
+                                    className="absolute right-0 top-full z-10 mt-2 w-min rounded-lg bg-white shadow-lg p-2 pr-4"
                                 >
+                                    <button
+                                        type="button"
+                                        role="menuitem"
+                                        aria-pressed={selectedDeviceType === null}
+                                        onClick={() => setSelectedDeviceType(null)}
+                                        className={`
+                                        flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs cursor-pointer 
+                                        ${!selectedDeviceType ? "text-black" : "text-[#909090]"}
+                                        text-nowrap
+                                        `}
+                                    >
+                                        <FaApple size={16} className={`shrink-0`}/> <span>View all devices</span>
+                                    </button>
                                     {mediaPlatformIcons.map((platformIcon) => {
                                         const selected = selectedDeviceType === platformIcon.deviceType;
 
@@ -354,7 +370,10 @@ export default function ProjectPage() {
                                                 role="menuitem"
                                                 aria-pressed={selected}
                                                 onClick={() => setSelectedDeviceType(selected ? null : platformIcon.deviceType)}
-                                                className={`flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs ${selected ? "text-black" : "text-[#909090]"}`}
+                                                className={`
+                                                flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs cursor-pointer
+                                                ${selected ? "text-black" : "text-[#909090]"}
+                                                `}
                                             >
                                                 <PlatformIcon
                                                     label={platformIcon.label}

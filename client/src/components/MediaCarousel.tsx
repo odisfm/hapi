@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import {MdChevronLeft, MdChevronRight} from "react-icons/md";
 import type {ProjectMediaType} from "@hapi/shared/types/projectMedia";
+import { useModal } from "../contexts/modal/useModal";
 
 const MEDIA_BUCKET_URL = import.meta.env.VITE_S3_MEDIA_BUCKET;
 
@@ -23,6 +24,7 @@ export function MediaCarousel({media, videoUrl, projectName}: Props) {
     const [canScrollMediaRight, setCanScrollMediaRight] = useState(false);
     const [carouselSidePadding, setCarouselSidePadding] = useState({left: 0, right: 0});
     const mediaCarouselRef = useRef<HTMLDivElement>(null);
+    const modalContext = useModal()
 
     useEffect(() => {
         const mediaCarousel = mediaCarouselRef.current;
@@ -144,6 +146,10 @@ export function MediaCarousel({media, videoUrl, projectName}: Props) {
                         <img
                             src={resolveStorageUrl(MEDIA_BUCKET_URL, m.uri, ".webp")}
                             alt={`${projectName} screenshot`}
+                            onDoubleClick={() => modalContext.dispatchImage(
+                                resolveStorageUrl(MEDIA_BUCKET_URL, m.uri, ".webp"),
+                                `${projectName} screenshot`
+                            )}
                             onLoad={() => {
                                 updateMediaScrollState();
                                 const mediaCarousel = mediaCarouselRef.current;

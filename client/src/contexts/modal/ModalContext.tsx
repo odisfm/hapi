@@ -14,6 +14,7 @@ export type ModalInteraction = {
 
 export type ModalContextValue = {
     dispatchModal: (modal: ModalInteraction) => Promise<string>,
+    dispatchImage: (url: string, altText: string) => Promise<string>,
 }
 
 export const  ModalContext = createContext<ModalContextValue | null>(null)

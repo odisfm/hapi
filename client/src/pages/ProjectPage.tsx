@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import {useParams} from "react-router";
-import {MdChevronLeft, MdChevronRight} from "react-icons/md";
+import {MdChevronLeft, MdChevronRight, MdExpandMore} from "react-icons/md";
 import type {ProjectDetailsResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL, deviceEnumFriendly} from "../consts.ts";
 import {AppIcon} from "../components/AppIcon.tsx";
@@ -15,6 +15,22 @@ function resolveStorageUrl(bucketUrl: string, storageKey: string, extension = ""
     }
 
     return `${bucketUrl}${storageKey}${extension}`;
+}
+
+function getLinkType(url: string) {
+    if (url.includes("apps.apple.com")) {
+        return "App Store";
+    }
+
+    if (url.includes("testflight.apple.com")) {
+        return "TestFlight";
+    }
+
+    if (url.includes("github.com")) {
+        return "GitHub";
+    }
+
+    return "Website";
 }
 
 type ProjectPageState = {
@@ -68,6 +84,8 @@ export default function ProjectPage() {
     const [carouselSidePadding, setCarouselSidePadding] = useState({left: 0, right: 0});
     const [selectedDeviceType, setSelectedDeviceType] = useState<string | null>(null);
     const [deviceFilterOpen, setDeviceFilterOpen] = useState(false);
+    const [selectedLinkType, setSelectedLinkType] = useState<string | null>(null);
+    const [linkDropdownOpen, setLinkDropdownOpen] = useState(false);
     const [state, setState] = useState<ProjectPageState>({
         project: null,
         error: null,
@@ -75,6 +93,7 @@ export default function ProjectPage() {
     });
     const mediaCarouselRef = useRef<HTMLDivElement>(null);
     const deviceFilterRef = useRef<HTMLDivElement>(null);
+    const linkDropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const projectRequestController = new AbortController();
@@ -213,6 +232,31 @@ export default function ProjectPage() {
     }, [deviceFilterOpen]);
 
     useEffect(() => {
+        if (!linkDropdownOpen) {
+            return;
+        }
+
+        const closeLinkDropdown = (event: MouseEvent) => {
+            if (!linkDropdownRef.current?.contains(event.target as Node)) {
+                setLinkDropdownOpen(false);
+            }
+        };
+        const closeLinkDropdownOnEscape = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setLinkDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", closeLinkDropdown);
+        document.addEventListener("keydown", closeLinkDropdownOnEscape);
+
+        return () => {
+            document.removeEventListener("mousedown", closeLinkDropdown);
+            document.removeEventListener("keydown", closeLinkDropdownOnEscape);
+        };
+    }, [linkDropdownOpen]);
+
+    useEffect(() => {
         const animationFrame = requestAnimationFrame(updateMediaScrollState);
 
         return () => cancelAnimationFrame(animationFrame);
@@ -253,6 +297,9 @@ export default function ProjectPage() {
     const filteredScreenshotMedia = selectedDeviceType
         ? screenshotMedia.filter((media) => media.deviceType === selectedDeviceType)
         : screenshotMedia;
+    const detectedLinks = project.links.map((url) => ({url, type: getLinkType(url)}));
+    const detectedLinkTypes = [...new Set(detectedLinks.map((link) => link.type))];
+    const selectedLink = detectedLinks.find((link) => link.type === selectedLinkType);
     const developerLabel = project.developers.length === 1 ? "Developer" : "Developers";
 
     function updateMediaScrollState() {
@@ -487,14 +534,67 @@ export default function ProjectPage() {
                 <p className="mt-4 text-xs leading-5">Join the {project.name} Beta with a single tap.</p>
                 <p className="mt-2 text-xs leading-5">Choose your device and select TestFlight to begin.</p>
                 <p className="mt-2 text-xs leading-5">After installation, open {project.name} from your Home Screen and follow the quick onboarding steps to unlock immersive focus tracking and real-time alerts.</p>
-                <a
-                    href={project.links[0] || "#"}
-                    target={project.links[0] ? "_blank" : undefined}
-                    rel={project.links[0] ? "noreferrer" : undefined}
-                    className="mt-8 inline-block rounded-full bg-[#000054] px-10 py-2 text-center text-sm font-bold text-white"
-                >
-                    DOWNLOAD
-                </a>
+                {detectedLinkTypes.length <= 1 ? (
+                    <a
+                        href={project.links[0] || "#"}
+                        target={project.links[0] ? "_blank" : undefined}
+                        rel={project.links[0] ? "noreferrer" : undefined}
+                        className="mt-8 inline-block rounded-full bg-[#000054] px-10 py-2 text-center text-sm font-bold text-white"
+                    >
+                        {detectedLinkTypes[0]?.toUpperCase() || "DOWNLOAD"}
+                    </a>
+                ) : (
+                    <div ref={linkDropdownRef} className="relative mt-8 inline-flex text-sm font-bold text-white">
+                        {selectedLink ? (
+                            <a
+                                href={selectedLink.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="rounded-l-full bg-[#000054] px-10 py-2 text-center"
+                            >
+                                {selectedLink.type.toUpperCase()}
+                            </a>
+                        ) : (
+                            <button
+                                type="button"
+                                className="rounded-l-full bg-[#000054] px-10 py-2 text-center"
+                            >
+                                DOWNLOAD
+                            </button>
+                        )}
+                        <button
+                            type="button"
+                            aria-label="Choose download link"
+                            aria-expanded={linkDropdownOpen}
+                            aria-haspopup="menu"
+                            onClick={() => setLinkDropdownOpen(!linkDropdownOpen)}
+                            className="rounded-r-full bg-[#000054] px-3 py-2"
+                        >
+                            <MdExpandMore />
+                        </button>
+                        {linkDropdownOpen && (
+                            <div
+                                role="menu"
+                                className="absolute right-0 top-full z-10 mt-2 w-full rounded-lg bg-white p-1 text-xs text-black shadow-lg"
+                            >
+                                {detectedLinkTypes.map((linkType) => (
+                                    <button
+                                        key={linkType}
+                                        type="button"
+                                        role="menuitem"
+                                        onClick={() => {
+                                            setSelectedLinkType(linkType);
+                                            setLinkDropdownOpen(false);
+                                        }}
+                                        className="block w-full rounded-md px-3 py-2 text-left hover:bg-[#D9D9D9]"
+                                    >
+                                        {linkType}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
                 <a
                     href="mailto:hapi@rmit.edu.au"
                     className="ml-3 mt-8 inline-block rounded-full bg-[#909090] px-10 py-2 text-center text-sm font-bold text-white"

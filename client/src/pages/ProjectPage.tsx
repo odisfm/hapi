@@ -2,7 +2,7 @@ import {useEffect, useRef, useState} from "react";
 import {useParams} from "react-router";
 import {MdChevronLeft, MdChevronRight} from "react-icons/md";
 import type {ProjectDetailsResponse} from "@hapi/shared/types/apiResponses";
-import {API_URL} from "../consts.ts";
+import {API_URL, deviceEnumFriendly} from "../consts.ts";
 import {AppIcon} from "../components/AppIcon.tsx";
 import Markdown from "react-markdown";
 import { FaSpinner } from "react-icons/fa";
@@ -23,18 +23,28 @@ type ProjectPageState = {
     loading: boolean;
 }
 
-const platformIcons = [
-    {deviceType: "PHONE", label: "iPhone", source: "/icons/iphone.svg"},
-    {deviceType: "TABLET", label: "iPad", source: "/icons/ipad.svg"},
-    {deviceType: "DESKTOP", label: "macOS", source: "/icons/macbook.svg"},
-    {deviceType: "AR", label: "Vision Pro", source: "/icons/vision_pro.svg"},
-] as const;
+const mediaPlatformIconSources: Record<keyof typeof deviceEnumFriendly, string> = {
+    PHONE: "/icons/iphone.svg",
+    TABLET: "/icons/ipad.svg",
+    DESKTOP: "/icons/macbook.svg",
+    WATCH: "/icons/applewatch.svg",
+    AR: "/icons/vision_pro.svg",
+    TV: "/icons/tv.svg",
+};
 
-function PlatformIcon({label, source, available}: {label: string, source: string, available: boolean}) {
+const platformIconOrder = ["PHONE", "TABLET", "DESKTOP", "AR", "WATCH", "TV"] as const;
+
+const platformIcons = platformIconOrder.map((deviceType) => ({
+    deviceType,
+    label: deviceEnumFriendly[deviceType],
+    source: mediaPlatformIconSources[deviceType],
+}));
+
+function PlatformIcon({label, source, available, selected = false}: {label: string, source: string, available: boolean, selected?: boolean}) {
     return (
         <span
             aria-label={label}
-            className={`inline-block h-5 w-5 bg-current ${available ? "text-black" : "text-[#909090]"}`}
+            className={`inline-block h-5 w-5 bg-current ${selected ? "text-[#000054]" : available ? "text-black" : "text-[#909090]"}`}
             role="img"
             style={{
                 maskImage: `url(${source})`,
@@ -56,12 +66,15 @@ export default function ProjectPage() {
     const [canScrollMediaLeft, setCanScrollMediaLeft] = useState(false);
     const [canScrollMediaRight, setCanScrollMediaRight] = useState(false);
     const [carouselSidePadding, setCarouselSidePadding] = useState({left: 0, right: 0});
+    const [selectedDeviceType, setSelectedDeviceType] = useState<string | null>(null);
+    const [deviceFilterOpen, setDeviceFilterOpen] = useState(false);
     const [state, setState] = useState<ProjectPageState>({
         project: null,
         error: null,
         loading: true,
     });
     const mediaCarouselRef = useRef<HTMLDivElement>(null);
+    const deviceFilterRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const projectRequestController = new AbortController();
@@ -124,7 +137,7 @@ export default function ProjectPage() {
         mediaCarousel.addEventListener("scroll", updateScrollState);
 
         return () => mediaCarousel.removeEventListener("scroll", updateScrollState);
-    }, [projectSlug, state.project?.media.length]);
+    }, [projectSlug, state.project?.media.length, selectedDeviceType]);
 
     useEffect(() => {
         const mediaCarousel = mediaCarouselRef.current;
@@ -154,7 +167,50 @@ export default function ProjectPage() {
         resizeObserver.observe(mediaCarousel);
 
         return () => resizeObserver.disconnect();
-    }, [projectSlug, state.project?.media.length]);
+    }, [projectSlug, state.project?.media.length, selectedDeviceType]);
+
+    useEffect(() => {
+        if (!state.project || !selectedDeviceType) {
+            return;
+        }
+
+        const availableDeviceTypes = [...new Set(
+            state.project.media
+                .filter((media) => media.mediaType === "SCREENSHOT")
+                .map((media) => media.deviceType)
+        )];
+
+        if (!availableDeviceTypes.some((deviceType) => deviceType === selectedDeviceType)) {
+            const animationFrame = requestAnimationFrame(() => setSelectedDeviceType(null));
+
+            return () => cancelAnimationFrame(animationFrame);
+        }
+    }, [selectedDeviceType, state.project]);
+
+    useEffect(() => {
+        if (!deviceFilterOpen) {
+            return;
+        }
+
+        const closeDeviceFilter = (event: MouseEvent) => {
+            if (!deviceFilterRef.current?.contains(event.target as Node)) {
+                setDeviceFilterOpen(false);
+            }
+        };
+        const closeDeviceFilterOnEscape = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setDeviceFilterOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", closeDeviceFilter);
+        document.addEventListener("keydown", closeDeviceFilterOnEscape);
+
+        return () => {
+            document.removeEventListener("mousedown", closeDeviceFilter);
+            document.removeEventListener("keydown", closeDeviceFilterOnEscape);
+        };
+    }, [deviceFilterOpen]);
 
     useEffect(() => {
         const animationFrame = requestAnimationFrame(updateMediaScrollState);
@@ -185,6 +241,18 @@ export default function ProjectPage() {
         screenshotMedia
             .map((media) => media.deviceType)
     )];
+    const mediaPlatformIcons = availableDeviceTypes.map((deviceType) => ({
+        deviceType,
+        label: deviceEnumFriendly[deviceType as keyof typeof deviceEnumFriendly],
+        source: mediaPlatformIconSources[deviceType as keyof typeof mediaPlatformIconSources],
+    }));
+    const displayedPlatformIcons = [
+        ...platformIcons.filter((platformIcon) => availableDeviceTypes.includes(platformIcon.deviceType)),
+        ...platformIcons.filter((platformIcon) => !availableDeviceTypes.includes(platformIcon.deviceType)),
+    ].slice(0, 4);
+    const filteredScreenshotMedia = selectedDeviceType
+        ? screenshotMedia.filter((media) => media.deviceType === selectedDeviceType)
+        : screenshotMedia;
     const developerLabel = project.developers.length === 1 ? "Developer" : "Developers";
 
     function updateMediaScrollState() {
@@ -252,7 +320,7 @@ export default function ProjectPage() {
                         <div>
                             <dt className="font-bold">Available On</dt>
                             <dd className="mt-1 flex items-center gap-1">
-                                {platformIcons.map((platformIcon) => (
+                                {displayedPlatformIcons.map((platformIcon) => (
                                     <PlatformIcon
                                         key={platformIcon.deviceType}
                                         label={platformIcon.label}
@@ -283,7 +351,7 @@ export default function ProjectPage() {
                         style={{paddingLeft: carouselSidePadding.left, paddingRight: carouselSidePadding.right}}
                         className="no-scrollbar flex h-80 snap-x snap-proximity gap-4 overflow-x-auto scroll-smooth"
                     >
-                        {screenshotMedia.map((media) => (
+                        {filteredScreenshotMedia.map((media) => (
                             <div key={media.uri} className="h-full shrink-0 snap-center">
                                 <img
                                     src={resolveStorageUrl(MEDIA_BUCKET_URL, media.uri, ".webp")}
@@ -328,6 +396,57 @@ export default function ProjectPage() {
                             </button>
                         </>
                     )}
+                    {availableDeviceTypes.length > 1 && (
+                        <div ref={deviceFilterRef} className="relative mt-5 ml-auto flex w-max justify-end">
+                            <button
+                                type="button"
+                                aria-expanded={deviceFilterOpen}
+                                aria-haspopup="menu"
+                                onClick={() => setDeviceFilterOpen(!deviceFilterOpen)}
+                                className="flex items-center gap-2 text-xs font-bold"
+                            >
+                                <span className="flex items-center gap-1">
+                                    {mediaPlatformIcons.map((platformIcon) => (
+                                        <PlatformIcon
+                                            key={platformIcon.deviceType}
+                                            label={platformIcon.label}
+                                            source={platformIcon.source}
+                                            available
+                                        />
+                                    ))}
+                                </span>
+                                <span>View All Devices</span>
+                            </button>
+                            {deviceFilterOpen && (
+                                <div
+                                    role="menu"
+                                    className="absolute left-0 top-full z-10 mt-2 w-full rounded-lg bg-white p-1 shadow-lg"
+                                >
+                                    {mediaPlatformIcons.map((platformIcon) => {
+                                        const selected = selectedDeviceType === platformIcon.deviceType;
+
+                                        return (
+                                            <button
+                                                key={platformIcon.deviceType}
+                                                type="button"
+                                                role="menuitem"
+                                                aria-pressed={selected}
+                                                onClick={() => setSelectedDeviceType(selected ? null : platformIcon.deviceType)}
+                                                className={`flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs ${selected ? "text-black" : "text-[#909090]"}`}
+                                            >
+                                                <PlatformIcon
+                                                    label={platformIcon.label}
+                                                    source={platformIcon.source}
+                                                    available={selected}
+                                                />
+                                                <span>View {platformIcon.label}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </section>
             <section className={`
@@ -355,7 +474,7 @@ export default function ProjectPage() {
                 <div className="mt-3 text-xs leading-5">
                     <p className="font-bold">Available On:</p>
                     <div className="mt-2 flex items-center gap-1">
-                        {platformIcons.map((platformIcon) => (
+                        {displayedPlatformIcons.map((platformIcon) => (
                             <PlatformIcon
                                 key={platformIcon.deviceType}
                                 label={platformIcon.label}

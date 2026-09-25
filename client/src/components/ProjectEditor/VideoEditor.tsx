@@ -49,7 +49,7 @@ export function VideoEditor({media, project}: Props) {
         }
         let res: Response
         try {
-            res = await fetch(`${API_URL}/media/${uri}`, {
+            res = await fetch(`${API_URL}/media/video/${uri}`, {
                 credentials: "include",
                 method: "DELETE"
             })
@@ -129,7 +129,7 @@ export function VideoEditor({media, project}: Props) {
                 <ul>
                     {failedUrls.map((url) => (
                         <li key={url} className={`flex items-center gap-2`}>
-                            <span className={`bg-red-950 text-white rounded-md mb-2`}>Video upload failed! Check the video file is correct. id: {url}</span>
+                            <span className={`bg-red-800 p-2 text-white rounded-md mb-2`}>Video upload failed! Check the video file is correct. id: {url}</span>
                             <button
                                 className={`ml-auto px-2 py-1 rounded-md cursor-pointer bg-neutral-500`}
                                 onClick={() => deleteVideo(url, false)}

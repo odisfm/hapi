@@ -223,6 +223,29 @@ export default function ProjectPage() {
         return null;
     }, [state.project]);
 
+    useEffect(() => {
+        if (!state.project) return
+
+        function getDeviceType(): DeviceType {
+            const isTouch = window.matchMedia('(pointer: coarse)').matches;
+            if (!isTouch) return 'DESKTOP';
+
+            const shortSide = Math.min(window.screen.width, window.screen.height);
+            return shortSide < 600 ? 'PHONE' : 'TABLET';
+        }
+
+        const deviceType = getDeviceType();
+         (async () => {
+            for (const m of state.project!.media) {
+                if (m.deviceType === deviceType) {
+                    return setSelectedDeviceType(deviceType)
+                }
+            }
+            setSelectedDeviceType(null);
+        })()
+
+    }, [state.project]);
+
     if (state.loading) {
         return <FaSpinner className={`text-[5rem] mt-20 animate-spin`}/>;
     }

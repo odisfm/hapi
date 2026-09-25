@@ -7,7 +7,7 @@ const s3 = new S3Client()
 
 export const handler = async (event: S3Event) => {
     const key = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));
-    const uri = key.replace("transcode_out/", "").replace(".webm", "")
+    const uri = key.replace("transcode_out/", "").replace("transcode_out/", "").replace(".webm", "")
 
     const record = await db.projectMedia.findUnique({
         where: {mediaUrl: uri}

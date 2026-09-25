@@ -202,7 +202,7 @@ projectRouter.get("/search", async (c) => {
 })
 
 projectRouter.get("/:projectSlug", async (c) => {
-    const projectSlug = c.req.param("projectSlug")
+    const projectSlug = c.req.param("projectSlug").toLowerCase()
     const slugRecord = await db.projectSlug.findUnique({
             where: {
                 slug: projectSlug
@@ -403,7 +403,7 @@ projectRouter.post("/id/:projectId/slug", needsAuth, async (c) => {
         await db.projectSlug.create({
             data: {
                 projectId,
-                slug: body.slug,
+                slug: body.slug.toLowerCase(),
                 assignedDate: new Date()
             }
         })
@@ -411,7 +411,7 @@ projectRouter.post("/id/:projectId/slug", needsAuth, async (c) => {
     } catch (e) {
         if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
             const existingSlugRecord = await db.projectSlug.findUnique({
-                where: {slug: body.slug}, include: {project: true}
+                where: {slug: body.slug.toLowerCase()}, include: {project: true}
             })
             return c.json({
                 error: `Slug already taken by project with name "${existingSlugRecord!.project.name}"`}
@@ -432,7 +432,7 @@ projectRouter.delete("/id/:projectId/slug", needsAuth, async (c) => {
     }
     try {
         await db.projectSlug.delete({
-            where: {slug: body.slug, projectId: projectId}
+            where: {slug: body.slug.toLowerCase(), projectId: projectId}
         })
         return c.json({}, 200)
     } catch (e) {

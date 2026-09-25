@@ -64,8 +64,12 @@ export function SlugEditor({projectId}: Props) {
                     body: JSON.stringify({slug: slug} satisfies AlterProjectSlugRequestType),
                 })
                 if (!res.ok) {
-                    const json = await res.json()
-                    throw new Error(json?.error || res.statusText)
+                    try {
+                        const json = await res.json()
+                        throw new Error(json?.error || res.statusText)
+                    } catch {
+                        throw new Error(res.statusText)
+                    }
                 }
                 await getSlugs()
             } catch (error) {
@@ -88,8 +92,14 @@ export function SlugEditor({projectId}: Props) {
                 body: JSON.stringify({slug: slug} satisfies AlterProjectSlugRequestType),
             })
             if (!res.ok) {
-                const json = await res.json()
-                throw new Error(json?.error || res.statusText)
+                let errorMessage = ""
+                try {
+                    const json = await res.json()
+                    errorMessage = json?.error || res.statusText
+                } catch {
+                    throw new Error(res.statusText)
+                }
+                throw new Error(errorMessage)
             }
             await getSlugs()
             inputRef.current!.value = ""

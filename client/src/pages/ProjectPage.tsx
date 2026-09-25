@@ -290,16 +290,25 @@ export default function ProjectPage() {
                             </dd>
                         </div>
                     </dl>
-                    <a
-                        href="#how-to-install"
-                        onClick={(event) => {
-                            event.preventDefault();
-                            document.getElementById("how-to-install")?.scrollIntoView({behavior: "smooth"});
-                        }}
-                        className="min-w-48 shrink-0 rounded-full bg-[#000054] px-16 py-3 text-center text-sm font-bold text-white font-copy"
-                    >
-                        GET
-                    </a>
+                    {
+                        project.links.length > 0 ?
+                            <a
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    document.getElementById("how-to-install")?.scrollIntoView({behavior: "smooth"});
+                                }}
+                                className="min-w-48 shrink-0 rounded-full bg-[#000054] px-16 py-3 text-center text-sm font-bold text-white font-copy cursor-pointer"
+                            >
+                                GET
+                            </a>
+                            :
+                            <a
+                                href={`mailto:hapi@rmit.edu.au`}
+                                className="min-w-48 shrink-0 rounded-full bg-[#000054] px-16 py-3 text-center text-sm font-bold text-white font-copy cursor-pointer"
+                            >
+                                CONTACT US
+                            </a>
+                    }
                 </div>
             </section>
             <section className="mt-8">
@@ -382,89 +391,92 @@ export default function ProjectPage() {
                     {descriptionExpanded ? "View Less ↑" : "View More ↓"}
                 </button>
             </section>
-            <section id="how-to-install" className="mt-8 rounded-2xl bg-[#D9D9D9] px-6 pb-16 pt-10 text-black sm:px-7 sm:pb-20 sm:pt-12">
-                <h2 className="text-2xl font-bold">Get {project.name}</h2>
-                <div className="mt-3 text-xs leading-5">
-                    <p className="font-bold">Available On:</p>
-                    <div className="mt-2 flex items-center gap-1">
-                        {displayedPlatformIcons.map((platformIcon) => (
-                            <PlatformIcon
-                                key={platformIcon.deviceType}
-                                label={platformIcon.label}
-                                source={platformIcon.source}
-                                available={availableDeviceTypes.includes(platformIcon.deviceType)}
-                            />
-                        ))}
+            {project.links.length > 0 &&
+                <section id="how-to-install"
+                         className="mt-8 rounded-2xl bg-[#D9D9D9] px-6 pb-16 pt-10 text-black sm:px-7 sm:pb-20 sm:pt-12">
+                    <h2 className="text-2xl font-bold">Get {project.name}</h2>
+                    <div className="mt-3 text-xs leading-5">
+                        <p className="font-bold">Available On:</p>
+                        <div className="mt-2 flex items-center gap-1">
+                            {displayedPlatformIcons.map((platformIcon) => (
+                                <PlatformIcon
+                                    key={platformIcon.deviceType}
+                                    label={platformIcon.label}
+                                    source={platformIcon.source}
+                                    available={availableDeviceTypes.includes(platformIcon.deviceType)}
+                                />
+                            ))}
+                        </div>
                     </div>
-                </div>
-                {detectedLinkTypes.length <= 1 ? (
-                    <a
-                        href={project.links[0] || "#"}
-                        target={project.links[0] ? "_blank" : undefined}
-                        rel={project.links[0] ? "noreferrer" : undefined}
-                        className="mt-8 inline-block rounded-full bg-[#000054] px-10 py-2 text-center text-sm font-bold text-white"
-                    >
-                        {detectedLinkTypes[0]?.toUpperCase() || "DOWNLOAD"}
-                    </a>
-                ) : (
-                    <div ref={linkDropdownRef} className="relative mt-8 inline-flex text-sm font-bold text-white">
-                        {selectedLink ? (
-                            <a
-                                href={selectedLink.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="rounded-l-full bg-[#000054] px-10 py-2 text-center"
-                            >
-                                {selectedLink.type.toUpperCase()}
-                            </a>
-                        ) : (
+                    {detectedLinkTypes.length <= 1 ? (
+                        <a
+                            href={project.links[0] || "#"}
+                            target={project.links[0] ? "_blank" : undefined}
+                            rel={project.links[0] ? "noreferrer" : undefined}
+                            className="mt-8 inline-block rounded-full bg-[#000054] px-10 py-2 text-center text-sm font-bold text-white"
+                        >
+                            {detectedLinkTypes[0]?.toUpperCase() || "DOWNLOAD"}
+                        </a>
+                    ) : (
+                        <div ref={linkDropdownRef} className="relative mt-8 inline-flex text-sm font-bold text-white">
+                            {selectedLink ? (
+                                <a
+                                    href={selectedLink.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="rounded-l-full bg-[#000054] px-10 py-2 text-center"
+                                >
+                                    {selectedLink.type.toUpperCase()}
+                                </a>
+                            ) : (
+                                <button
+                                    type="button"
+                                    className="rounded-l-full bg-[#000054] px-10 py-2 text-center"
+                                >
+                                    DOWNLOAD
+                                </button>
+                            )}
                             <button
                                 type="button"
-                                className="rounded-l-full bg-[#000054] px-10 py-2 text-center"
+                                aria-label="Choose download link"
+                                aria-expanded={linkDropdownOpen}
+                                aria-haspopup="menu"
+                                onClick={() => setLinkDropdownOpen(!linkDropdownOpen)}
+                                className="rounded-r-full bg-[#000054] px-3 py-2"
                             >
-                                DOWNLOAD
+                                <MdExpandMore/>
                             </button>
-                        )}
-                        <button
-                            type="button"
-                            aria-label="Choose download link"
-                            aria-expanded={linkDropdownOpen}
-                            aria-haspopup="menu"
-                            onClick={() => setLinkDropdownOpen(!linkDropdownOpen)}
-                            className="rounded-r-full bg-[#000054] px-3 py-2"
-                        >
-                            <MdExpandMore />
-                        </button>
-                        {linkDropdownOpen && (
-                            <div
-                                role="menu"
-                                className="absolute right-0 top-full z-10 mt-2 w-full rounded-lg bg-white p-1 text-xs text-black shadow-lg"
-                            >
-                                {detectedLinkTypes.map((linkType) => (
-                                    <button
-                                        key={linkType}
-                                        type="button"
-                                        role="menuitem"
-                                        onClick={() => {
-                                            setSelectedLinkType(linkType);
-                                            setLinkDropdownOpen(false);
-                                        }}
-                                        className="block w-full rounded-md px-3 py-2 text-left hover:bg-[#D9D9D9]"
-                                    >
-                                        {linkType}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                )}
-                <a
-                    href="mailto:hapi@rmit.edu.au"
-                    className="ml-3 mt-8 inline-block rounded-full bg-[#909090] px-10 py-2 text-center text-sm font-bold text-white"
-                >
-                    CONTACT US
-                </a>
-            </section>
+                            {linkDropdownOpen && (
+                                <div
+                                    role="menu"
+                                    className="absolute right-0 top-full z-10 mt-2 w-full rounded-lg bg-white p-1 text-xs text-black shadow-lg"
+                                >
+                                    {detectedLinkTypes.map((linkType) => (
+                                        <button
+                                            key={linkType}
+                                            type="button"
+                                            role="menuitem"
+                                            onClick={() => {
+                                                setSelectedLinkType(linkType);
+                                                setLinkDropdownOpen(false);
+                                            }}
+                                            className="block w-full rounded-md px-3 py-2 text-left hover:bg-[#D9D9D9]"
+                                        >
+                                            {linkType}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    <a
+                        href="mailto:hapi@rmit.edu.au"
+                        className="ml-3 mt-8 inline-block rounded-full bg-[#909090] px-10 py-2 text-center text-sm font-bold text-white"
+                    >
+                        CONTACT US
+                    </a>
+                </section>
+            }
         </article>
     );
 }

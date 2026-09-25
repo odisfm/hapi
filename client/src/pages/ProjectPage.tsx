@@ -1,21 +1,13 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {useParams} from "react-router";
-import {MdChevronLeft, MdChevronRight, MdExpandMore} from "react-icons/md";
+import {MdExpandMore} from "react-icons/md";
 import type {ProjectDetailsResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL, deviceEnumFriendly} from "../consts.ts";
 import {AppIcon} from "../components/AppIcon.tsx";
 import Markdown from "react-markdown";
 import { FaSpinner } from "react-icons/fa";
+import {MediaCarousel} from "../components/MediaCarousel.tsx";
 
-const MEDIA_BUCKET_URL = import.meta.env.VITE_S3_MEDIA_BUCKET;
-
-function resolveStorageUrl(bucketUrl: string, storageKey: string, extension = "") {
-    if (storageKey.startsWith("http://") || storageKey.startsWith("https://")) {
-        return storageKey;
-    }
-
-    return `${bucketUrl}${storageKey}${extension}`;
-}
 
 function getLinkType(url: string) {
     if (url.includes("apps.apple.com")) {
@@ -79,9 +71,6 @@ function PlatformIcon({label, source, available, selected = false}: {label: stri
 export default function ProjectPage() {
     const {projectSlug} = useParams();
     const [descriptionExpanded, setDescriptionExpanded] = useState(false);
-    const [canScrollMediaLeft, setCanScrollMediaLeft] = useState(false);
-    const [canScrollMediaRight, setCanScrollMediaRight] = useState(false);
-    const [carouselSidePadding, setCarouselSidePadding] = useState({left: 0, right: 0});
     const [selectedDeviceType, setSelectedDeviceType] = useState<string | null>(null);
     const [deviceFilterOpen, setDeviceFilterOpen] = useState(false);
     const [selectedLinkType, setSelectedLinkType] = useState<string | null>(null);
@@ -91,7 +80,6 @@ export default function ProjectPage() {
         error: null,
         loading: true,
     });
-    const mediaCarouselRef = useRef<HTMLDivElement>(null);
     const deviceFilterRef = useRef<HTMLDivElement>(null);
     const linkDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -137,56 +125,6 @@ export default function ProjectPage() {
 
         return () => projectRequestController.abort();
     }, [projectSlug]);
-
-    useEffect(() => {
-        const mediaCarousel = mediaCarouselRef.current;
-
-        if (!mediaCarousel) {
-            return;
-        }
-
-        const updateScrollState = () => {
-            setCanScrollMediaLeft(mediaCarousel.scrollLeft > 0);
-            setCanScrollMediaRight(
-                mediaCarousel.scrollLeft + mediaCarousel.clientWidth < mediaCarousel.scrollWidth - 1
-            );
-        };
-
-        updateScrollState();
-        mediaCarousel.addEventListener("scroll", updateScrollState);
-
-        return () => mediaCarousel.removeEventListener("scroll", updateScrollState);
-    }, [projectSlug, state.project?.media.length, selectedDeviceType]);
-
-    useEffect(() => {
-        const mediaCarousel = mediaCarouselRef.current;
-
-        if (!mediaCarousel) {
-            return;
-        }
-
-        const updateCarouselPadding = () => {
-            const firstMediaItem = mediaCarousel.firstElementChild as HTMLElement | null;
-            const lastMediaItem = mediaCarousel.lastElementChild as HTMLElement | null;
-
-            if (!firstMediaItem || !lastMediaItem) {
-                setCarouselSidePadding({left: 0, right: 0});
-                return;
-            }
-
-            setCarouselSidePadding({
-                left: Math.max((mediaCarousel.clientWidth - firstMediaItem.offsetWidth) / 2, 0),
-                right: Math.max((mediaCarousel.clientWidth - lastMediaItem.offsetWidth) / 2, 0),
-            });
-        };
-
-        updateCarouselPadding();
-        const resizeObserver = new ResizeObserver(updateCarouselPadding);
-
-        resizeObserver.observe(mediaCarousel);
-
-        return () => resizeObserver.disconnect();
-    }, [projectSlug, state.project?.media.length, selectedDeviceType]);
 
     useEffect(() => {
         if (!state.project || !selectedDeviceType) {
@@ -256,16 +194,33 @@ export default function ProjectPage() {
         };
     }, [linkDropdownOpen]);
 
-    useEffect(() => {
-        const animationFrame = requestAnimationFrame(updateMediaScrollState);
-
-        return () => cancelAnimationFrame(animationFrame);
-    }, [carouselSidePadding]);
 
     useEffect(() => {
         if (!document.scrollingElement) return
         document.scrollingElement.scrollTop = 0
     }, []);
+
+    const filteredScreenshotMedia = useMemo(() => {
+        if (!state.project) return []
+        if (!selectedDeviceType) return state.project.media.filter((media) => {
+            return media.mediaType === "SCREENSHOT" && media.status === "AVAILABLE"
+        });
+        return state.project.media.filter((media) => {
+            return media.deviceType === selectedDeviceType &&
+                media.status === "AVAILABLE" &&
+                media.mediaType === "SCREENSHOT"
+
+        })
+
+    }, [selectedDeviceType, state.project])
+
+    const videoUrl: string | null = useMemo(() => {
+        if (!state.project || !state.project.media) return null;
+        for (const m of state.project.media) {
+            if (m.mediaType === "VIDEO" && m.status === "AVAILABLE") return m.uri
+        }
+        return null;
+    }, [state.project]);
 
     if (state.loading) {
         return <FaSpinner className={`text-[5rem] mt-20 animate-spin`}/>;
@@ -294,55 +249,12 @@ export default function ProjectPage() {
         ...platformIcons.filter((platformIcon) => availableDeviceTypes.includes(platformIcon.deviceType)),
         ...platformIcons.filter((platformIcon) => !availableDeviceTypes.includes(platformIcon.deviceType)),
     ].slice(0, 4);
-    const filteredScreenshotMedia = selectedDeviceType
-        ? screenshotMedia.filter((media) => media.deviceType === selectedDeviceType)
-        : screenshotMedia;
+
     const detectedLinks = project.links.map((url) => ({url, type: getLinkType(url)}));
     const detectedLinkTypes = [...new Set(detectedLinks.map((link) => link.type))];
     const selectedLink = detectedLinks.find((link) => link.type === selectedLinkType);
     const developerLabel = project.developers.length === 1 ? "Developer" : "Developers";
 
-    function updateMediaScrollState() {
-        const mediaCarousel = mediaCarouselRef.current;
-
-        if (!mediaCarousel) {
-            return;
-        }
-
-        setCanScrollMediaLeft(mediaCarousel.scrollLeft > 0);
-        setCanScrollMediaRight(
-            mediaCarousel.scrollLeft + mediaCarousel.clientWidth < mediaCarousel.scrollWidth - 1
-        );
-    }
-
-    function scrollMedia(direction: number) {
-        const mediaCarousel = mediaCarouselRef.current;
-
-        if (!mediaCarousel) {
-            return;
-        }
-
-        const mediaItems = Array.from(mediaCarousel.children) as HTMLElement[];
-        const carouselCenter = mediaCarousel.scrollLeft + mediaCarousel.clientWidth / 2;
-        const centeredItemIndex = mediaItems.reduce((closestIndex, mediaItem, itemIndex) => {
-            const itemCenter = mediaItem.offsetLeft + mediaItem.offsetWidth / 2;
-            const closestItemCenter = mediaItems[closestIndex].offsetLeft + mediaItems[closestIndex].offsetWidth / 2;
-
-            return Math.abs(itemCenter - carouselCenter) < Math.abs(closestItemCenter - carouselCenter)
-                ? itemIndex
-                : closestIndex;
-        }, 0);
-        const targetItem = mediaItems[centeredItemIndex + direction];
-
-        if (!targetItem) {
-            return;
-        }
-
-        mediaCarousel.scrollTo({
-            behavior: "smooth",
-            left: targetItem.offsetLeft - (mediaCarousel.clientWidth - targetItem.offsetWidth) / 2,
-        });
-    }
 
     return (
         <article className="w-full max-w-5xl font-copy">
@@ -392,57 +304,11 @@ export default function ProjectPage() {
             </section>
             <section className="mt-8">
                 <div className="relative">
-                    <div
-                        ref={mediaCarouselRef}
-                        onScroll={updateMediaScrollState}
-                        style={{paddingLeft: carouselSidePadding.left, paddingRight: carouselSidePadding.right}}
-                        className="no-scrollbar flex h-80 snap-x snap-proximity gap-4 overflow-x-auto scroll-smooth"
-                    >
-                        {filteredScreenshotMedia.map((media) => (
-                            <div key={media.uri} className="h-full shrink-0 snap-center">
-                                <img
-                                    src={resolveStorageUrl(MEDIA_BUCKET_URL, media.uri, ".webp")}
-                                    alt={`${project.name} screenshot`}
-                                    onLoad={() => {
-                                        updateMediaScrollState();
-                                        const mediaCarousel = mediaCarouselRef.current;
-                                        const firstMediaItem = mediaCarousel?.firstElementChild as HTMLElement | null;
-                                        const lastMediaItem = mediaCarousel?.lastElementChild as HTMLElement | null;
-
-                                        if (mediaCarousel && firstMediaItem && lastMediaItem) {
-                                            setCarouselSidePadding({
-                                                left: Math.max((mediaCarousel.clientWidth - firstMediaItem.offsetWidth) / 2, 0),
-                                                right: Math.max((mediaCarousel.clientWidth - lastMediaItem.offsetWidth) / 2, 0),
-                                            });
-                                        }
-                                    }}
-                                    className="h-full w-auto max-w-none rounded-lg object-contain"
-                                />
-                            </div>
-                        ))}
-                    </div>
-                    {(canScrollMediaLeft || canScrollMediaRight) && (
-                        <>
-                            <button
-                                type="button"
-                                aria-label="Previous screenshot"
-                                disabled={!canScrollMediaLeft}
-                                onClick={() => scrollMedia(-1)}
-                                className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1 text-2xl disabled:invisible"
-                            >
-                                <MdChevronLeft />
-                            </button>
-                            <button
-                                type="button"
-                                aria-label="Next screenshot"
-                                disabled={!canScrollMediaRight}
-                                onClick={() => scrollMedia(1)}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1 text-2xl disabled:invisible"
-                            >
-                                <MdChevronRight />
-                            </button>
-                        </>
-                    )}
+                    <MediaCarousel
+                        media={filteredScreenshotMedia}
+                        videoUrl={videoUrl}
+                        projectName={project.name}
+                    />
                     {availableDeviceTypes.length > 1 && (
                         <div ref={deviceFilterRef} className="relative mt-5 ml-auto flex w-max justify-end">
                             <button

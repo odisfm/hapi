@@ -168,7 +168,7 @@ export function ProjectList() {
                     {loading && <FaSpinner className={`animate-spin`}/>}
                 </div>
 
-                <Link to={`project/new`} className={`
+                <Link to={`/dashboard/project/new`} className={`
                 ml-auto rounded-lg bg-r-red hover:bg-r-yellow-500 text-white hover:text-black transition-colors px-4 py-2 cursor-pointer
                 font-bold flex items-center gap-2
                 `}>

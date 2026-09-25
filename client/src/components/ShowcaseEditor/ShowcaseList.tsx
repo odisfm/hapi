@@ -38,7 +38,7 @@ export function ShowcaseList() {
 
     return (
         <div className={`flex flex-col gap-2`}>
-            <Link to={`project/new`} className={`
+            <Link to={`/dashboard/showcase/new`} className={`
                 ml-auto rounded-lg bg-r-red hover:bg-r-yellow-500 text-white hover:text-black transition-colors px-4 py-2 cursor-pointer
                 font-bold flex items-center gap-2 mb-4
                 `}>

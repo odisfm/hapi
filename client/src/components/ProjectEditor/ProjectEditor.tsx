@@ -67,7 +67,7 @@ export function ProjectEditor() {
         document.scrollingElement.scrollTop = 0
     }, []);
 
-    async function createNewProject() {
+    const createNewProject = useCallback(async () => {
         try {
 
             const categoryRes = await fetch(`${API_URL}/category`, {
@@ -111,7 +111,8 @@ export function ProjectEditor() {
                 iconUrl: "",
                 published: false,
                 rejectionReason: "",
-                approvalStatus: "APPROVED"
+                approvalStatus: "APPROVED",
+                featured: false
             }
 
             console.log(newProjectData);
@@ -143,7 +144,7 @@ export function ProjectEditor() {
             })
             return
         }
-    }
+    }, [modalContext])
 
     const getProject = useCallback(async () => {
         let res: Response
@@ -179,7 +180,7 @@ export function ProjectEditor() {
            await getProject();
         })()
 
-    }, [projectId, getProject])
+    }, [projectId, getProject, createNewProject])
 
     useEffect(() => {
         (async () => {

@@ -1,10 +1,10 @@
 import {Link, Outlet, useLocation} from "react-router";
 import {MdSearch} from "react-icons/md";
-import {useEffect, useState} from "react";
+import {type ReactNode, useEffect, useState} from "react";
 import {useAuth} from "./contexts/auth/useAuth.ts";
 import SearchOverlay from "./components/SearchOverlay.tsx";
 
-export function App() {
+export function App({children}: {children?: ReactNode}) {
     const authenticationContext = useAuth()
     const currentLocation = useLocation();
     const [searchOpen, setSearchOpen] = useState(false);
@@ -62,6 +62,7 @@ export function App() {
             </div>
             <main className={`h-full w-full flex flex-col items-center px-4 pb-12 pt-8 bg-neutral-100`}>
                 <Outlet/>
+                {children}
             </main>
             {!isAdminPage &&
                 <footer className="w-full bg-[#D1D1D6] text-xs text-black">

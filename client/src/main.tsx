@@ -17,11 +17,13 @@ import {ShowcaseList} from "./components/ShowcaseEditor/ShowcaseList.tsx";
 import {ShowcaseEditor} from "./components/ShowcaseEditor/ShowcaseEditor.tsx";
 import SearchResultsPage from "./pages/SearchResultsPage.tsx";
 import {PasswordReset} from "./pages/admin/PasswordReset/PasswordReset.tsx";
+import {RootErrorBoundary} from "./components/RootErrorBoundary.tsx";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <App />,
+        ErrorBoundary: RootErrorBoundary,
         children: [
             {
                 index: true,

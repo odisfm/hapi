@@ -25,7 +25,7 @@ export const handler = async (event: S3Event) => {
     await s3.send(new CopyObjectCommand({
         Bucket: bucket,
         CopySource: `${bucket}/${encodeURIComponent(key)}`,
-        Key: uri,
+        Key: `${uri}.webm`,
     }));
     await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
 

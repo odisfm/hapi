@@ -32,11 +32,16 @@ export function ShowcaseEditor() {
                     credentials: "include"
                 });
             } else {
-                res = await fetch(`${API_URL}/showcase}`, {
+                res = await fetch(`${API_URL}/showcase`, {
                     credentials: "include",
                     method: "POST"
                 });
             }
+
+            if(!res.ok) {
+                throw new Error(res.statusText);
+            }
+
             const json: ShowcaseAdminDetailsResponse = await res.json();
             setShowcase(json.showcase)
 
@@ -53,9 +58,7 @@ export function ShowcaseEditor() {
 
     useEffect(() => {
         (async () => {
-            if (!isNew) {
-                await getShowcase();
-            }
+            await getShowcase();
         })()
     }, [isNew, getShowcase])
 

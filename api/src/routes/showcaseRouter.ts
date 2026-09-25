@@ -12,6 +12,7 @@ import {needsAuth} from "../middleware/needsAuth";
 import {addYears} from "date-fns";
 import {UpdateShowcaseRequestSchema} from "@hapi/shared/types/apiRequests";
 import {Prisma} from "@hapi/shared/prisma/client";
+import {createUuid} from "@hapi/client/src/utils/misc";
 
 const NUM_FEATURED_SHOWCASES = 3
 const NUM_FEATURED_PROJECTS = 9
@@ -148,12 +149,14 @@ showcaseRouter.post("", needsAuth, async (c) => {
         return c.json({error: "Not authorised"}, 403)
     }
     try {
+        const id = createUuid()
         const record = await db.showcase.create({
             data: {
+                id: id,
                 year: addYears(new Date(), 1).getFullYear(),
                 semester: 0,
                 description: "",
-                name: "",
+                name: id, // will violate unique constraint if admin makes showcase, doesn't update, makes new
                 publishedDate: null
             }
         })
@@ -163,6 +166,7 @@ showcaseRouter.post("", needsAuth, async (c) => {
             showcase: showcase
         } satisfies ShowcaseAdminDetailsResponse, 200)
     } catch (e) {
+        console.error(e)
         return c.json({error: "Internal server error"}, 500)
     }
 })

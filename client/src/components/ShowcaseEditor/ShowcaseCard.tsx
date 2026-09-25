@@ -1,5 +1,6 @@
 import {useNavigate} from "react-router";
 import {formatDate} from "date-fns";
+import {Button} from "../generic/Button.tsx";
 
 type Props = {
     name: string,
@@ -25,12 +26,12 @@ export function ShowcaseCard({name, id, projectCount, publishedDate}: Props) {
             </div>
 
             <div className={`ml-auto`}>
-                <button
+                <Button
                     onClick={() => navigate(`/dashboard/showcase/${id}`)}
-                    className={`px-4 py-1 rounded-md cursor-pointer bg-r-blue-700 hover:bg-r-blue text-white`}
+                    color={"blue"}
                 >
                     Edit
-                </button>
+                </Button>
             </div>
         </div>
     )

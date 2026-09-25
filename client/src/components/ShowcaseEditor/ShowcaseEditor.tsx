@@ -10,6 +10,7 @@ import {MarkdownEditor} from "../generic/MarkdownEditor.tsx";
 import ProjectCard from "../ProjectCard.tsx";
 import {format, formatDistance} from "date-fns";
 import type {UpdateShowcaseRequestType} from "@hapi/shared/types/apiRequests";
+import {Button} from "../generic/Button.tsx";
 
 const legendStyles = `font-medium`
 const inputStyles = `p-1 rounded-md bg-neutral-200 px-2 py-1 font-light`
@@ -257,13 +258,13 @@ export function ShowcaseEditor() {
                 ))}
             </div>
 
-            <button
-                className={`mt-12 self-start rounded-md px-4 py-2 bg-red-700 hover:bg-red-600 text-white cursor-pointer flex gap-2 items-center`}
+            <Button
+                color={"danger"}
                 onClick={() => {deleteShowcase()}}
             >
                 <FaTrash />
                 <span>Delete showcase</span>
-            </button>
+            </Button>
         </div>
     )
 }

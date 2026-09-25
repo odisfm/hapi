@@ -15,6 +15,7 @@ import {MdCancel} from "react-icons/md";
 import type {Category, Showcase} from "@hapi/shared/prisma/client";
 import {FilterSection} from "./FilterSection.tsx";
 import {Link} from "react-router";
+import {Button} from "../generic/Button.tsx";
 
 export function ProjectList() {
     const [searchQuery, setSearchQuery] = useState<ProjectSearchQuery>({
@@ -190,26 +191,26 @@ export function ProjectList() {
                     onChange={(e) => {setSearchBarText(e.target.value)}}
                 />
                 {searchBarText.length > 0 &&
-                    <button
-                    type={"button"}
-                    className={`p-3 rounded-md bg-r-yellow-500 hover:bg-r-yellow-400 cursor-pointer text-black`}
+                    <Button
+                    buttonType={"button"}
+                    styles={`!p-3`}
+                    color={"yellow"}
                     onClick={() => {
                         setSearchTerm("")
                         searchBarRef.current!.value = ""
                     }}
                 >
                     <MdCancel/>
-                </button>
+                </Button>
                 }
-                <button
-                    type={"submit"}
-                    className={`
-                    bg-r-red hover:bg-r-yellow-500 text-white hover:text-black px-4 py-2 rounded-xl flex items-center gap-2
-                    cursor-pointer transition-colors
-                    `}>
+                <Button
+                    buttonType={"submit"}
+                    color={"red"}
+                    styles={`!rounded-xl hover:!bg-r-yellow-500 `}
+                >
                     <FaSearch />
                     <span>Search</span>
-                </button>
+                </Button>
             </form>
             <Paginator pageCount={pageCount} activePage={pageNumber} setPage={_setPageNumber}/>
             <div className={`flex flex-col md:flex-row gap-2`}>

@@ -9,6 +9,8 @@ import type {ProjectType} from "@hapi/shared/types/project";
 import type {CreateProjectMediaRequestType} from "@hapi/shared/types/apiRequests";
 import type {CreateProjectMediaResponse} from "@hapi/shared/types/apiResponses";
 import {useModal} from "../../../contexts/modal/useModal.ts";
+import {Button} from "../../generic/Button.tsx";
+import {FaExternalLinkAlt, FaFileUpload, FaTrashAlt} from "react-icons/fa";
 
 type Props = {
     media: ProjectMediaType[]
@@ -253,20 +255,19 @@ export function MediaEditor({media, setMedia, setHasChanged, project, submitProj
                 <div className={`flex flex-col gap-1 flex-1 items-start`}>
                     {activeMedia &&
                         <>
-                            <a
-                                href={`${import.meta.env.VITE_S3_MEDIA_BUCKET}${activeMedia.uri}.webp`}
-                                target="_blank"
-                                className={`
-                            px-4 py-1 rounded-md bg-r-blue-700 hover:bg-r-blue text-white cursor-pointer
-                            `}>
+                            <Button
+                                onClick={() => {window.open(
+                                    `${import.meta.env.VITE_S3_MEDIA_BUCKET}${activeMedia.uri}.webp`,
+                                    "_blank"
+                                )}}
+                                color={"blue"}
+                                >
                                 View in new tab
-                            </a>
-                            <button
-                                className={`
-                        px-4 py-1 rounded-md 
-                        ${activeMediaIsActiveType ? `bg-neutral-500` : `bg-r-blue-700 hover:bg-r-blue cursor-pointer`} 
-                        text-white 
-                        `}
+                                <FaExternalLinkAlt size={10}/>
+                            </Button>
+                            <Button
+                                color={activeMediaIsActiveType ? "grey" : "blue"}
+                                active={Boolean(activeMediaIsActiveType)}
                                 onClick={() => {
                                     const activeIdx = media.indexOf(activeMedia)
                                     const newActiveMedia = {...activeMedia, deviceType: deviceType}
@@ -277,31 +278,25 @@ export function MediaEditor({media, setMedia, setHasChanged, project, submitProj
                                 disabled={activeMedia.deviceType === deviceType}
                             >
                                 Assign to {deviceEnumFriendly[deviceType as DeviceType]}
-                            </button>
-                            <button
-                                className={`
-                                px-4 py-1 rounded-md 
-                                bg-red-700 hover:bg-red-500 cursor-pointer 
-                                text-white 
-                                `}
+                            </Button>
+                            <Button
+                                color={"danger"}
                                 onClick={deleteScreenshot}
                             >
                                 Delete screenshot
-                            </button>
+                                <FaTrashAlt size={15}/>
+                            </Button>
                         </>
                     }
 
                     <div className={`mt-auto`}>
-                        <button
+                        <Button
                             onClick={openFilePicker}
-                            className={`
-                        px-4 py-1 rounded-md 
-                        bg-r-yellow-500 hover:bg-r-yellow-400 cursor-pointer 
-                        text-black
-                        `}
+                            color={"yellow"}
                         >
                             Upload screenshot
-                        </button>
+                            <FaFileUpload />
+                        </Button>
                         <input type={"file"} accept="image/*" className={"hidden"} ref={uploadRef}
                                onChange={(e) => uploadScreenshot(e)}/>
                     </div>

@@ -1,6 +1,7 @@
 import type {ProjectSearchQuery} from "@hapi/shared/types/apiRequests";
 import type {Category, Showcase} from "@hapi/shared/prisma/client";
 import {getShowcaseName} from "../../utils/getShowcaseName.ts";
+import {Button} from "../generic/Button.tsx";
 
 type Props = {
     searchQuery: ProjectSearchQuery;
@@ -20,35 +21,37 @@ export function PublicFilterSection({
     return (
         <nav className={`bg-neutral-200 w-full md:w-60 rounded-md self-start p-2 flex flex-col gap-2`}>
             {hasFilter &&
-                <button
-                className={`
-                ml-auto p-1 rounded-md bg-r-yellow-500 hover:bg-r-yellow-400 text-xs cursor-pointer
-                `}
-                onClick={() => {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const {showcase, category, ...rest} = searchQuery;
-                    setSearchQuery(rest);
-                }}>
-
+                <Button
+                    color={"yellow"}
+                    variant={"compact"}
+                    styles={"self-start"}
+                    onClick={() => {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const {showcase, category, ...rest} = searchQuery;
+                        setSearchQuery(rest);
+                    }}
+                >
                 clear all
-            </button>
+            </Button>
             }
             <div className={`flex flex-col gap-1`}>
                 <span>Showcase</span>
                 <ul>
                     {showcases.map((s, i) => {
+                        const active = searchQuery.showcase === s.id
                         return (
                             <li key={i} className={`mb-1`}>
-                                <button className={`
-                                text-left text-xs p-1 rounded-md bg-neutral-300 cursor-pointer
-                                ${s.id === searchQuery.showcase ? `bg-r-blue-500 text-white` : ``}
-                                `}
-                                onClick={() => {
-                                    setSearchQuery({...searchQuery, page: 0, showcase: s.id});
-                                }}
+                                <Button
+                                    variant={"compact"}
+                                    color={active ? "light-blue" : "grey"}
+                                    active={active}
+                                    styles={`text-xs text-left !p-1`}
+                                    onClick={() => {
+                                        setSearchQuery({...searchQuery, page: 0, showcase: s.id});
+                                    }}
                                 >
                                     {getShowcaseName(s)}
-                                </button>
+                                </Button>
                             </li>
                         )
                     })}
@@ -58,18 +61,20 @@ export function PublicFilterSection({
                 <span>Category</span>
                 <ul className={`flex flex-wrap gap-1`}>
                     {categories.map((c, i) => {
+                        const active = searchQuery.category === c.id;
                         return (
                             <li key={i} className={`mb-1`}>
-                                <button className={`
-                                text-left text-xs p-1 rounded-md bg-neutral-300 cursor-pointer
-                                ${c.id === searchQuery.category ? `bg-r-blue-500 text-white` : ``}
-                                `}
-                                        onClick={() => {
-                                            setSearchQuery({...searchQuery, page: 0, category: c.id});
-                                        }}
+                                <Button
+                                    variant={"compact"}
+                                    color={active ? "light-blue" : "grey"}
+                                    styles={`text-xs`}
+                                    active={active}
+                                    onClick={() => {
+                                        setSearchQuery({...searchQuery, page: 0, category: c.id});
+                                    }}
                                 >
                                     {c.name}
-                                </button>
+                                </Button>
                             </li>
                         )
                     })}

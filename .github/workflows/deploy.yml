@@ -77,11 +77,15 @@ jobs:
           cd infra/lambda
           
           cd transcode_in
+          npm ci
           npm run build:lambda
+          zip -j dist/lambda.zip dist/lambda.mjs
           cd ..
           
           cd transcode_out
+          npm ci
           npm run build:lambda
+          zip -j dist/lambda.zip dist/lambda.mjs
           cd ..
 
       - name: deploy aws

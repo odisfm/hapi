@@ -1,6 +1,7 @@
 import {useAuth} from "../../contexts/auth/useAuth.ts";
 import {Link, Outlet, useLocation, useNavigate} from "react-router";
 import {useEffect} from "react";
+import {Button} from "../../components/generic/Button.tsx";
 
 
 export function AdminDashboard() {
@@ -22,12 +23,13 @@ export function AdminDashboard() {
             {authContext.user &&
                 <div className={`flex gap-1 items-center`}>
                     <span>Logged in as {authContext.user.name}.</span>
-                    <button
-                        className={`px-1 py-1 rounded-md font-bold cursor-pointer hover:bg-r-red hover:text-white`}
+                    <Button
+                        variant={"compact"}
+                        color={"red"}
                         onClick={() => {authContext.logOut()}}
                     >
                         Log out.
-                    </button>
+                    </Button>
                 </div>
             }
             <div className={`self-start flex flex-wrap gap-2 mt-4`}>

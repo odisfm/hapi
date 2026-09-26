@@ -1,6 +1,7 @@
 import type {ProjectSearchQuery} from "@hapi/shared/types/apiRequests";
 import type {Category, Showcase} from "@hapi/shared/prisma/client";
 import {getShowcaseName} from "../../utils/getShowcaseName.ts";
+import {Button} from "../generic/Button.tsx";
 
 type Props = {
     searchQuery: ProjectSearchQuery;
@@ -22,10 +23,10 @@ export function FilterSection({
             <div className={`flex items-center`}>
                 <span className={`font-bold text-black/70`}>Filter</span>
                 {hasFilter &&
-                    <button
-                    className={`
-                    ml-auto p-1 rounded-md bg-r-yellow-500 hover:bg-r-yellow-400 text-xs cursor-pointer
-                    `}
+                    <Button
+                    color={"yellow"}
+                    variant={"compact"}
+                    styles={"ml-auto"}
                     onClick={() => {
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         const {showcase, category, published, ...rest} = searchQuery;
@@ -33,25 +34,27 @@ export function FilterSection({
                     }}>
 
                     clear all
-                </button>
+                </Button>
                 }
             </div>
             <div className={`flex flex-col gap-1`}>
                 <span>Showcase</span>
                 <ul>
                     {showcases.map((s, i) => {
+                        const active = searchQuery.showcase === s.id
                         return (
                             <li key={i} className={`mb-1`}>
-                                <button className={`
-                                text-left text-xs p-1 rounded-md bg-neutral-300 cursor-pointer
-                                ${s.id === searchQuery.showcase ? `bg-r-blue-500 text-white` : ``}
-                                `}
-                                onClick={() => {
-                                    setSearchQuery({...searchQuery, page: 0, showcase: s.id});
-                                }}
+                                <Button
+                                    variant={"compact"}
+                                    color={active ? "light-blue" : "grey"}
+                                    active={active}
+                                    styles={`text-xs text-left !p-1`}
+                                    onClick={() => {
+                                        setSearchQuery({...searchQuery, page: 0, showcase: s.id});
+                                    }}
                                 >
                                     {getShowcaseName(s)}
-                                </button>
+                                </Button>
                             </li>
                         )
                     })}
@@ -61,18 +64,20 @@ export function FilterSection({
                 <span>Category</span>
                 <ul className={`flex flex-wrap gap-1`}>
                     {categories.map((c, i) => {
+                        const active = searchQuery.category === c.id;
                         return (
                             <li key={i} className={`mb-1`}>
-                                <button className={`
-                                text-left text-xs p-1 rounded-md bg-neutral-300 cursor-pointer
-                                ${c.id === searchQuery.category ? `bg-r-blue-500 text-white` : ``}
-                                `}
-                                        onClick={() => {
-                                            setSearchQuery({...searchQuery, page: 0, category: c.id});
-                                        }}
+                                <Button
+                                    variant={"compact"}
+                                    color={active ? "light-blue" : "grey"}
+                                    styles={`text-xs`}
+                                    active={active}
+                                    onClick={() => {
+                                        setSearchQuery({...searchQuery, page: 0, category: c.id});
+                                    }}
                                 >
                                     {c.name}
-                                </button>
+                                </Button>
                             </li>
                         )
                     })}
@@ -85,17 +90,18 @@ export function FilterSection({
                         const active = p === searchQuery.published;
                         return (
                             <li key={i} className={`mb-1`}>
-                                <button className={`
-                                text-left text-xs p-1 rounded-md bg-neutral-300 cursor-pointer
-                                ${active ? `bg-r-blue-500 text-white` : ``}
-                                `}
-                                        onClick={() => {
-                                            console.log(p)
-                                            setSearchQuery({...searchQuery, published: p as never});
-                                        }}
+                                <Button
+                                    variant={"compact"}
+                                    color={active ? "light-blue" : "grey"}
+                                    active={active}
+                                    styles={`text-xs`}
+                                    onClick={() => {
+                                        console.log(p)
+                                        setSearchQuery({...searchQuery, published: p as never});
+                                    }}
                                 >
                                     {p ? p.slice(0, 1).toUpperCase() + p.slice(1) : "All"}
-                                </button>
+                                </Button>
                             </li>
                         )
                     })}

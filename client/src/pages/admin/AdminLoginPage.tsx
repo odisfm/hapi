@@ -3,6 +3,7 @@ import {useCallback, useEffect, useRef, useState} from "react";
 import {Link, useNavigate} from "react-router";
 import type {LoginSuccessResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL} from "../../consts.ts";
+import {Button} from "../../components/generic/Button.tsx";
 
 const inputClasses = `p-1 bg-neutral-200 rounded-md`
 
@@ -79,15 +80,12 @@ export default function AdminLoginPage() {
                         className={inputClasses}
                     />
                 </fieldset>
-                <button
-                    type={"submit"}
-                    className={`
-                    cursor-pointer px-4 py-2 font-bold bg-r-blue-700 hover:bg-r-blue-950 
-                    text-white rounded-md mt-6
-                    `}
+                <Button
+                    buttonType={"submit"}
+                    color={"blue"}
                 >
                     Log in
-                </button>
+                </Button>
                 <Link className={'block mt-6 hover:underline'} to={"/reset-password/request"}>Forgot password?</Link>
             </form>
         </div>

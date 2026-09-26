@@ -8,6 +8,7 @@ import Markdown from "react-markdown";
 import {FaApple, FaSpinner } from "react-icons/fa";
 import {MediaCarousel} from "../components/MediaCarousel.tsx";
 import type {DeviceType} from "@hapi/shared/prisma/enums";
+import {Button} from "../components/generic/Button.tsx";
 
 
 function getLinkType(url: string) {
@@ -316,22 +317,22 @@ export default function ProjectPage() {
                     </dl>
                     {
                         project.links.length > 0 ?
-                            <a
+                            <Button
                                 onClick={(event) => {
                                     event.preventDefault();
                                     document.getElementById("how-to-install")?.scrollIntoView({behavior: "smooth"});
                                 }}
-                                className="min-w-48 shrink-0 rounded-full bg-[#000054] px-16 py-3 text-center text-sm font-bold text-white font-copy cursor-pointer"
+                                variant={"hero"}
                             >
                                 GET
-                            </a>
+                            </Button>
                             :
-                            <a
-                                href={`mailto:hapi@rmit.edu.au`}
-                                className="min-w-48 shrink-0 rounded-full bg-[#000054] px-16 py-3 text-center text-sm font-bold text-white font-copy cursor-pointer"
+                            <Button
+                                onClick={() => {window.open(`mailto:hapi@rmit.edu.au`)}}
+                                variant={"hero"}
                             >
                                 CONTACT US
-                            </a>
+                            </Button>
                     }
                 </div>
             </section>

@@ -1,6 +1,7 @@
 import { ModalContext, type ModalInteraction, type ModalButton } from "./ModalContext.tsx";
 import {useState, useCallback, useEffect} from "react";
 import {createUuid} from "../../utils/misc.ts";
+import {Button} from "../../components/generic/Button.tsx";
 
 type QueuedModal = ModalInteraction & {
     id: string;
@@ -13,11 +14,6 @@ type QueuedImage = {
     id: string;
     resolve: (buttonId: string) => void;
 }
-
-const buttonStyles = `px-4 py-2 rounded-md cursor-pointer`
-const defaultStyles = `bg-r-blue-700 hover:bg-r-blue text-white`
-const dangerStyles = `bg-red-700 hover:bg-red-500 text-white`
-const subtleStyles = `border-1 border-transparent hover:border-r-blue-500 hover:bg-black/10`
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
     const [modals, setModals] = useState<QueuedModal[]>([]);
@@ -67,27 +63,15 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
                         }
                         <div className="mt-4 flex gap-2">
                             {m.buttons.map((b: ModalButton) => {
-                                let variantStyles
-                                switch (b.variant) {
-                                    case "default":
-                                        variantStyles = defaultStyles
-                                        break
-                                    case "danger":
-                                        variantStyles = dangerStyles
-                                        break
-                                    case "subtle":
-                                        variantStyles = subtleStyles
-                                        break
-                                }
                                 return (
-                                    <button
+                                    <Button
                                         key={b.id}
-                                        data-variant={b.variant}
-                                        className={`${buttonStyles} ${variantStyles}`}
+                                        color={b.variant}
+
                                         onClick={() => handleButtonClick(m.id, b.id, m.resolve)}
                                     >
                                         {b.text}
-                                    </button>
+                                    </Button>
                                 )
                             })}
                         </div>

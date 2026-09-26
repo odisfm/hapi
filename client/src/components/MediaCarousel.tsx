@@ -128,6 +128,7 @@ export function MediaCarousel({media, videoUrl, projectName}: Props) {
             >
                 {videoUrl &&
                     <video
+                        muted={true}
                         controls={true}
                         src={resolveStorageUrl(MEDIA_BUCKET_URL, videoUrl, ".webm")}
                         className={`rounded-lg`}

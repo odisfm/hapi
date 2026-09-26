@@ -106,7 +106,10 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
                         <img
                             src={image.url}
                             alt={image.altText}
-                            className="block h-auto w-auto max-h-[calc(90vh-3rem)] max-w-[calc(90vw-3rem)] object-contain"
+                            className={`
+                                block h-auto w-auto max-h-[calc(90vh-3rem)] max-w-[calc(90vw-3rem)] 
+                                object-contain cursor-pointer
+                                `}
                         />
                     </div>
                 </div>

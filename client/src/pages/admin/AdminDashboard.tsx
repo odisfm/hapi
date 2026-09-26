@@ -17,7 +17,7 @@ export function AdminDashboard() {
     }, [authContext.user, authContext.authPending, navigate]);
 
     return (
-        <div className={`flex flex-col gap-4 p-4 w-full md:w-5/12`}>
+        <div className={`flex flex-col gap-4 p-4 w-full md:w-4/5 lg:w-2/3 xl:w-3/5 2xl:w-2/5`}>
             <h1 className={`self-start font-headline font-bold text-5xl`}>Admin Dashboard</h1>
             {authContext.user &&
                 <div className={`flex gap-1 items-center`}>

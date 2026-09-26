@@ -4,13 +4,15 @@ import type {ShowcaseListResponse, ShowcaseListResponseItem} from "@hapi/shared/
 import {ShowcaseCard} from "./ShowcaseCard.tsx";
 import {getShowcaseName} from "../../utils/getShowcaseName.ts";
 import {Link} from "react-router";
-import {FaPlus} from "react-icons/fa";
+import {FaPlus, FaSpinner} from "react-icons/fa";
 
 export function ShowcaseList() {
     const [showcases, setShowcases] = useState<ShowcaseListResponseItem[]>([]);
+    const [loading, setLoading] = useState(true);
 
     const getShowcases = useCallback(async () => {
         let res: Response
+        setLoading(true)
         try {
             res = await fetch(`${API_URL}/showcase/all`, {
                 credentials: "include"
@@ -27,6 +29,8 @@ export function ShowcaseList() {
             }));
         } catch (e) {
             console.error(e)
+        } finally {
+            setLoading(false);
         }
     }, [])
 
@@ -37,13 +41,17 @@ export function ShowcaseList() {
     }, [getShowcases]);
 
     return (
-        <div className={`flex flex-col gap-2`}>
-            <Link to={`/dashboard/showcase/new`} className={`
+        <div className={`flex flex-col gap-2 w-full`}>
+            <div className={`w-full flex items-center gap-2`}>
+                <h2 className={`font-bold text-3xl`}>SHOWCASES</h2>
+                {loading && <FaSpinner className={`animate-spin`}/>}
+                <Link to={`/dashboard/showcase/new`} className={`
                 ml-auto rounded-lg bg-r-red hover:bg-r-yellow-500 text-white hover:text-black transition-colors px-4 py-2 cursor-pointer
                 font-bold flex items-center gap-2 mb-4
                 `}>
-                <FaPlus /> <span>New showcase</span>
-            </Link>
+                    <FaPlus/> <span>New showcase</span>
+                </Link>
+            </div>
             {showcases.length > 0 && showcases.map((s) => {
                 return (
                     <ShowcaseCard id={s.id} key={s.id} name={getShowcaseName(s)} publishedDate={s.publishedDate} projectCount={s._count.projects}/>

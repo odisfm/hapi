@@ -9,6 +9,7 @@ import {ProjectListItem} from "./ProjectListItem.tsx";
 import {ProjectList} from "./ProjectList.tsx";
 import {LexoRank} from "@dalet-oss/lexorank";
 import {SaveButton} from "../generic/SaveButton.tsx";
+import {FaSpinner} from "react-icons/fa";
 
 const h3Styles = "font-copy text-2xl font-bold leading-[1.3] tracking-normal"
 
@@ -16,9 +17,11 @@ export function FeaturedProjectsEditor() {
     const modalContext = useModal()
     const [allProjects, setAllProjects] = useState<ProjectPreviewType[]>([])
     const [alteredProjects, setAlteredProjects] = useState<string[]>([])
+    const [loading, setLoading] = useState<boolean>(false)
 
     const getProjects = useCallback(async () => {
         let res: Response
+        setLoading(true)
         try {
             res = await fetch(`${API_URL}/project/search?limit=100000&published=published`)
             if (!res.ok) {
@@ -34,6 +37,8 @@ export function FeaturedProjectsEditor() {
                 body: String(e),
                 buttons: [{id: "", text: "Ok", variant: "default"}]
             })
+        } finally {
+            setLoading(false)
         }
     }, [modalContext])
 
@@ -142,13 +147,17 @@ export function FeaturedProjectsEditor() {
     return (
         <div className={`flex flex-col gap-2 items-start`}>
 
-            <div className={`flex items-center gap-6`}>
+            <div className={`flex items-center gap-2 w-full`}>
                 <h3
                     className={`font-bold text-3xl`}
                 >
                     FEATURED PROJECTS
                 </h3>
-                <SaveButton onClick={() => {batchUpdateProjects()}} hasChanged={alteredProjects.length > 0} styles={``} />
+                {loading && <FaSpinner className={`animate-spin`}/>}
+                <SaveButton
+                    onClick={() => {batchUpdateProjects()}} hasChanged={alteredProjects.length > 0}
+                    styles={`ml-auto`}
+                />
             </div>
             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 self-center isolate md:min-w-250">
                 {featuredProjectList.map((p) => {

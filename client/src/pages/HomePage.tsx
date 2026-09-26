@@ -94,6 +94,7 @@ export default function HomePage() {
                             className={`
                             font-copy flex cursor-pointer items-center gap-1 p-0 text-[0.8rem] 
                             font-bold uppercase leading-[1.3] tracking-normal text-black hover:text-r-red
+                            text-right
                             `}
                         >
                             VIEW MORE <span aria-hidden="true">→</span>

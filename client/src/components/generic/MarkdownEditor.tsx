@@ -59,7 +59,7 @@ export function MarkdownEditor({initText, setHasChanged, markdownRef, setDescrip
                            linkDialogPlugin(),
                            diffSourcePlugin(),
                            toolbarPlugin({
-                               toolbarClassName: 'my-classname',
+                               toolbarClassName: 'my-classname text-xs max-w-screen',
                                toolbarContents: () => (
                                    <>
                                        <DiffSourceToggleWrapper>

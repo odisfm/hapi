@@ -447,7 +447,7 @@ export function ProjectEditor() {
     return (
         <>
             { project && categories.length &&
-                <div className={"flex flex-col gap-2 w-full md:w-4/5 lg:w-2/5 mt-8"}>
+                <div className={"flex flex-col gap-2 w-full md:w-4/5 lg:w-2/3 xl:w-3/5 2xl:w-2/5 mt-8"}>
                     <div className={`flex gap-4 w-full`}>
                         <div className={`flex flex-col gap-2 w-full`}>
                             <div className={`pointer-events-none`}>

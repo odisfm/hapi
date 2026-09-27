@@ -136,23 +136,14 @@ for (const project of projectData) {
 console.log(`Done`)
 
 console.log(`Populating table ProjectMedia`)
-for (const media of projectMediaData) {
-    try {
-        await db.projectMedia.create({
-            data: {
-                mediaUrl: media.mediaUrl,
-                mediaType: media.mediaType,
-                projectId: media.projectId,
-                deviceType: media.deviceType,
-                order: media.order,
-                status: "AVAILABLE"
-            }
-        })
-    } catch (e) {
-        console.error(`Error inserting media with URI: ${media.mediaUrl}`)
-        console.error(e)
-        process.exit(1)
-    }
+try {
+    await db.projectMedia.createMany({data: projectMediaData.map((m) => {
+        return {...m, order: "", status: "AVAILABLE"}
+        })})
+} catch (e) {
+    console.error("Error inserting media")
+    console.error(e)
+    process.exit(1)
 }
 console.log(`Done`)
 

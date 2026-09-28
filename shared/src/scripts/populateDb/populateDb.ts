@@ -116,6 +116,8 @@ for (const project of projectData) {
                 showcaseId,
                 published: project.published,
                 featured: project.featured === true,
+                canBeHero: true,
+                heroArtUrl: project.heroArtUrl || null
             }
         })
 

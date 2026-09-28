@@ -5,15 +5,19 @@ import {useBlocker, useNavigate, useParams} from "react-router";
 import type {ProjectAdminType} from "@hapi/shared/types/project";
 import {API_URL} from "../../consts.ts";
 import type {
-    CategoryResponse,
+    CategoryResponse, CreateProjectHeroArtResponse,
     ProjectDetailsAdminResponse,
     ShowcaseListResponse
 } from "@hapi/shared/types/apiResponses";
 import type {Category, Showcase} from "@hapi/shared/prisma/client";
 import {TextItemEditor} from "./TextItemEditor.tsx";
 import {formatDate, formatDistance} from "date-fns";
-import {FaSpinner, FaTrash} from "react-icons/fa";
-import {UpdateProjectRequestSchema, type UpdateProjectRequestType} from "@hapi/shared/types/apiRequests";
+import {FaSpinner, FaTrash, FaUpload} from "react-icons/fa";
+import {
+    type CreateProjectHeroArtRequestType,
+    UpdateProjectRequestSchema,
+    type UpdateProjectRequestType
+} from "@hapi/shared/types/apiRequests";
 import {createUuid} from "../../utils/misc.ts";
 import {useModal} from "../../contexts/modal/useModal.ts";
 import {MediaEditor} from "./MediaEditor/MediaEditor.tsx";
@@ -24,6 +28,7 @@ import {SaveButton} from "../generic/SaveButton.tsx";
 import { VideoEditor } from "./VideoEditor.tsx";
 import type {ProjectMediaType} from "@hapi/shared/types/projectMedia";
 import {Button} from "../generic/Button.tsx";
+import {HeroProjectCard} from "../HeroProjectCard.tsx";
 
 const legendStyles = `font-medium`
 const inputStyles = `p-1 rounded-md bg-neutral-200 px-2 py-1 font-light`
@@ -35,7 +40,7 @@ type ShowcaseListItem = {
     date: Date | null
 }
 
-type DetailsTab = "description" | "media" | "video"
+type DetailsTab = "description" | "media" | "video" | "hero"
 
 
 export function ProjectEditor() {
@@ -58,6 +63,7 @@ export function ProjectEditor() {
     const modalContext = useModal();
     const [detailsTab, setDetailsTab] = useState<DetailsTab>("description");
     const iconUploadRef = useRef<HTMLInputElement | null>(null);
+    const heroUploadRef = useRef<HTMLInputElement | null>(null);
     const blocker = useBlocker(
         ({ currentLocation, nextLocation }) =>
             hasChanged && currentLocation.pathname !== nextLocation.pathname
@@ -295,6 +301,7 @@ export function ProjectEditor() {
                     iconUrl: submitProject!.iconUrl,
                     published: submitProject.published,
                     featured: submitProject.featured,
+                    heroArtUrl: submitProject.heroArtUrl,
                 },
             })
         } catch (e) {
@@ -366,6 +373,41 @@ export function ProjectEditor() {
         }
 
     }, [project, submit, modalContext])
+
+    const uploadHeroArt = useCallback(async (e: React.ChangeEvent) => {
+        if (!project) return
+        const input = e.target as HTMLInputElement
+        if (!input.files?.length) return
+        const file = input.files[0]!
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append("data", JSON.stringify({
+            projectId: project.id,
+        } satisfies CreateProjectHeroArtRequestType))
+
+        let res: Response
+        try {
+            res = await fetch(`${API_URL}/media/hero`, {
+                method: "POST",
+                credentials: "include",
+                body: formData,
+            })
+            if (!res.ok) {
+                console.error(res)
+                throw new Error("Failed to upload image")
+            }
+            const json: CreateProjectHeroArtResponse = await res.json()
+
+            setProject({
+                ...project,
+                heroArtUrl: json.uri
+            })
+            setHasChanged(true)
+
+        } catch (e) {
+            console.error(e) // todo
+        }
+    }, [project])
 
     async function deleteProject() {
         if (!project) return
@@ -656,6 +698,14 @@ export function ProjectEditor() {
                                 </Button>
                                 <Button
                                     buttonType={"button"}
+                                    color={detailsTab === "hero" ? "blue" : "light-blue"}
+                                    active={detailsTab === "hero"}
+                                    onClick={() => setDetailsTab("hero")}
+                                >
+                                    Hero art
+                                </Button>
+                                <Button
+                                    buttonType={"button"}
                                     color={detailsTab === "video" ? "blue" : "light-blue"}
                                     active={detailsTab === "video"}
                                     onClick={() => setDetailsTab("video")}
@@ -683,6 +733,41 @@ export function ProjectEditor() {
                                     project={project}
                                     submitProject={submit}
                                 />
+                            }
+                            {
+                                detailsTab === "hero" &&
+                                <div className="flex flex-col gap-2 mt-6">
+                                    {
+                                        !project.heroArtUrl &&
+                                        <p className={`p-4 rounded-md bg-red-700/20`}>
+                                            No hero art for this project yet.
+                                        </p>
+                                    }
+                                    <Button
+                                        styles={`self-start`}
+                                        onClick={() => {
+                                            if (!heroUploadRef.current) return
+                                            heroUploadRef.current.click()
+                                        }}
+                                    >
+                                        <FaUpload />
+                                        {project.heroArtUrl ? "Replace hero art" : "Upload hero art"}
+                                    </Button>
+                                    <input
+                                        ref={heroUploadRef}
+                                        onChange={(e) => uploadHeroArt(e)}
+                                        type={"file"}
+                                        accept={".png,.jpg,.jpeg,.tiff,.svg,.webp,.heif"}
+                                        name={"iconInput"}
+                                        className={'hidden'}
+                                    />
+                                    <div className={`max-w-[300px]`}>
+                                        <HeroProjectCard project={project}/>
+                                    </div>
+                                    <div className={`max-w-[640px]`}>
+                                        <HeroProjectCard project={project} />
+                                    </div>
+                                </div>
                             }
                             {
                                 detailsTab === "video" &&

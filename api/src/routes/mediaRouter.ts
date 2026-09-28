@@ -5,11 +5,16 @@ import {createVideoUploadUrl, s3} from "../services/s3";
 import {v4 as createUuid} from "uuid"
 import sharp from 'sharp'
 import {db} from "@hapi/shared";
-import {CreateProjectMediaRequestSchema} from "@hapi/shared/types/apiRequests";
-import type {CreateProjectMediaResponse, CreateProjectVideoResponse} from "@hapi/shared/types/apiResponses";
+import {CreateProjectHeroArtRequestSchema, CreateProjectMediaRequestSchema} from "@hapi/shared/types/apiRequests";
+import type {
+    CreateProjectHeroArtResponse,
+    CreateProjectMediaResponse,
+    CreateProjectVideoResponse
+} from "@hapi/shared/types/apiResponses";
 
 const ICON_LONG_EDGE = 400 // px
 const SCREENSHOT_LONG_EDGE = 1920 // px
+const HERO_ART_WIDTH = 2000 // px
 
 export const mediaRouter = createHono()
 
@@ -122,6 +127,63 @@ mediaRouter.post("/screenshot", needsAuth, async (c) => {
         })
 
         return c.json({projectMedia: record} satisfies CreateProjectMediaResponse, 201)
+
+    } catch (e) {
+        console.error(e)
+        return c.json({error: "Internal server error"}, 500)
+    }
+})
+
+mediaRouter.post("/hero", needsAuth, async (c) => {
+    const formData = await c.req.formData()
+    const file = formData.get("file")
+    let data
+    if (!(file instanceof File)) {
+        return c.json({ error: "Missing 'file' field" }, 400)
+    }
+    try {
+        const rawData = formData.get("data")
+        if (typeof rawData !== "string") {
+            return c.json({ error: "Missing 'data' field" }, 400)
+        }
+        data = CreateProjectHeroArtRequestSchema.parse(JSON.parse(rawData))
+    } catch (e) {
+        return c.json({error: "Malformed 'data' field"}, 400)
+    }
+
+    const arrayBuffer = await file.arrayBuffer()
+    const uploadBuffer = new Uint8Array(arrayBuffer);
+    const image = sharp(uploadBuffer)
+    const metadata = await image.metadata()
+    if (!metadata.width || !metadata.height) {
+        return c.json({ error: "Could not read image dimensions" }, 400)
+    }
+    let webpBuffer: Buffer
+    try {
+        webpBuffer = await image
+            .rotate()
+            .resize({
+                width: HERO_ART_WIDTH,
+                fit: "inside",
+            })
+            .webp()
+            .toBuffer()
+    } catch (e) {
+        console.error(e)
+        return c.json({error: "Internal server error"}, 500)
+    }
+
+    const uri = createUuid()
+    const commandInput: PutObjectCommandInput = {
+        Bucket: process.env.BUCKET_MEDIA,
+        Key: `${uri}.webp`,
+        Body: webpBuffer,
+        ContentType: "image/webp",
+    }
+
+    try {
+        await s3.send(new PutObjectCommand(commandInput))
+        return c.json({uri} satisfies CreateProjectHeroArtResponse, 201)
 
     } catch (e) {
         console.error(e)

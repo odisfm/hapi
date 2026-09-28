@@ -79,11 +79,12 @@ type ShowcaseSearch = {
     semester: number,
 }
 
-export type NewProjectType = Omit<Project, 'categoryId' | 'showcaseId' | 'order' | 'featured'> & {
+export type NewProjectType = Omit<Project, 'categoryId' | 'showcaseId' | 'order' | 'featured' | 'canBeHero' | 'heroArtUrl'> & {
     categoryName: string,
     showcase: ShowcaseSearch,
     slug: string,
     featured?: boolean,
+    heroArtUrl?: string
 
 }
 
@@ -112,6 +113,7 @@ export const projectData: NewProjectType[] = [
             "  Some Instagram features may not be available in your country or region.",
         subtitle: "Videos, Creators & Friends",
         iconUrl: "ad1987aa-6278-4408-b35f-304863998196",
+        heroArtUrl: "77272cab-8f1f-4fb1-b021-a8da5fa12fd5",
         developers: ["Frantzisko Monifa", "Earl Sue"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -499,6 +501,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Just like the animated series, Bluey’s Quest for the Gold Pen sparks laughter and encourages players of all ages to discover through play. Packed full of trifficult puzzles and wholesome moments, this is an adventure for the whole household.",
         iconUrl: "d4911a18-5b87-4109-968f-cc7346832c38",
+        heroArtUrl: "7b2970ed-ebf3-4a6d-8f69-5199594a30a8",
         developers: ["Viktorie Haiyang", "Natalija Zoilus"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -561,6 +564,7 @@ export const projectData: NewProjectType[] = [
             "\n" +
             ">\"I Can't Stop Playing Duolingo Chess.\" - Wired",
         iconUrl: "58e26c42-a120-4c08-9b46-be2749243817",
+        heroArtUrl: "c546b654-226a-4f0b-9759-5ae38c32bc3a",
         developers: ["Märyäm Agapitos", "Aisha Anand"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -702,6 +706,7 @@ export const projectData: NewProjectType[] = [
             "- Leadership and management\n" +
             "- Software development",
         iconUrl: "dab6bd42-0b5f-46b0-ad4c-1a0e8dd2f0f1",
+        heroArtUrl: "ff28e1d1-2b82-4348-93e8-673f2fcec3d9",
         developers: ["Aucaman Krystiana", "Zabulon Nindaanis", "Su-bin Barak"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -749,6 +754,7 @@ export const projectData: NewProjectType[] = [
             "Levels range from easy to hard for all adults to enjoy – accessible on-the-go, offline and online.\n" +
             "It's easy to sync the game between devices and unlock full game features when connected to the Internet or Wifi.",
         iconUrl: "9fb303f7-5b03-43c7-8310-15aeb4857d26",
+        heroArtUrl: "7294ee97-d5c5-42d4-ae00-c2307970f562",
         developers: ["Geno Ceallach", "Deasún Ron"],
         approvalStatus: "APPROVED",
         rejectionReason: null,
@@ -877,6 +883,7 @@ export const projectData: NewProjectType[] = [
             "Strava includes both a free version and a subscription version with premium features.\n" +
             "Strava uses HealthKit to export your Strava activities into the Health app and to read heart rate and biometric data.",
         iconUrl: "b10b346b-1277-479c-9068-b03f660e86be",
+        heroArtUrl: "49aecc1f-5973-4477-8eda-04894d32ead1",
         developers: ["Yami Briggs", "Czarek Nina"],
         approvalStatus: "APPROVED",
         rejectionReason: null,

@@ -16,6 +16,7 @@ import Fuse from "fuse.js"
 import {needsAuth} from "../middleware/needsAuth";
 import type {ProjectAdminType} from "@hapi/shared/types/project";
 import {Prisma} from "@hapi/shared/prisma/client";
+import {NUM_HERO_PROJECTS_FRONT_PAGE} from "@hapi/shared/consts";
 
 const SEARCH_SCORE_CUTOFF = 0.6 // 0 - exact match, 1 - no match
 
@@ -48,7 +49,24 @@ projectRouter.get("/featured", async (c) => {
 
         const projects = records.map((r) => filterProjectPreview(r))
 
-        return c.json({projects: projects, info: {totalResults: projects.length}} satisfies ProjectSearchResponse)
+        let numHeroProjectsToGet = NUM_HERO_PROJECTS_FRONT_PAGE
+        // do we have enough to fill this number ?
+        let eligibleHeroes = []
+        for (const r of records) {
+            if (r.canBeHero) {
+                eligibleHeroes.push(r)
+            }
+        }
+        numHeroProjectsToGet = Math.min(numHeroProjectsToGet, eligibleHeroes.length)
+
+        const heroIds: string[] = []
+        while (heroIds.length < numHeroProjectsToGet) {
+            const rand = Math.floor(Math.random() * eligibleHeroes.length);
+            heroIds.push(eligibleHeroes[rand].id);
+            eligibleHeroes = eligibleHeroes.toSpliced(rand, 1)
+        }
+
+        return c.json({projects: projects, info: {totalResults: projects.length, heroIds}} satisfies ProjectSearchResponse)
 
     } catch (e) {
         console.error(e)
@@ -196,7 +214,8 @@ projectRouter.get("/search", async (c) => {
     return c.json({
         projects: processedRecords,
         info: {
-            totalResults: resultCount
+            totalResults: resultCount,
+            heroIds: []
         }
     } satisfies ProjectSearchResponse)
 })

@@ -80,9 +80,10 @@ model Project {
   showcase        Showcase       @relation(fields: [showcaseId], references: [id])
   published       Boolean
   featured        Boolean
-
-  media ProjectMedia[]
-  slugs ProjectSlug[]
+  canBeHero       Boolean        @default(false)
+  heroArtUrl      String?
+  media           ProjectMedia[]
+  slugs           ProjectSlug[]
 }
 
 model ProjectMedia {

@@ -27,6 +27,7 @@ export function filterProjectPreview(project: ProjectPayload): ProjectPreviewTyp
         slug: project.slugs[0].slug,
         developers: project.developers,
         featured: project.featured,
+        heroArtUrl: project.heroArtUrl || undefined
     }
 }
 
@@ -34,6 +35,7 @@ export function filterProject(project: ProjectPayload, role: UserRole | null): P
     let _project: ProjectType = {
         description: project.description,
         iconUrl: project.iconUrl,
+        heroArtUrl: project.heroArtUrl || undefined,
         id: project.id,
         name: project.name,
         order: project.order || DEFAULT_ORDER,

@@ -84,6 +84,8 @@ REJECTED REJECTED
     String order "❓ Lexo-rank"
     Boolean published 
     Boolean featured 
+    Boolean canBeHero 
+    String heroArtUrl "❓"
     }
   
 

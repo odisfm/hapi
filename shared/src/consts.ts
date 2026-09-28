@@ -1,0 +1,1 @@
+export const NUM_HERO_PROJECTS_FRONT_PAGE = 2

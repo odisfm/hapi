@@ -9,6 +9,7 @@ export const ProjectPreviewSchema = z.object({
     name: z.string(),
     subtitle: z.string().optional(),
     iconUrl: z.string(),
+    heroArtUrl: z.string().optional(),
     order: z.string(),
     slug: z.string(),
     developers: z.array(z.string()),

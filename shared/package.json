@@ -4,6 +4,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./consts": "./src/consts.ts",
     "./db": "./src/db.ts",
     "./types/*": "./src/types/*.ts",
     "./prisma/*": "./src/generated/prisma/*.ts",

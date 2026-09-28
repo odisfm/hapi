@@ -30,6 +30,7 @@ export type ProjectSearchResponse = {
 
 export type SearchInfo = {
     totalResults: number
+    heroIds: string[]
 }
 
 export type CategoryResponse = {
@@ -71,6 +72,10 @@ export type CreateProjectMediaResponse = {
 
 export type CreateProjectVideoResponse = {
     presignedUrl: string
+}
+
+export type CreateProjectHeroArtResponse = {
+    uri: string
 }
 
 export const ProjectSlugSchema = z.object({

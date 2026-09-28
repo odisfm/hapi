@@ -1,14 +1,17 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import type {ProjectSearchResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL} from "../consts.ts";
 import ProjectCard from "../components/ProjectCard.tsx";
 import {FaSpinner} from "react-icons/fa";
 import {Link} from "react-router";
+import {HeroProjectCard} from "../components/HeroProjectCard.tsx";
+import type {ProjectPreviewType} from "@hapi/shared/types/project";
 
 type HomePageState = {
     projects: ProjectSearchResponse["projects"];
     error: string | null;
     loading: boolean;
+    heroProjectIds: string[]
 };
 
 export default function HomePage() {
@@ -16,6 +19,7 @@ export default function HomePage() {
         projects: [],
         error: null,
         loading: true,
+        heroProjectIds: [],
     });
 
     useEffect(() => {
@@ -32,18 +36,18 @@ export default function HomePage() {
                 );
 
                 if (!projectResponse.ok) {
-                    setState({projects: [], error: "Unable to load projects.", loading: false});
+                    setState({projects: [], error: "Unable to load projects.", loading: false, heroProjectIds: []});
                     return;
                 }
 
                 const projectResponseBody = await projectResponse.json() as ProjectSearchResponse;
-                setState({projects: projectResponseBody.projects, error: null, loading: false});
+                setState({projects: projectResponseBody.projects, error: null, loading: false, heroProjectIds: projectResponseBody.info.heroIds});
             } catch (error) {
                 if (error instanceof DOMException && error.name === "AbortError") {
                     return;
                 }
 
-                setState({projects: [], error: "Unable to load projects.", loading: false});
+                setState({projects: [], error: "Unable to load projects.", loading: false, heroProjectIds: []});
             }
         }
 
@@ -51,6 +55,20 @@ export default function HomePage() {
 
         return () => projectRequestController.abort();
     }, []);
+
+    const { heroProjects, projects } = useMemo(() => {
+        const projects: ProjectPreviewType[] = []
+        const heroProjects: ProjectPreviewType[] = []
+        for (const p of state.projects) {
+            if (state.heroProjectIds.includes(p.id)) {
+                heroProjects.push(p);
+            } else {
+                projects.push(p);
+            }
+        }
+        console.log({heroProjects, projects})
+        return {projects, heroProjects}
+    }, [state.projects, state.heroProjectIds])
 
     return (
         <div className="-mt-8 w-full px-4 md:px-6 ">
@@ -107,16 +125,23 @@ export default function HomePage() {
                     ) :  state.projects.length === 0 && !state.loading ? (
                         <p className="mt-6">No projects found.</p>
                     ) :  (
-                        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {state.projects.map((project) => (
-                                <ProjectCard
-                                    key={project.id}
-                                    name={project.name}
-                                    subtitle={project.subtitle}
-                                    iconUrl={project.iconUrl}
-                                    slug={project.slug}
-                                />
-                            ))}
+                        <div className={`flex flex-col gap-4 mt-4`}>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-x-auto">
+                                {heroProjects.map((project) => (
+                                    <HeroProjectCard key={project.id} project={project}/>
+                                ))}
+                            </div>
+                            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                                {projects.map((project) => (
+                                    <ProjectCard
+                                        key={project.id}
+                                        name={project.name}
+                                        subtitle={project.subtitle}
+                                        iconUrl={project.iconUrl}
+                                        slug={project.slug}
+                                    />
+                                ))}
+                            </div>
                         </div>
                     )}
                 </div>

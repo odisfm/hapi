@@ -57,6 +57,12 @@ export const CreateProjectMediaRequestSchema = z.object({
 
 export type CreateProjectMediaRequestType = z.infer<typeof CreateProjectMediaRequestSchema>
 
+export const CreateProjectHeroArtRequestSchema = z.object({
+    projectId: z.uuidv4(),
+})
+
+export type CreateProjectHeroArtRequestType = z.infer<typeof CreateProjectHeroArtRequestSchema>
+
 export const AlterProjectSlugRequestSchema = z.object({
     slug: z.string(),
 })

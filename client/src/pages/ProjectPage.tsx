@@ -1,6 +1,5 @@
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useParams} from "react-router";
-import {MdExpandMore} from "react-icons/md";
 import type {ProjectDetailsResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL, deviceEnumFriendly} from "../consts.ts";
 import {AppIcon} from "../components/AppIcon.tsx";
@@ -10,8 +9,9 @@ import {MediaCarousel} from "../components/MediaCarousel.tsx";
 import type {DeviceType} from "@hapi/shared/prisma/enums";
 import {Button} from "../components/generic/Button.tsx";
 
+type LinkType = "App Store" | "TestFlight" | "GitHub" | "Website"
 
-function getLinkType(url: string) {
+function getLinkType(url: string): LinkType {
     if (url.includes("apps.apple.com")) {
         return "App Store";
     }
@@ -75,7 +75,6 @@ export default function ProjectPage() {
     const [descriptionExpanded, setDescriptionExpanded] = useState(false);
     const [selectedDeviceType, setSelectedDeviceType] = useState<DeviceType | null>(null);
     const [deviceFilterOpen, setDeviceFilterOpen] = useState(false);
-    const [selectedLinkType, setSelectedLinkType] = useState<string | null>(null);
     const [linkDropdownOpen, setLinkDropdownOpen] = useState(false);
     const [state, setState] = useState<ProjectPageState>({
         project: null,
@@ -226,6 +225,7 @@ export default function ProjectPage() {
 
     useEffect(() => {
         if (!state.project) return
+        if (!state.project.media.length) return
 
         function getDeviceType(): DeviceType {
             const isTouch = window.matchMedia('(pointer: coarse)').matches;
@@ -285,9 +285,38 @@ export default function ProjectPage() {
         ...platformIcons.filter((platformIcon) => !availableDeviceTypes.includes(platformIcon.deviceType)),
     ].slice(0, 4);
 
-    const detectedLinks = project.links.map((url) => ({url, type: getLinkType(url)}));
-    const detectedLinkTypes = [...new Set(detectedLinks.map((link) => link.type))];
-    const selectedLink = detectedLinks.find((link) => link.type === selectedLinkType);
+    const detectedLinks = project.links
+        .map((url) => ({url, type: getLinkType(url)}))
+        .sort((a, b) => {
+            function rateLinkType(linkType: LinkType) {
+                let rating = Infinity
+                switch (linkType) {
+                    case "App Store": {
+                        rating = 0;
+                        break;
+                    }
+                    case "TestFlight": {
+                        rating = 1;
+                        break;
+                    }
+                    case "GitHub": {
+                        rating = 2;
+                        break
+                    }
+                    case "Website": {
+                        rating = 3;
+                        break
+                    }
+                }
+                return rating
+            }
+            const aRating = rateLinkType(a.type)
+            const bRating = rateLinkType(b.type)
+            if (aRating < bRating) return -1
+            if (aRating > bRating) return 1
+            return 0
+        })
+
     const developerLabel = project.developers.length === 1 ? "Developer" : "Developers";
 
 
@@ -461,73 +490,29 @@ export default function ProjectPage() {
                             ))}
                         </div>
                     </div>
-                    {detectedLinkTypes.length <= 1 ? (
-                        <a
-                            href={project.links[0] || "#"}
-                            target={project.links[0] ? "_blank" : undefined}
-                            rel={project.links[0] ? "noreferrer" : undefined}
-                            className="mt-8 inline-block rounded-full bg-[#000054] px-10 py-2 text-center text-sm font-bold text-white"
-                        >
-                            {detectedLinkTypes[0]?.toUpperCase() || "DOWNLOAD"}
-                        </a>
-                    ) : (
-                        <div ref={linkDropdownRef} className="relative mt-8 inline-flex text-sm font-bold text-white">
-                            {selectedLink ? (
-                                <a
-                                    href={selectedLink.url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="rounded-l-full bg-[#000054] px-10 py-2 text-center"
-                                >
-                                    {selectedLink.type.toUpperCase()}
-                                </a>
-                            ) : (
-                                <button
-                                    type="button"
-                                    className="rounded-l-full bg-[#000054] px-10 py-2 text-center"
-                                >
-                                    DOWNLOAD
-                                </button>
-                            )}
-                            <button
-                                type="button"
-                                aria-label="Choose download link"
-                                aria-expanded={linkDropdownOpen}
-                                aria-haspopup="menu"
-                                onClick={() => setLinkDropdownOpen(!linkDropdownOpen)}
-                                className="rounded-r-full bg-[#000054] px-3 py-2"
+                    <div className={`flex flex-wrap items-center gap-4 mt-8`}>
+                        {detectedLinks.map((link) => {
+                        return (
+                            <Button
+                                variant={"hero"}
+                                onClick={() => {
+                                    window.open(link.url, "_blank");
+                                }}
                             >
-                                <MdExpandMore/>
-                            </button>
-                            {linkDropdownOpen && (
-                                <div
-                                    role="menu"
-                                    className="absolute right-0 top-full z-10 mt-2 w-full rounded-lg bg-white p-1 text-xs text-black shadow-lg"
-                                >
-                                    {detectedLinkTypes.map((linkType) => (
-                                        <button
-                                            key={linkType}
-                                            type="button"
-                                            role="menuitem"
-                                            onClick={() => {
-                                                setSelectedLinkType(linkType);
-                                                setLinkDropdownOpen(false);
-                                            }}
-                                            className="block w-full rounded-md px-3 py-2 text-left hover:bg-[#D9D9D9]"
-                                        >
-                                            {linkType}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    )}
-                    <a
-                        href="mailto:hapi@rmit.edu.au"
-                        className="ml-3 mt-8 inline-block rounded-full bg-[#909090] px-10 py-2 text-center text-sm font-bold text-white"
-                    >
-                        CONTACT US
-                    </a>
+                                {link.type}
+                            </Button>
+                        )
+                    })}
+                        <Button
+                            onClick={() => {
+                                window.open("mailto:hapi@rmit.edu.au", "_blank");
+                            }}
+                            variant={"hero"}
+                            color={"grey"}
+                            styles={`!bg-neutral-200 hover:!bg-neutral-100`}
+                        >
+                            CONTACT US
+                        </Button></div>
                 </section>
             }
         </article>

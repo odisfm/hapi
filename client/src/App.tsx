@@ -19,7 +19,7 @@ export function App({children}: {children?: ReactNode}) {
 
     return (
         <div className={`w-full font-copy`}>
-            <div
+            <header
                 className={`sticky top-0 z-30 w-full bg-[#D1D1D6] text-black`}
             >
                 {authenticationContext.user &&
@@ -59,13 +59,13 @@ export function App({children}: {children?: ReactNode}) {
                     </div>
                     {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
                 </div>
-            </div>
+            </header>
             <main className={`h-full w-full flex flex-col items-center px-4 pb-12 pt-8 bg-neutral-100`}>
                 <Outlet/>
                 {children}
             </main>
             {!isAdminPage &&
-                <footer className="w-full bg-[#D1D1D6] text-xs text-black">
+                <footer className="w-full bg-r-blue text-xs text-white">
                     <div className="mx-auto max-w-[1416px] px-10 py-12 sm:py-16">
                         <div className="flex items-center gap-2">
                             <img
@@ -85,7 +85,6 @@ export function App({children}: {children?: ReactNode}) {
                             impactful contributions to the tech industry.
                         </p>
                     </div>
-                    <div className="h-6 w-full bg-[#000054]" />
                 </footer>
             }
         </div>

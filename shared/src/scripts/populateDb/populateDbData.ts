@@ -1,6 +1,8 @@
 import type {Showcase, Category, Project, ProjectMedia} from "../../generated/prisma/client.js";
 
-type NewShowcaseType = Omit<Showcase, 'id'>
+type NewShowcaseType = Omit<Showcase, 'id'> & {
+    slug: string
+}
 
 export const showcaseData: NewShowcaseType[] = [
     {
@@ -8,28 +10,32 @@ export const showcaseData: NewShowcaseType[] = [
         year: 2026,
         semester: 1,
         description: null,
-        publishedDate: new Date("2026-11-01")
+        publishedDate: new Date("2026-11-01"),
+        slug: "capstone-2026-1"
     },
     {
         name: "Apple Foundation Program",
         year: 2025,
         semester: 2,
         description: null,
-        publishedDate: new Date("2025-07-13")
+        publishedDate: new Date("2025-07-13"),
+        slug: "afp-2025-2"
     },
     {
         name: "Apple Foundation Program",
         year: 2026,
         semester: 1,
         description: null,
-        publishedDate: new Date("2026-06-01")
+        publishedDate: new Date("2026-06-01"),
+        slug: "afp-2026-1"
     },
     {
         name: "RMIT Hackathon",
         year: 2026,
         semester: 0,
         description: null,
-        publishedDate: new Date("2026-11-1")
+        publishedDate: new Date("2026-11-1"),
+        slug: "rmit-hackathon-2026"
     }
 ]
 

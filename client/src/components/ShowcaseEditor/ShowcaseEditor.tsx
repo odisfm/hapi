@@ -11,6 +11,7 @@ import ProjectCard from "../ProjectCard.tsx";
 import {format, formatDistance} from "date-fns";
 import type {UpdateShowcaseRequestType} from "@hapi/shared/types/apiRequests";
 import {Button} from "../generic/Button.tsx";
+import {SlugEditor} from "./SlugEditor.tsx";
 
 const legendStyles = `font-medium`
 const inputStyles = `p-1 rounded-md bg-neutral-200 px-2 py-1 font-light`
@@ -29,7 +30,7 @@ export function ShowcaseEditor() {
         let res: Response;
         try {
             if (!isNew) {
-                res = await fetch(`${API_URL}/showcase/${id}`, {
+                res = await fetch(`${API_URL}/showcase/id/${id}`, {
                     credentials: "include"
                 });
             } else {
@@ -126,7 +127,7 @@ export function ShowcaseEditor() {
 
         let res: Response;
         try {
-            res = await fetch(`${API_URL}/showcase/${showcase.id}`, {
+            res = await fetch(`${API_URL}/showcase/id/${showcase.id}`, {
                 method: 'DELETE',
                 credentials: "include",
             })
@@ -223,6 +224,11 @@ export function ShowcaseEditor() {
                         }}
                     />
                     <span className={`block text-sm font-thin mt-2`}>{publishDateText}</span>
+                </fieldset>
+
+                <fieldset>
+                    <legend className={legendStyles}>Slugs</legend>
+                    <SlugEditor showcaseId={showcase.id} />
                 </fieldset>
 
                 <fieldset>

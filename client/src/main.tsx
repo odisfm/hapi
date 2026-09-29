@@ -18,6 +18,7 @@ import {ShowcaseEditor} from "./components/ShowcaseEditor/ShowcaseEditor.tsx";
 import SearchResultsPage from "./pages/SearchResultsPage.tsx";
 import {PasswordReset} from "./pages/admin/PasswordReset/PasswordReset.tsx";
 import {RootErrorBoundary} from "./components/RootErrorBoundary.tsx";
+import {ShowcasePage} from "./pages/ShowcasePage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
             {
                 path: "/project/:projectSlug",
                 element: <ProjectPage />
+            },
+            {
+                path: "/showcase/:showcaseSlug",
+                element: <ShowcasePage />
             }
         ]
     },

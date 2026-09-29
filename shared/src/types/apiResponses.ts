@@ -84,10 +84,24 @@ export const ProjectSlugSchema = z.object({
     projectId: z.uuidv4()
 })
 
+export const ShowcaseSlugSchema = ProjectSlugSchema
+    .omit({ projectId: true })
+    .extend({
+        showcaseId: z.uuidv4(),
+    });
+
 export type ProjectSlugType = z.infer<typeof ProjectSlugSchema>
+
+export type ShowcaseSlugType = z.infer<typeof ShowcaseSlugSchema>
 
 export const ProjectGetSlugsResponseSchema = z.object({
     slugs: z.array(ProjectSlugSchema)
 })
 
 export type ProjectGetSlugsResponse = z.infer<typeof ProjectGetSlugsResponseSchema>
+
+export const ShowcaseGetSlugsResponseSchema = z.object({
+    slugs: z.array(ShowcaseSlugSchema)
+})
+
+export type ShowcaseGetSlugsResponse = z.infer<typeof ShowcaseGetSlugsResponseSchema>

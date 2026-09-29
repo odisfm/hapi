@@ -1,4 +1,4 @@
-import type {ProjectGetSlugsResponse, ProjectSlugType} from "@hapi/shared/types/apiResponses";
+import type {ShowcaseGetSlugsResponse, ShowcaseSlugType} from "@hapi/shared/types/apiResponses";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {API_URL} from "../../consts.ts";
 import {TiDelete} from "react-icons/ti";
@@ -7,48 +7,48 @@ import type {AlterProjectSlugRequestType} from "@hapi/shared/types/apiRequests";
 import {IoMdAddCircle} from "react-icons/io";
 
 type Props = {
-    projectId: string
+    showcaseId: string
 }
 
 const liStyles = `bg-neutral-200 pl-4 pr-2 py-1 flex rounded-lg w-min flex gap-4 items-center`
 
-export function SlugEditor({projectId}: Props) {
-    const [slugs, setSlugs] = useState<ProjectSlugType[]>([])
+export function SlugEditor({showcaseId}: Props) {
+    const [slugs, setSlugs] = useState<ShowcaseSlugType[]>([])
     const inputRef = useRef<HTMLInputElement>(null)
     const modalContext = useModal()
 
     const getSlugs = useCallback(async () => {
         let res
         try {
-            res = await fetch(`${API_URL}/project/id/${projectId}/slug`, {
+            res = await fetch(`${API_URL}/showcase/id/${showcaseId}/slug`, {
                 credentials: "include",
             })
-            const json: ProjectGetSlugsResponse = await res.json()
+            const json: ShowcaseGetSlugsResponse = await res.json()
             setSlugs(json.slugs)
 
         } catch (e) {
             console.error(e)
         }
-    }, [projectId])
+    }, [showcaseId])
 
     useEffect(() => {
         (async () => {
             getSlugs()
         })()
-    }, [projectId, getSlugs])
+    }, [showcaseId, getSlugs])
 
     async function deleteSlug(slug: string) {
         if (slugs.length === 1) {
             return await modalContext.dispatchModal({
                 headline: "Can't delete slug",
-                body: "Project must have at least one slug. Add a new one before deleting this one,",
+                body: "Showcase must have at least one slug. Add a new one before deleting this one,",
                 buttons: [{id: "", text: "Ok", variant: "default"}]
             })
         }
         const result = await modalContext.dispatchModal({
             headline: "Delete slug?",
-            body: `The slug "${slug}" will be immediately disassociated from this project.\n
-            Existing links to this project, including those posted externally, will immediately break.\n
+            body: `The slug "${slug}" will be immediately disassociated from this showcase.\n
+            Existing links to this showcase, including those posted externally, will immediately break.\n
             Consider adding an additional slug, which will automatically take precedence over all other slugs.`,
             buttons: [
                 {id: "cancel", text: "Cancel", variant: "default"},
@@ -58,7 +58,7 @@ export function SlugEditor({projectId}: Props) {
         if (result === "delete") {
             let res
             try {
-                res = await fetch(`${API_URL}/project/id/${projectId}/slug`, {
+                res = await fetch(`${API_URL}/showcase/id/${showcaseId}/slug`, {
                     method: "DELETE",
                     credentials: "include",
                     body: JSON.stringify({slug: slug} satisfies AlterProjectSlugRequestType),
@@ -86,7 +86,7 @@ export function SlugEditor({projectId}: Props) {
     async function addSlug(slug: string) {
         let res
         try {
-            res = await fetch(`${API_URL}/project/id/${projectId}/slug`, {
+            res = await fetch(`${API_URL}/showcase/id/${showcaseId}/slug`, {
                 method: "POST",
                 credentials: "include",
                 body: JSON.stringify({slug: slug} satisfies AlterProjectSlugRequestType),
@@ -119,7 +119,9 @@ export function SlugEditor({projectId}: Props) {
             <ul>
                 {slugs.map((slug) => {
                     return (
-                        <li key={slug.slug} className={`${liStyles} mb-2 first:bg-r-blue-500 first:text-white`}>
+                        <li
+                            key={slug.slug}
+                            className={`${liStyles} mb-2 first:bg-r-blue-500 first:text-white whitespace-nowrap`}>
                             <span>{`/${slug.slug}`}</span>
                             <button
                                 type={"button"}

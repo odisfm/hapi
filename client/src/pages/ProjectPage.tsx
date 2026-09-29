@@ -242,7 +242,17 @@ export default function ProjectPage() {
                     return setSelectedDeviceType(deviceType)
                 }
             }
-            setSelectedDeviceType(null);
+            // no device matching user device, fallback to hardcoded preference
+             for (const m of state.project!.media) {
+                 if (m.deviceType === "PHONE") {
+                     return setSelectedDeviceType("PHONE")
+                 } else if (m.deviceType === "TABLET") {
+                     return setSelectedDeviceType("TABLET")
+                 } else if (m.deviceType === "DESKTOP") {
+                     return setSelectedDeviceType("DESKTOP")
+                 }
+             }
+            setSelectedDeviceType(state.project!.media[0].deviceType);
         })()
 
     }, [state.project]);

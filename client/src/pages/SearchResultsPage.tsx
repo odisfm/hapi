@@ -13,7 +13,7 @@ import {useLocation} from "react-router";
 import ProjectCard from "../components/ProjectCard.tsx";
 import {Paginator} from "../components/ProjectEditor/Paginator.tsx";
 import {PublicFilterSection} from "../components/ProjectList/PublicFilterSection.tsx";
-import {getShowcaseName} from "../utils/getShowcaseName.ts";
+import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
 import {FaSearch} from "react-icons/fa";
 import {MdCancel} from "react-icons/md";
 import {Button} from "../components/generic/Button.tsx";

@@ -105,6 +105,12 @@ REJECTED REJECTED
     }
   
 
+  "ShowcaseSlug" {
+    String slug "🗝️"
+    DateTime assignedDate 
+    }
+  
+
   "PasswordResetRequest" {
     String id "🗝️"
     DateTime expiry "❓"
@@ -121,5 +127,6 @@ REJECTED REJECTED
     "ProjectMedia" |o--|| "DeviceType" : "enum:deviceType"
     "ProjectMedia" |o--|| "MediaStatus" : "enum:status"
     "ProjectSlug" }o--|| "Project" : "project"
+    "ShowcaseSlug" }o--|| "Showcase" : "showcase"
     "PasswordResetRequest" }o--|| "User" : "user"
 ```

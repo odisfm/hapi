@@ -2,17 +2,20 @@ import {createHono} from "../helpers/createHono";
 import {db} from "@hapi/shared"
 import {filterShowcase} from "../utils/filters/filterShowcase.js";
 import {
-    type ProjectDetailsAdminResponse,
+    type ProjectDetailsAdminResponse, type ProjectGetSlugsResponse,
     type ShowcaseAdminDetailsResponse,
-    type ShowcaseFeaturedResponse,
+    type ShowcaseFeaturedResponse, type ShowcaseGetSlugsResponse,
     type ShowcaseListResponse, type ShowcasePublicDetailsResponse
 } from "@hapi/shared/types/apiResponses"
 import type {ShowcaseAdminType} from "@hapi/shared/types/showcase";
 import {needsAuth} from "../middleware/needsAuth";
 import {addYears} from "date-fns";
-import {UpdateShowcaseRequestSchema} from "@hapi/shared/types/apiRequests";
+import {AlterProjectSlugRequestSchema, UpdateShowcaseRequestSchema} from "@hapi/shared/types/apiRequests";
 import {Prisma} from "@hapi/shared/prisma/client";
 import {createUuid} from "@hapi/client/src/utils/misc";
+import {filterProject} from "../utils/filters/filterProject";
+import {projectRouter} from "./projectRouter";
+import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
 
 const NUM_FEATURED_SHOWCASES = 3
 const NUM_FEATURED_PROJECTS = 9
@@ -91,7 +94,50 @@ showcaseRouter.get("all", async (c) => {
     }
 })
 
-showcaseRouter.get(":showcaseId", async (c) => {
+showcaseRouter.get(":showcaseSlug", async (c) => {
+    const slug = c.req.param("showcaseSlug").toLowerCase()
+    const record = await db.showcaseSlug.findUnique({
+        where: {
+            slug: slug,
+        },
+        include: {
+            showcase: {
+                include: {
+                    projects: {
+                        where: {
+                          published: true
+                        },
+                        include: {
+                            category: true,
+                            media: true,
+                            showcase: true,
+                            slugs: {
+                                take: 1,
+                                orderBy: {assignedDate: "desc"}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    })
+
+    if (!record) {
+        return c.json({}, 404)
+    }
+    if (!record.showcase.publishedDate || record.showcase.publishedDate > new Date()) {
+        return c.json({}, 404)
+    }
+
+    const showcase = filterShowcase(record.showcase, null)
+
+    return c.json({
+        showcase
+    } satisfies ShowcasePublicDetailsResponse, 200)
+
+})
+
+showcaseRouter.get("id/:showcaseId", async (c) => {
     const user = c.get("user")
     const userRole = user?.role || null
     const showcaseId = c.req.param("showcaseId")
@@ -140,6 +186,80 @@ showcaseRouter.get(":showcaseId", async (c) => {
     } catch (e) {
         console.error(e)
         return c.json({error: "Internal server errror"}, 500)
+    }
+})
+
+showcaseRouter.get("id/:showcaseId/slug", needsAuth, async (c) => {
+    const showcaseId = c.req.param("showcaseId")
+    try {
+        const record = await db.showcaseSlug.findMany({
+            where: {
+                showcaseId: showcaseId,
+            },
+            orderBy: {
+                assignedDate: "desc"
+            }
+        })
+
+        return c.json(
+            {
+                slugs: record
+            } satisfies ShowcaseGetSlugsResponse, 200)
+    } catch (e) {
+        console.error(e)
+        return c.json({error: "Internal server error"}, 500)
+    }
+})
+
+showcaseRouter.post("id/:showcaseId/slug", needsAuth, async (c) => {
+    const showcaseId = c.req.param("showcaseId")
+    let body
+    try {
+        body = AlterProjectSlugRequestSchema.parse(await c.req.json())
+    } catch {
+        return c.json({error: "Malformed data"}, 400)
+    }
+    try {
+        await db.showcaseSlug.create({
+            data: {
+                slug: body.slug.toLowerCase(),
+                showcaseId: showcaseId,
+                assignedDate: new Date()
+            }
+        })
+        return c.json({}, 200)
+    } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+            const existingRecord = await db.showcaseSlug.findUnique({
+                where: {slug: body.slug},
+                include: {showcase: true}
+            })
+            return c.json(
+                {error: `Slug taken by showcase with name ${getShowcaseName(existingRecord!.showcase)}`}
+            , 400)
+        } else {
+            console.error(e)
+            return c.json({error: "Internal server error"}, 500)
+        }
+    }
+})
+
+showcaseRouter.delete("id/:showcaseId/slug", needsAuth, async (c) => {
+    const showcaseId = c.req.param("showcaseId")
+    let body
+    try {
+        body = AlterProjectSlugRequestSchema.parse(await c.req.json())
+    } catch {
+        return c.json({error: "Malformed data"}, 400)
+    }
+    try {
+        await db.showcaseSlug.delete({
+            where: {slug: body.slug.toLowerCase()}
+        })
+        return c.json({}, 200)
+    } catch (e) {
+        console.error(e)
+        return c.json({error: "Internal server error"}, 500)
     }
 })
 

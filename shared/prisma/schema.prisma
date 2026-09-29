@@ -37,6 +37,7 @@ model Showcase {
   publishedDate DateTime? /// null or future = unpublished
 
   projects Project[]
+  slugs    ShowcaseSlug[]
 
   @@unique([name, year, semester])
 }
@@ -101,6 +102,13 @@ model ProjectSlug {
   slug         String   @id
   projectId    String   @db.Uuid
   project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignedDate DateTime @db.Timestamptz()
+}
+
+model ShowcaseSlug {
+  slug         String   @id
+  showcaseId   String   @db.Uuid
+  showcase     Showcase @relation(fields: [showcaseId], references: [id], onDelete: Cascade)
   assignedDate DateTime @db.Timestamptz()
 }
 

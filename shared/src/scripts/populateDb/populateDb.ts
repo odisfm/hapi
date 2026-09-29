@@ -54,9 +54,24 @@ await db.user.deleteMany()
 console.log(`Done`)
 
 console.log(`Populating table Showcase`)
-await db.showcase.createMany({
-    data: showcaseData
-})
+for (const showcase of showcaseData) {
+    const record = await db.showcase.create({
+        data: {
+            name: showcase.name,
+            year: showcase.year,
+            semester: showcase.semester,
+            description: showcase.description,
+            publishedDate: showcase.publishedDate
+        },
+    })
+    await db.showcaseSlug.create({
+        data: {
+            slug: showcase.slug,
+            assignedDate: new Date(),
+            showcaseId: record.id
+        }
+    })
+}
 console.log(`Done`)
 
 console.log(`Populating table Category`)

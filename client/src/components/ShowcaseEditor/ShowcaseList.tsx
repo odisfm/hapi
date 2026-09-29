@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from "react";
 import {API_URL} from "../../consts.ts";
 import type {ShowcaseListResponse, ShowcaseListResponseItem} from "@hapi/shared/types/apiResponses";
 import {ShowcaseCard} from "./ShowcaseCard.tsx";
-import {getShowcaseName} from "../../utils/getShowcaseName.ts";
+import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
 import {Link} from "react-router";
 import {FaPlus, FaSpinner} from "react-icons/fa";
 

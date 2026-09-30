@@ -2,6 +2,8 @@ import { ModalContext, type ModalInteraction, type ModalButton } from "./ModalCo
 import {useState, useCallback, useEffect} from "react";
 import {createUuid} from "../../utils/misc.ts";
 import {Button} from "../../components/generic/Button.tsx";
+import {FaChevronCircleLeft, FaChevronCircleRight} from "react-icons/fa";
+import {IoMdCloseCircle} from "react-icons/io";
 
 type QueuedModal = ModalInteraction & {
     id: string;
@@ -102,15 +104,55 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
                         image.resolve("")
                     }}
                 >
-                    <div className="relative rounded-lg bg-white p-6 shadow-xl">
-                        <img
-                            src={image.url}
-                            alt={image.altText}
-                            className={`
+                    <div className="relative rounded-lg bg-white p-6 shadow-xl flex flex-col gap-2">
+                        <Button
+                            styles={`self-end`}
+                            color={"subtle"}
+                            onClick={() => {}} // clicking anywhere already dismisses, but user might not know that
+                            ariaLabel={"dismiss image"}
+                        >
+                            <IoMdCloseCircle size={20}/>
+                        </Button>
+                        <div className={`flex gap-2 items-center`}>
+                            {image.navigation &&
+                                <Button
+                                    color={"subtle"}
+                                    disabled={!(image.navigation?.previous)}
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        if (!image.navigation?.previous) return
+                                        image.navigation.previous()
+                                    }}
+                                    ariaLabel={`previous image`}
+                                >
+                                    <FaChevronCircleLeft size={30}/>
+                                </Button>
+                            }
+                            <img
+                                src={image.url}
+                                alt={image.altText}
+                                className={`
                                 block h-auto w-auto max-h-[calc(90vh-3rem)] max-w-[calc(90vw-3rem)] 
                                 object-contain cursor-pointer
                                 `}
-                        />
+                            />
+                            {image.navigation &&
+                                <Button
+                                    color={"subtle"}
+                                    disabled={!(image.navigation?.next)}
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        if (!image.navigation?.next) return
+                                        image.navigation.next()
+                                    }}
+                                    ariaLabel={`next image`}
+                                >
+                                    <FaChevronCircleRight size={30}/>
+                                </Button>
+                            }
+                        </div>
                     </div>
                 </div>
             }

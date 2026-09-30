@@ -246,6 +246,7 @@ export function MediaEditor({media, setMedia, setHasChanged, project, submitProj
                         <img
                             className={`w-full h-full object-contain block`}
                             src={`${import.meta.env.VITE_S3_MEDIA_BUCKET}${activeMedia.uri}.webp`}
+                            alt="Selected screenshot preview"
                         />
                     }
                     {!activeMedia &&

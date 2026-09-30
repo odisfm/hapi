@@ -6,6 +6,7 @@ import {API_URL} from "../../consts.ts";
 import {Button} from "../../components/generic/Button.tsx";
 
 const inputClasses = `p-1 bg-neutral-200 rounded-md`
+const fieldsetClasses = `flex flex-col gap-1 mb-2`
 
 export default function AdminLoginPage() {
     const authContext = useAuth()
@@ -62,26 +63,26 @@ export default function AdminLoginPage() {
                         {errorText}
                     </p>
                 }
-                <fieldset>
-                    <legend>Email</legend>
+                <div className={fieldsetClasses}>
+                    <label htmlFor={"emailInput"}>Email</label>
                     <input
                         type={"email"}
                         ref={emailRef}
                         required
-                        aria-label="Email"
+                        id={"emailInput"}
                         className={inputClasses}
                     />
-                </fieldset>
-                <fieldset>
-                    <legend>Password</legend>
+                </div>
+                <div className={fieldsetClasses}>
+                    <label htmlFor={"passwordInput"}>Password</label>
                     <input
                         type={"password"}
                         ref={passwordRef}
                         required
-                        aria-label="Password"
+                        id={"passwordInput"}
                         className={inputClasses}
                     />
-                </fieldset>
+                </div>
                 <Button
                     buttonType={"submit"}
                     color={"blue"}

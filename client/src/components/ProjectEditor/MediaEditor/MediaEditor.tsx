@@ -299,14 +299,13 @@ export function MediaEditor({media, setMedia, setHasChanged, project, submitProj
                             <FaFileUpload />
                         </Button>
                         <input type={"file"} accept="image/*" className={"hidden"} ref={uploadRef}
-                            aria-label="Upload screenshot"
                                onChange={(e) => uploadScreenshot(e)}/>
                     </div>
                 </div>
             </div>
-            <legend>Device</legend>
+            <label htmlFor={"deviceInput"}>Device</label>
             <select
-                aria-label="Device"
+                id={"deviceInput"}
                 onChange={(e) => setDeviceType(e.target.value as DeviceType)}
                 className={`p-2 bg-neutral-200 rounded-md self-start`}
             >

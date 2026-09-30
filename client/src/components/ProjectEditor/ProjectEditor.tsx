@@ -510,7 +510,6 @@ export function ProjectEditor() {
                                     type={"file"}
                                     accept={".png,.jpg,.jpeg,.tiff,.svg,.webp,.heif"}
                                     name={"iconInput"}
-                                    aria-label="Upload project icon"
                                     className={'hidden'}
                                 />
                                     <div className={`flex gap-2 w-full`}>
@@ -531,16 +530,21 @@ export function ProjectEditor() {
 
                     </div>
                     <form
-                        className={`flex flex-col gap-4 mt-4`}
+                        className={`flex flex-col gap-4 mt-4 project-editor-form`}
                         onSubmit={(e) => {
                             e.preventDefault()
                             submit()
                         }}
                     >
-                        <fieldset>
-                            <legend className={legendStyles}>Project name</legend>
+                        <div>
+                            <label
+                                className={legendStyles}
+                                htmlFor={"projectNameInput"}
+                            >
+                                Project name
+                            </label>
                             <input
-                                name={"name"}
+                                id={"projectNameInput"}
                                 aria-label="Project name"
                                 defaultValue={projectName}
                                 onChange={(e) => {
@@ -550,12 +554,17 @@ export function ProjectEditor() {
                                 className={`${inputStyles} w-full`}
                                 required
                             />
-                        </fieldset>
-                        <fieldset>
-                            <legend className={legendStyles}>Subtitle</legend>
+                        </div>
+                        <div>
+                            <label
+                                className={legendStyles}
+                                htmlFor={"subtitleInput"}
+                            >
+                                Subtitle
+                            </label>
                             <input
                                 name={"subtitle"}
-                                aria-label="Subtitle"
+                                id={"subtitleInput"}
                                 defaultValue={subtitle}
                                 onChange={(e) => {
                                     setHasChanged(true)
@@ -564,14 +573,19 @@ export function ProjectEditor() {
                                 className={`${inputStyles} w-full`}
                                 required
                             />
-                        </fieldset>
+                        </div>
                         {showcaseItems.length > 0 &&
                             <>
-                                <fieldset>
-                                    <legend className={legendStyles}>Showcase</legend>
+                                <div>
+                                    <label
+                                        className={legendStyles}
+                                        htmlFor={"showcaseInput"}
+                                    >
+                                        Showcase
+                                    </label>
                                     <select
                                         name={"showcase"}
-                                        aria-label="Showcase"
+                                        id={"showcaseInput"}
                                         value={selectedShowcase?.id ?? ""}
                                         className={`${selectStyles}`}
                                         onChange={(e) => {
@@ -588,11 +602,11 @@ export function ProjectEditor() {
                                             )
                                         })}
                                     </select>
-                                </fieldset>
+                                </div>
                             </>
                         }
-                        <fieldset>
-                            <legend className={legendStyles}>Status</legend>
+                        <div>
+                            <label className={legendStyles}>Status</label>
                             <div className={`flex gap-2 items-center`}>
                                 <input
                                     name={"published"}
@@ -626,7 +640,7 @@ export function ProjectEditor() {
                                     required
                                 />
                                 <label htmlFor={"publishedFalse"} className={`font-light`}>Unpublished</label></div>
-                        </fieldset>
+                        </div>
                         {showcaseDate &&
                             <span className={`text-xs`}>
                                     {showcaseDate.split("(")[0]}
@@ -652,8 +666,10 @@ export function ProjectEditor() {
                                 })}
                             </select>
                         </fieldset>
-                        <fieldset>
-                            <legend className={legendStyles}>Developers</legend>
+                        <div>
+                            <label className={legendStyles} id={"developersLabel"}>
+                                Developers
+                            </label>
                             <TextItemEditor
                                 items={developers}
                                 setItems={(items) => {
@@ -663,9 +679,9 @@ export function ProjectEditor() {
                                 placeholder={"John Smith"}
                                 validator={() => { return true}}
                             />
-                        </fieldset>
-                        <fieldset>
-                            <legend className={legendStyles}>Links</legend>
+                        </div>
+                        <div>
+                            <label className={legendStyles}>Links</label>
                             <TextItemEditor
                                 items={links}
                                 setItems={(items) => {
@@ -677,11 +693,11 @@ export function ProjectEditor() {
                                     return z.validate(z.url(), value)
                                 }}
                             />
-                        </fieldset>
-                        <fieldset>
-                            <legend className={legendStyles}>Slugs</legend>
+                        </div>
+                        <div>
+                            <label className={legendStyles} id={"slugsLabel"} htmlFor={"slugsEditor"}>Slugs</label>
                             <SlugEditor projectId={project.id}/>
-                        </fieldset>
+                        </div>
 
                         <div className={`mt-4 flex flex-col gap-2`}>
                             <div className={`flex gap-2`}>
@@ -690,6 +706,7 @@ export function ProjectEditor() {
                                     color={detailsTab === "description" ? "blue" : "light-blue"}
                                     active={detailsTab === "description"}
                                     onClick={() => setDetailsTab("description")}
+                                    ariaLabel={"Enable description view"}
                                 >
                                     Description
                                 </Button>
@@ -698,6 +715,7 @@ export function ProjectEditor() {
                                     color={detailsTab === "media" ? "blue" : "light-blue"}
                                     active={detailsTab === "media"}
                                     onClick={() => setDetailsTab("media")}
+                                    ariaLabel={"Enable screenshots view"}
                                 >
                                     Screenshots
                                 </Button>
@@ -706,6 +724,7 @@ export function ProjectEditor() {
                                     color={detailsTab === "hero" ? "blue" : "light-blue"}
                                     active={detailsTab === "hero"}
                                     onClick={() => setDetailsTab("hero")}
+                                    ariaLabel={"Enable hero art view"}
                                 >
                                     Hero art
                                 </Button>
@@ -714,6 +733,7 @@ export function ProjectEditor() {
                                     color={detailsTab === "video" ? "blue" : "light-blue"}
                                     active={detailsTab === "video"}
                                     onClick={() => setDetailsTab("video")}
+                                    ariaLabel={"Enable video view"}
                                 >
                                     Video
                                 </Button>
@@ -764,7 +784,6 @@ export function ProjectEditor() {
                                         type={"file"}
                                         accept={".png,.jpg,.jpeg,.tiff,.svg,.webp,.heif"}
                                         name={"iconInput"}
-                                        aria-label="Upload hero art"
                                         className={'hidden'}
                                     />
                                     <div className={`max-w-[300px]`}>

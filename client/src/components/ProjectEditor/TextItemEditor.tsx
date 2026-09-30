@@ -45,7 +45,7 @@ export function TextItemEditor({items, setItems, validator, placeholder}: {
     }, [inputFocus, addItem])
 
     return (
-        <div className={`flex flex-col gap-2`}>
+        <div className={`flex flex-col gap-2`} aria-labelledby={"developersLabel"}>
             <ul className={`flex flex-wrap gap-2`}>
                 {items.map((item, index) => {
                     return (
@@ -63,9 +63,9 @@ export function TextItemEditor({items, setItems, validator, placeholder}: {
                     )
                 })}
             </ul>
-            <div className={`flex gap-2 items-center justify-end`}>
+            <div className={`flex gap-2 items-center justify-end self-start`}>
                 <input
-                    aria-label={placeholder}
+                    aria-label={"New link input"}
                     className={`bg-neutral-200 rounded-md px-2 py-1 box-border ${!inputValid && `border-1 border-red-700`}`}
                     placeholder={placeholder}
                     ref={inputRef}

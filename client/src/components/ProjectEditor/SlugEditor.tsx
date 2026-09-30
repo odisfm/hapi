@@ -123,6 +123,7 @@ export function SlugEditor({projectId}: Props) {
                             <span>{`/${slug.slug}`}</span>
                             <button
                                 type={"button"}
+                                aria-label={`Delete slug ${slug.slug}`}
                                 className={`p-1 rounded-md hover:bg-red-600 hover:text-white cursor-pointer`}
                                 onClick={() => {deleteSlug(slug.slug)}}
                             >
@@ -141,6 +142,7 @@ export function SlugEditor({projectId}: Props) {
                 />
                 <button
                     type="button"
+                    aria-label="Add slug"
                     className={`p-1 rounded-md bg-r-blue-700 hover:bg-r-blue text-white cursor-pointer`}
                     onClick={() => {
                         if (!inputRef.current) return

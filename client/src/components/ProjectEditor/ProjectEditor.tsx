@@ -510,10 +510,11 @@ export function ProjectEditor() {
                                     type={"file"}
                                     accept={".png,.jpg,.jpeg,.tiff,.svg,.webp,.heif"}
                                     name={"iconInput"}
+                                    aria-label="Upload project icon"
                                     className={'hidden'}
                                 />
                                     <div className={`flex gap-2 w-full`}>
-                                        <button className={`
+                                        <button aria-label="Upload project icon" className={`
                                             bg-r-yellow-500 hover:bg-r-yellow-400 cursor-pointer
                                             flex items-center gap-2 p-3 rounded-full
                                             `}
@@ -540,6 +541,7 @@ export function ProjectEditor() {
                             <legend className={legendStyles}>Project name</legend>
                             <input
                                 name={"name"}
+                                aria-label="Project name"
                                 defaultValue={projectName}
                                 onChange={(e) => {
                                     setHasChanged(true)
@@ -553,6 +555,7 @@ export function ProjectEditor() {
                             <legend className={legendStyles}>Subtitle</legend>
                             <input
                                 name={"subtitle"}
+                                aria-label="Subtitle"
                                 defaultValue={subtitle}
                                 onChange={(e) => {
                                     setHasChanged(true)
@@ -568,6 +571,7 @@ export function ProjectEditor() {
                                     <legend className={legendStyles}>Showcase</legend>
                                     <select
                                         name={"showcase"}
+                                        aria-label="Showcase"
                                         value={selectedShowcase?.id ?? ""}
                                         className={`${selectStyles}`}
                                         onChange={(e) => {
@@ -635,6 +639,7 @@ export function ProjectEditor() {
                             <legend className={legendStyles}>Category</legend>
                             <select
                                 name={"category"}
+                                aria-label="Category"
                                 defaultValue={project.category}
                                 className={`${selectStyles}`}
                                 ref={categoryRef}
@@ -759,6 +764,7 @@ export function ProjectEditor() {
                                         type={"file"}
                                         accept={".png,.jpg,.jpeg,.tiff,.svg,.webp,.heif"}
                                         name={"iconInput"}
+                                        aria-label="Upload hero art"
                                         className={'hidden'}
                                     />
                                     <div className={`max-w-[300px]`}>

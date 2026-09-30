@@ -170,6 +170,7 @@ export function ShowcaseEditor() {
                 <fieldset>
                     <legend className={legendStyles}>Showcase name</legend>
                     <input
+                        aria-label="Showcase name"
                         className={`${inputStyles} w-2/3`}
                         defaultValue={showcase.name}
                         onChange={e => {
@@ -182,6 +183,7 @@ export function ShowcaseEditor() {
                 <fieldset>
                     <legend className={legendStyles}>Year</legend>
                     <input
+                        aria-label="Year"
                         className={inputStyles}
                         type={"number"}
                         defaultValue={showcase.year}
@@ -197,6 +199,7 @@ export function ShowcaseEditor() {
                 <fieldset>
                     <legend className={legendStyles}>Semester</legend>
                     <input
+                        aria-label="Semester"
                         className={inputStyles}
                         type={"number"}
                         defaultValue={showcase.semester}
@@ -213,6 +216,7 @@ export function ShowcaseEditor() {
                 <fieldset>
                     <legend className={legendStyles}>Publish date</legend>
                     <input
+                        aria-label="Publish date"
                         className={inputStyles}
                         type={"datetime-local"}
                         defaultValue={showcase.publishedDate ? format(new Date(showcase.publishedDate), "yyyy-MM-dd'T'HH:mm") : ""}

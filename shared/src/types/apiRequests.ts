@@ -11,8 +11,8 @@ export type ProjectSearchQuery = {
     limit?: number,
     /** when paginating, the UUID of the last project returned **/
     cursor?: string,
-    /** UUID of category **/
     page?: number,
+    /** UUIDs of categories to search, joined on "," **/
     category?: string,
     /** UUID of capstone **/
     showcase?: string,
@@ -38,11 +38,10 @@ export const CreateUserRequestSchema = z.object({
 })
 
 export const UpdateProjectRequestSchema = z.object({
-    project: ProjectAdminSchema.omit({slug: true}).extend({
+    project: ProjectAdminSchema.omit({slug: true, categories: true}).extend({
         iconUrl: z.string(),
         order: z.string().optional(),
-        category: z.undefined().optional(),
-        categoryId: z.uuidv4(),
+        categoryIds: z.array(z.uuidv4()),
         showcaseId: z.uuidv4(),
         media: z.array(ProjectMediaSchema)
     })

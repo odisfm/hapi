@@ -257,6 +257,17 @@ export default function ProjectPage() {
 
     }, [state.project]);
 
+    const categoriesText = useMemo(() => {
+        const categories = state.project?.categories ?? []
+        if (!categories.length) return ""
+
+        const MAX_DISPLAYED = 3
+        const shown = categories.slice(0, MAX_DISPLAYED).join(", ")
+        const remaining = categories.length - MAX_DISPLAYED
+
+        return remaining > 0 ? `${shown} +${remaining}` : shown
+    }, [state.project?.categories])
+
     if (state.loading) {
         return <FaSpinner className={`text-[5rem] mt-20 animate-spin`}/>;
     }
@@ -319,7 +330,6 @@ export default function ProjectPage() {
 
     const developerLabel = project.developers.length === 1 ? "Developer" : "Developers";
 
-
     return (
         <article className="w-full max-w-5xl font-copy">
             <section className="rounded-2xl bg-[#C6C6C6] p-4 text-black sm:p-5">
@@ -336,10 +346,15 @@ export default function ProjectPage() {
                             <dt className="font-bold">{developerLabel}</dt>
                             <dd>{project.developers.join(", ")}</dd>
                         </div>
-                        <div>
-                            <dt className="font-bold">Category</dt>
-                            <dd>{project.category}</dd>
+                        {project.categories.length > 0 &&
+                            <div>
+                            <dt className="font-bold">
+                                {project.categories.length === 1 ? "Category" : "Categories"}</dt>
+                            <dd>
+                                {categoriesText}
+                            </dd>
                         </div>
+                        }
                         <div>
                             <dt className="font-bold">Available On</dt>
                             <dd className="mt-1 flex items-center gap-1">

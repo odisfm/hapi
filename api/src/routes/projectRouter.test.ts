@@ -44,7 +44,11 @@ type SlugWithProject = ProjectSlugGetPayload<{
             include: {
                 showcase: true
                 media: true
-                category: true
+                categories: {
+                    include: {
+                        category: true
+                    }
+                }
                 slugs: true
             }
         }
@@ -54,7 +58,11 @@ type SlugWithProject = ProjectSlugGetPayload<{
 type ProjectFindMany = ProjectGetPayload<{
     include: {
         media: true,
-        category: true
+        categories: {
+            include: {
+                category: true
+            }
+        }
         slugs: true
         showcase: true
     }
@@ -67,7 +75,7 @@ const validFindUnique = {
         {slug: "my-cool-app"},
     ],
     media: [],
-    category: {name: "Games"},
+    categories: [],
     published: true,
     showcase: {
         publishedDate: new Date(Date.now() - 1000),
@@ -83,7 +91,7 @@ describe("GET /project", async () => {
             project: {
                 showcase: {publishedDate: new Date(Date.now() - 1000)},
                 media: [],
-                category: {name: "Games"},
+                categories: [],
                 published: true,
                 slugs: [
                     {slug: "my-cool-app"},

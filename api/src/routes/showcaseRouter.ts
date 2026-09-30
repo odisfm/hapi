@@ -38,7 +38,11 @@ showcaseRouter.get("featured", async (c) => {
                     take: NUM_FEATURED_PROJECTS,
                     include: {
                         media: true,
-                        category: true,
+                        categories: {
+                            include: {
+                                category: true
+                            }
+                        },
                         showcase: true,
                         slugs: {
                             take: 1,
@@ -108,7 +112,9 @@ showcaseRouter.get(":showcaseSlug", async (c) => {
                           published: true
                         },
                         include: {
-                            category: true,
+                            categories: {
+                                include: {category: true}
+                            },
                             media: true,
                             showcase: true,
                             slugs: {
@@ -160,7 +166,9 @@ showcaseRouter.get("id/:showcaseId", async (c) => {
                             }
                         },
                         media: true,
-                        category: true,
+                        categories: {
+                            include: {category: true}
+                        },
                         showcase: true
                     }
                 }

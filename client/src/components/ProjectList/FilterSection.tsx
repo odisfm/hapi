@@ -18,6 +18,22 @@ export function FilterSection({
 }: Props) {
 
     const hasFilter = searchQuery.showcase || searchQuery.category || searchQuery.published
+    function toggleCategory(categoryId: string) {
+        const categoriesSplit = searchQuery.category ? searchQuery.category.split(",") : []
+        if (categoriesSplit.includes(categoryId)) {
+            const idx = categoriesSplit.indexOf(categoryId);
+            setSearchQuery({
+                ...searchQuery,
+                category: categoriesSplit.toSpliced(idx, 1).join(",")
+            })
+        } else {
+            setSearchQuery({
+                ...searchQuery,
+                category: categoriesSplit.join(",") + "," + categoryId
+            })
+        }
+    }
+
     return (
         <nav className={`bg-neutral-200 w-full md:w-60 rounded-md self-start p-2 flex flex-col gap-2`}>
             <div className={`flex items-center`}>
@@ -64,7 +80,8 @@ export function FilterSection({
                 <span>Category</span>
                 <ul className={`flex flex-wrap gap-1`}>
                     {categories.map((c, i) => {
-                        const active = searchQuery.category === c.id;
+                        const active =
+                            searchQuery.category ? searchQuery.category.split(",").includes(c.id) : false
                         return (
                             <li key={i} className={`mb-1`}>
                                 <Button
@@ -73,7 +90,7 @@ export function FilterSection({
                                     styles={`text-xs`}
                                     active={active}
                                     onClick={() => {
-                                        setSearchQuery({...searchQuery, page: 0, category: c.id});
+                                        toggleCategory(c.id)
                                     }}
                                 >
                                     {c.name}

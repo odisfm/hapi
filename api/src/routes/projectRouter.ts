@@ -41,7 +41,11 @@ projectRouter.get("/featured", async (c) => {
             orderBy: {order: "asc"},
             include: {
                 showcase: true,
-                category: true,
+                categories: {
+                    include: {
+                        category: true
+                    }
+                },
                 media: true,
                 slugs: true
             }
@@ -117,13 +121,14 @@ projectRouter.get("/search", async (c) => {
     const records = await db.project.findMany({
         where: {
             ...(searchQuery.showcase && {showcaseId: searchQuery.showcase}),
-            ...(searchQuery.category && {categoryId: searchQuery.category}),
             ...(searchQuery.approvalStatus && {approvalStatus: searchQuery.approvalStatus}),
             ...(userRole !== "ADMIN" && {published: true, showcase: {publishedDate: {lt: new Date()}}}),
         },
         include: {
             showcase: true,
-            category: true,
+            categories: {
+                include: {category: true}
+            },
             media: true,
             slugs: {
                 take: 1,
@@ -138,6 +143,11 @@ projectRouter.get("/search", async (c) => {
         ]
     })
     const now = new Date()
+
+    let queryCategoryIds: string[] = []
+    if (searchQuery.category) {
+        queryCategoryIds = searchQuery.category.split(",")
+    }
 
     let filteredRecords = records.filter(r => {
         if (userRole === "ADMIN") {
@@ -157,35 +167,36 @@ projectRouter.get("/search", async (c) => {
         return true
     })
 
-    if (searchQuery.searchTerm) {
-        const searchItems = filteredRecords.map(
-            i => ({...i, categoryName: i.category.name})
-        );
-        const fuse = new Fuse(
-            searchItems, {
-                useTokenSearch: true,
-                ignoreLocation: true,
-                ignoreDiacritics: true,
-                fieldNormWeight: 0.7,
-                threshold: 0.8,
-                keys: [
-                    {name: "name", weight: 5},
-                    {name: "subtitle", weight: 3},
-                    {name: "description", weight: 1},
-                    {name: "developers", weight: 1},
-                    {name: "categoryName", weight: 3}
-                ],
-                includeScore: true
+    if (queryCategoryIds.length > 0) {
+        filteredRecords = filteredRecords.filter(r => {
+            for (const c of r.categories) {
+                if (queryCategoryIds.includes(c.categoryId)) return true
             }
-        )
-        let searchResult = fuse.search(searchQuery.searchTerm)
-        searchResult = searchResult.filter((r) => {
-            return r.score && r.score <= SEARCH_SCORE_CUTOFF
+            return false
         })
-        filteredRecords = searchResult.map((r) => {
-            const { categoryName, ...item } = r.item;
-            return item;
+    }
+
+    if (searchQuery.searchTerm) {
+        const fuse = new Fuse(filteredRecords, {
+            useTokenSearch: true,
+            ignoreLocation: true,
+            ignoreDiacritics: true,
+            fieldNormWeight: 0.7,
+            threshold: 0.8,
+            includeScore: true,
+            keys: [
+                { name: "name", weight: 5 },
+                { name: "subtitle", weight: 3 },
+                { name: "description", weight: 1 },
+                { name: "developers", weight: 1 },
+                { name: "categories.category.name", weight: 3 },
+            ],
         });
+
+        filteredRecords = fuse
+            .search(searchQuery.searchTerm)
+            .filter(r => r.score !== undefined && r.score <= SEARCH_SCORE_CUTOFF)
+            .map(r => r.item);
     }
 
     let processedRecords = filteredRecords.map((r) => {
@@ -231,7 +242,11 @@ projectRouter.get("/:projectSlug", async (c) => {
                     include: {
                         showcase: true,
                         media: true,
-                        category: true,
+                        categories: {
+                            include: {
+                                category: true
+                            }
+                        },
                         slugs: {
                             take: 1,
                             orderBy: {
@@ -269,7 +284,9 @@ projectRouter.get("/id/:projectId", needsAuth, async (c) => {
             where: {id: projectId},
             include: {
                 media: true,
-                category: true,
+                categories: {
+                    include: {category: true}
+                },
                 showcase: true,
                 slugs: true
             }
@@ -297,7 +314,7 @@ projectRouter.patch("/", needsAuth, async (c) => {
         return c.json({error: "Malformed input"}, 400)
     }
     try {
-        const { media, ...project } = body.project;
+        const { media, categoryIds, ...project } = body.project;
         await db.project.upsert({
             where: {id: project.id},
             create: {
@@ -319,6 +336,19 @@ projectRouter.patch("/", needsAuth, async (c) => {
                 }
             })
         }
+        await db.projectCategory.deleteMany({
+            where: {
+                projectId: project.id,
+            }
+        })
+        await db.projectCategory.createMany({
+            data: categoryIds.map((cid) => {
+                return {
+                    projectId: project.id,
+                    categoryId: cid
+                }
+            })
+        })
 
         const slugRecords = await db.projectSlug.findMany({where: {projectId: project.id}})
         if (!slugRecords.length) {
@@ -360,7 +390,12 @@ projectRouter.post("/", needsAuth, async (c) => {
         // need another query to get the `includes`
         const record = await db.project.findUnique({
             where: {id: project.id},
-            include: {showcase: true, media: true, category: true, slugs: {take: 1, orderBy: {assignedDate: "desc"}}}
+            include: {
+                showcase: true,
+                media: true,
+                categories: {include: {category: true}},
+                slugs: {take: 1, orderBy: {assignedDate: "desc"}}
+            }
         })
 
         const p = filterProject(record!, user.role) as ProjectAdminType

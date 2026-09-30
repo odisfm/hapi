@@ -19,7 +19,7 @@ export const ProjectPreviewSchema = z.object({
 export type ProjectPreviewType = z.infer<typeof ProjectPreviewSchema>
 
 export const ProjectPublicSchema = ProjectPreviewSchema.extend({
-    category: z.string(),
+    categories: z.array(z.string()),
     description: z.string(),
     links: z.array(z.string()),
     media: z.array(ProjectMediaSchema),

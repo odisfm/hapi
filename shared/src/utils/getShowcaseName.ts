@@ -1,4 +1,4 @@
-import type {Showcase} from "src/generated/prisma/client";
+import type {Showcase} from "../generated/prisma/client";
 
 export function getShowcaseName(showcase: Showcase): string {
     let text = ''

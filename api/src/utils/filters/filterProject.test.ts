@@ -5,7 +5,9 @@ import {filterProjectPreview, filterProject} from "./filterProject.js";
 type ProjectPayload = ProjectGetPayload<{
     include: {
         media: true,
-        category: true,
+        categories: {
+            include: {category: true}
+        },
         showcase: true,
         slugs: true
     }
@@ -13,11 +15,7 @@ type ProjectPayload = ProjectGetPayload<{
 
 const mockPayload: ProjectPayload = {
     approvalStatus: "APPROVED",
-    category: {
-        name: "test",
-        id: "dsfdsf"
-    },
-    categoryId: "",
+    categories: [],
     description: "",
     developers: [],
     iconUrl: "",
@@ -45,7 +43,9 @@ const mockPayload: ProjectPayload = {
             slug: "test-project",
             projectId: "",
         }
-    ]
+    ],
+    heroArtUrl: null,
+    canBeHero: true
 }
 
 describe("Project details filtering by role and context", () => {

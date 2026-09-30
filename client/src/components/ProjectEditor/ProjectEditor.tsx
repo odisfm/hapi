@@ -29,6 +29,7 @@ import { VideoEditor } from "./VideoEditor.tsx";
 import type {ProjectMediaType} from "@hapi/shared/types/projectMedia";
 import {Button} from "../generic/Button.tsx";
 import {HeroProjectCard} from "../HeroProjectCard.tsx";
+import {CategoryPicker} from "./CategoryPicker.tsx";
 
 const legendStyles = `font-medium`
 const inputStyles = `p-1 rounded-md bg-neutral-200 px-2 py-1 font-light`
@@ -58,7 +59,6 @@ export function ProjectEditor() {
     const [links, setLinks] = useState<string[]>([]);
     const [hasChanged, setHasChanged] = useState(false);
     const descriptionRef = useRef<string>("");
-    const categoryRef = useRef<HTMLSelectElement | null>(null);
     const isNewProject = useRef(projectId === "new");
     const modalContext = useModal();
     const [detailsTab, setDetailsTab] = useState<DetailsTab>("description");
@@ -293,7 +293,10 @@ export function ProjectEditor() {
                     subtitle: subtitle,
                     links,
                     developers,
-                    categoryId: categoryRef.current!.value,
+                    categoryIds: project!.categories.map((cName) => {
+                        const c = categories.find(c => c.name === cName)
+                        return c!.id
+                    }),
                     showcaseId: selectedShowcase!.id,
                     media: submitProject!.media,
                     approvalStatus: "APPROVED",
@@ -650,21 +653,13 @@ export function ProjectEditor() {
                                 </span>}
 
                         <fieldset>
-                            <legend className={legendStyles}>Category</legend>
-                            <select
-                                name={"category"}
-                                aria-label="Category"
-                                defaultValue={project.category}
-                                className={`${selectStyles}`}
-                                ref={categoryRef}
-                                required
-                            >
-                                {categories.map((c, i) => {
-                                    return (
-                                        <option key={i} value={c.id}>{c.name}</option>
-                                    )
-                                })}
-                            </select>
+                            <legend className={legendStyles}>Categories</legend>
+                            <CategoryPicker
+                                categories={categories}
+                                project={project}
+                                setProject={setProject}
+                                setHasChanged={setHasChanged}
+                            />
                         </fieldset>
                         <div>
                             <label className={legendStyles} id={"developersLabel"}>

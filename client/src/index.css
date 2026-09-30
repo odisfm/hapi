@@ -178,3 +178,12 @@ body {
 .showcase-description h1 {
   margin-top: 0rem;
 }
+
+.project-editor-form, .showcase-editor-form {
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: start;
+  }
+}

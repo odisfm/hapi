@@ -166,10 +166,11 @@ export function ShowcaseEditor() {
                 <SaveButton onClick={() => {updateShowcase()}} hasChanged={hasChanged} />
             </div>
 
-            <form className={`mt-6 flex flex-col gap-4`}>
-                <fieldset>
-                    <legend className={legendStyles}>Showcase name</legend>
+            <form className={`mt-6 flex flex-col gap-4 showcase-editor-form`}>
+                <div>
+                    <label className={legendStyles} htmlFor={"nameInput"}>Showcase name</label>
                     <input
+                        id={"nameInput"}
                         className={`${inputStyles} w-2/3`}
                         defaultValue={showcase.name}
                         onChange={e => {
@@ -178,10 +179,11 @@ export function ShowcaseEditor() {
                             setHasChanged(true)
                         }}
                     />
-                </fieldset>
-                <fieldset>
-                    <legend className={legendStyles}>Year</legend>
+                </div>
+                <div>
+                    <label className={legendStyles} htmlFor={"yearInput"}>Year</label>
                     <input
+                        id={"yearInput"}
                         className={inputStyles}
                         type={"number"}
                         defaultValue={showcase.year}
@@ -193,10 +195,11 @@ export function ShowcaseEditor() {
                         }}
                     />
                     <span className={`block text-sm font-thin mt-2`}>If showcase shouldn't be tied to a particular year, enter "0"</span>
-                </fieldset>
-                <fieldset>
-                    <legend className={legendStyles}>Semester</legend>
+                </div>
+                <div>
+                    <label className={legendStyles} htmlFor={"semesterInput"}>Semester</label>
                     <input
+                        id={"semesterInput"}
                         className={inputStyles}
                         type={"number"}
                         defaultValue={showcase.semester}
@@ -208,11 +211,12 @@ export function ShowcaseEditor() {
                         }}
                     />
                     <span className={`block text-sm font-thin mt-2`}>If showcase shouldn't be tied to a semester year, enter "0"</span>
-                </fieldset>
+                </div>
 
-                <fieldset>
-                    <legend className={legendStyles}>Publish date</legend>
+                <div>
+                    <label className={legendStyles} htmlFor={"publishDateInput"}>Publish date</label>
                     <input
+                        id={"publishDateInput"}
                         className={inputStyles}
                         type={"datetime-local"}
                         defaultValue={showcase.publishedDate ? format(new Date(showcase.publishedDate), "yyyy-MM-dd'T'HH:mm") : ""}
@@ -224,15 +228,15 @@ export function ShowcaseEditor() {
                         }}
                     />
                     <span className={`block text-sm font-thin mt-2`}>{publishDateText}</span>
-                </fieldset>
+                </div>
 
-                <fieldset>
-                    <legend className={legendStyles}>Slugs</legend>
+                <div>
+                    <label className={legendStyles} htmlFor={"slugEditor"}>Slugs</label>
                     <SlugEditor showcaseId={showcase.id} />
-                </fieldset>
+                </div>
 
-                <fieldset>
-                    <legend className={legendStyles}>Description</legend>
+                <div>
+                    <label className={legendStyles} htmlFor={"markdownEditor"}>Description</label>
                     <MarkdownEditor
                     initText={showcase.description || ""}
                     setHasChanged={setHasChanged}
@@ -241,7 +245,7 @@ export function ShowcaseEditor() {
                         setShowcase({...showcase, description: value})
                     }}
                     containerStyles={`self-start`}
-                /></fieldset>
+                /></div>
             </form>
 
             <h3 className={`mt-6 font-bold`}>PROJECTS</h3>

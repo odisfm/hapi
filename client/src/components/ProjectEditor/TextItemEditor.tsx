@@ -45,7 +45,7 @@ export function TextItemEditor({items, setItems, validator, placeholder}: {
     }, [inputFocus, addItem])
 
     return (
-        <div className={`flex flex-col gap-2`}>
+        <div className={`flex flex-col gap-2`} aria-labelledby={"developersLabel"}>
             <ul className={`flex flex-wrap gap-2`}>
                 {items.map((item, index) => {
                     return (
@@ -53,6 +53,7 @@ export function TextItemEditor({items, setItems, validator, placeholder}: {
                             <span className={`mr-2`}>{item}</span>
                             <button
                                 type="button"
+                                aria-label={`Remove ${item}`}
                                 onClick={() => removeItem(index)}
                                 className={`hover:bg-red-600 hover:text-white cursor-pointer p-0.5 rounded-md`}
                             >
@@ -61,25 +62,27 @@ export function TextItemEditor({items, setItems, validator, placeholder}: {
                         </li>
                     )
                 })}
-                <div className={`flex gap-2 items-center justify-end`}>
-                    <input
-                        className={`bg-neutral-200 rounded-md px-2 py-1 box-border ${!inputValid && `border-1 border-red-700`}`}
-                        placeholder={placeholder}
-                        ref={inputRef}
-                        onFocus={() => setInputFocus(true)}
-                        onBlur={() => setInputFocus(false)}
-                        onChange={(e) => validate(e.target.value)}
-                    />
-                    <button
-                        type="button"
-                        onClick={() => addItem()}
-                        className={`p-1 rounded-md bg-r-blue-700 hover:bg-r-blue text-white cursor-pointer`}
-
-                    >
-                        <IoMdAddCircle />
-                    </button>
-                </div>
             </ul>
+            <div className={`flex gap-2 items-center justify-end self-start`}>
+                <input
+                    aria-label={"New link input"}
+                    className={`bg-neutral-200 rounded-md px-2 py-1 box-border ${!inputValid && `border-1 border-red-700`}`}
+                    placeholder={placeholder}
+                    ref={inputRef}
+                    onFocus={() => setInputFocus(true)}
+                    onBlur={() => setInputFocus(false)}
+                    onChange={(e) => validate(e.target.value)}
+                />
+                <button
+                    type="button"
+                    aria-label="Add item"
+                    onClick={() => addItem()}
+                    className={`p-1 rounded-md bg-r-blue-700 hover:bg-r-blue text-white cursor-pointer`}
+
+                >
+                    <IoMdAddCircle />
+                </button>
+            </div>
         </div>
     )
 }

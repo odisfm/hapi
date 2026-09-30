@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import type {FormEvent} from "react";
 import {MdSearch} from "react-icons/md";
 import {useNavigate} from "react-router";
@@ -19,6 +19,14 @@ export default function SearchOverlay({onClose}: {onClose: () => void}) {
         navigate(`/search?q=${encodeURIComponent(term)}`);
         onClose();
     }
+    
+    useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+        if (e.key === "Escape") onClose()
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+}, [onClose])
 
     return (
         <>

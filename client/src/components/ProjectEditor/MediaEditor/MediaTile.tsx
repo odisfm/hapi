@@ -51,6 +51,7 @@ export function MediaTile({media, index, setActiveMedia}: {
             <img
                 draggable={false}
                 src={`${import.meta.env.VITE_S3_MEDIA_BUCKET}${media.uri}.webp`}
+                alt={`Screenshot ${index + 1}`}
                 className={`object-cover max-w-40 max-h-40`}
             />
         </div>

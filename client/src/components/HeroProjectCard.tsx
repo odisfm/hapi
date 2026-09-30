@@ -22,6 +22,7 @@ export function HeroProjectCard(
                 { useHeroArt &&
                     <img
                         src={`${MEDIA_BUCKET_URL}${project.heroArtUrl}.webp`}
+                        alt={`${project.name} featured project`}
                         className={`h-full w-full object-cover object-[50%_52%] min-h-[250px]`}
                     />
                 }

@@ -246,6 +246,7 @@ export function MediaEditor({media, setMedia, setHasChanged, project, submitProj
                         <img
                             className={`w-full h-full object-contain block`}
                             src={`${import.meta.env.VITE_S3_MEDIA_BUCKET}${activeMedia.uri}.webp`}
+                            alt="Selected screenshot preview"
                         />
                     }
                     {!activeMedia &&
@@ -302,8 +303,9 @@ export function MediaEditor({media, setMedia, setHasChanged, project, submitProj
                     </div>
                 </div>
             </div>
-            <legend>Device</legend>
+            <label htmlFor={"deviceInput"}>Device</label>
             <select
+                id={"deviceInput"}
                 onChange={(e) => setDeviceType(e.target.value as DeviceType)}
                 className={`p-2 bg-neutral-200 rounded-md self-start`}
             >

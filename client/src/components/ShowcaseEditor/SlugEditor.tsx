@@ -115,7 +115,7 @@ export function SlugEditor({showcaseId}: Props) {
 
 
     return (
-        <div className={`flex flex-col gap-2`}>
+        <div className={`flex flex-col gap-2`} id={"slugEditor"}>
             <ul>
                 {slugs.map((slug) => {
                     return (

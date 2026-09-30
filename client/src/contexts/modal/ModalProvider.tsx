@@ -42,24 +42,18 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         if (!image) return;
 
         function handleKeyDown(event: KeyboardEvent) {
-            const currentImage = image;
-
-            if (!currentImage) {
-                return;
-            }
-
             if (event.key === "Escape") {
                 setImage(null);
                 return;
             }
 
             if (event.key === "ArrowLeft") {
-                currentImage.navigation?.previous?.();
+                image?.navigation?.previous?.();
                 event.preventDefault();
             }
 
             if (event.key === "ArrowRight") {
-                currentImage.navigation?.next?.();
+                image?.navigation?.next?.();
                 event.preventDefault();
             }
         }

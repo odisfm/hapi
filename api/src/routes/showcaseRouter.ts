@@ -321,7 +321,7 @@ showcaseRouter.patch("/", needsAuth, async (c) => {
     }
 })
 
-showcaseRouter.delete("/:showcaseId", needsAuth, async (c) => {
+showcaseRouter.delete("/id/:showcaseId", needsAuth, async (c) => {
     const user = c.get("user")!
     if (user.role !== "ADMIN") {
         return c.json({error: "Not authorised"}, 403)

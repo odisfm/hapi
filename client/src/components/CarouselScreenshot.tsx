@@ -24,15 +24,6 @@ export function CarouselScreenshot(
         mediaCarouselRef,
         setCarouselSidePadding
     }: Props) {
-    const [animatePulse, setAnimatePulse] = useState<boolean>(false);
-
-    const _setAnimatePulse = useCallback((state: boolean) => {
-        if (!state) return setAnimatePulse(false);
-        setAnimatePulse(true);
-        setTimeout(() => {
-            setAnimatePulse(false);
-        }, 1000)
-    }, [])
 
     return (
         <div key={media.uri} className="h-full shrink-0 snap-center">
@@ -40,11 +31,7 @@ export function CarouselScreenshot(
                 src={resolveStorageUrl(MEDIA_BUCKET_URL, media.uri, ".webp")}
                 alt={`${projectName} screenshot`}
                 onClick={() => {
-                    _setAnimatePulse(true);
-                }}
-                onDoubleClick={() => {
-                    _setAnimatePulse(false)
-                    openImage()
+                    openImage();
                 }}
                 onLoad={() => {
                     updateMediaScrollState();
@@ -61,8 +48,7 @@ export function CarouselScreenshot(
                     }
                 }}
                 className={`
-                    h-full w-auto max-w-none rounded-lg object-contain 
-                    cursor-pointer ${animatePulse && `animate-pulse`}
+                    h-full w-auto max-w-none rounded-lg object-contain cursor-pointer
                     `}
             />
         </div>

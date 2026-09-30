@@ -61,6 +61,7 @@ export default function SearchResultsPage() {
                         )
                     );
                     res = await fetch(`${API_URL}/project/search?${params}`, {
+                        credentials: "omit"
                     })
                     if (!res.ok) {
                         console.error(res)
@@ -83,7 +84,9 @@ export default function SearchResultsPage() {
         (async () => {
            let res: Response
            try {
-               res = await fetch(`${API_URL}/category`)
+               res = await fetch(`${API_URL}/category`, {
+                   credentials: "omit"
+               })
                if (!res.ok) {
                    console.error(res)
                    throw new Error("Failed to get category")

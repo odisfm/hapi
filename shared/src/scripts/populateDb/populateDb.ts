@@ -91,7 +91,6 @@ let lastLexoRank = LexoRank.middle()
 for (const project of projectData) {
     try {
         let showcaseId: string
-        let categoryId: string
         const showcaseRecord = await db.showcase.findFirst({
             where: {
                 name: project.showcase.name,
@@ -103,13 +102,10 @@ for (const project of projectData) {
             throw new Error(`No showcase found with: Name: ${project.showcase.name}, Year: ${project.showcase.year}, Semester: ${project.showcase.semester}`)
         }
         showcaseId = showcaseRecord.id
-        const categoryRecord = await db.category.findFirst({
-            where: {name: project.categoryName}
+        const categoryRecords = await db.category.findMany({
+            where: {name: {in: project.categoryNames}}
         })
-        if (!categoryRecord) {
-            throw new Error(`No category called "${project.categoryName}"`)
-        }
-        categoryId = categoryRecord.id
+        const categoryIds = categoryRecords.map(cr => cr.id)
 
         await db.project.create({
             data: {
@@ -127,7 +123,6 @@ for (const project of projectData) {
                     lastLexoRank = lastLexoRank.genNext()
                     return lastLexoRank["value"]
                 })(),
-                categoryId,
                 showcaseId,
                 published: project.published,
                 featured: project.featured === true,
@@ -143,6 +138,12 @@ for (const project of projectData) {
                 assignedDate: new Date()
             }
         })
+
+        for (const categoryId of categoryIds) {
+            await db.projectCategory.create({
+                data: {categoryId, projectId: project.id}
+            })
+        }
 
     } catch (error) {
         console.error(`Error inserting project: ${project.name}`)

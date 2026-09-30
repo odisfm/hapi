@@ -99,6 +99,11 @@ REJECTED REJECTED
     }
   
 
+  "ProjectCategory" {
+    String id "🗝️"
+    }
+  
+
   "ProjectSlug" {
     String slug "🗝️"
     DateTime assignedDate 
@@ -120,12 +125,13 @@ REJECTED REJECTED
     "User" |o--|| "UserRole" : "enum:role"
     "Session" }o--|| "User" : "user"
     "Project" |o--|| "ApprovalStatus" : "enum:approvalStatus"
-    "Project" }o--|| "Category" : "category"
     "Project" }o--|| "Showcase" : "showcase"
     "ProjectMedia" }o--|| "Project" : "project"
     "ProjectMedia" |o--|| "MediaType" : "enum:mediaType"
     "ProjectMedia" |o--|| "DeviceType" : "enum:deviceType"
     "ProjectMedia" |o--|| "MediaStatus" : "enum:status"
+    "ProjectCategory" }o--|| "Project" : "project"
+    "ProjectCategory" }o--|| "Category" : "category"
     "ProjectSlug" }o--|| "Project" : "project"
     "ShowcaseSlug" }o--|| "Showcase" : "showcase"
     "PasswordResetRequest" }o--|| "User" : "user"

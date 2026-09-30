@@ -1,7 +1,7 @@
 import {
     type ProjectType,
     type ProjectPreviewType,
-    type ProjectAdminType,
+    type ProjectAdminType, type ProjectPublicType,
 } from "@hapi/shared/types/project";
 import {type ProjectGetPayload} from "@hapi/shared/prisma/models";
 import {type UserRole} from "@hapi/shared/prisma/enums";
@@ -11,7 +11,11 @@ const DEFAULT_ORDER = "zzzzzzzzzzzzz"
 type ProjectPayload = ProjectGetPayload<{
     include: {
         media: true,
-        category: true,
+        categories: {
+            include: {
+                category: true,
+            }
+        },
         showcase: true,
         slugs: true
     }
@@ -32,7 +36,7 @@ export function filterProjectPreview(project: ProjectPayload): ProjectPreviewTyp
 }
 
 export function filterProject(project: ProjectPayload, role: UserRole | null): ProjectType {
-    let _project: ProjectType = {
+    let _project: ProjectPublicType = {
         description: project.description,
         iconUrl: project.iconUrl,
         heroArtUrl: project.heroArtUrl || undefined,
@@ -54,7 +58,7 @@ export function filterProject(project: ProjectPayload, role: UserRole | null): P
         }),
         developers: project.developers,
         showcaseId: project.showcaseId,
-        category: project.category.name,
+        categories: project.categories.map(pc => pc.category.name),
         slug: project.slugs[0].slug
     }
     if (role === "ADMIN") {

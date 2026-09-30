@@ -7,7 +7,9 @@ type ShowcasePayload = ShowcaseGetPayload<{
     include: {
         projects: {
             include: {
-                category: true,
+                categories: {
+                    include: {category: true}
+                },
                 media: true,
                 showcase: true,
                 slugs: true

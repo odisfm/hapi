@@ -86,7 +86,7 @@ type ShowcaseSearch = {
 }
 
 export type NewProjectType = Omit<Project, 'categoryId' | 'showcaseId' | 'order' | 'featured' | 'canBeHero' | 'heroArtUrl'> & {
-    categoryName: string,
+    categoryNames: string[],
     showcase: ShowcaseSearch,
     slug: string,
     featured?: boolean,
@@ -129,7 +129,7 @@ export const projectData: NewProjectType[] = [
             "https://github.com/odisfm/hapi"
         ],
         featured: true,
-        categoryName: "Social Media",
+        categoryNames: ["Social Media", "Photo & Video"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2025,
@@ -192,7 +192,7 @@ export const projectData: NewProjectType[] = [
         links: [
             "https://example.com/"
         ],
-        categoryName: "Finance",
+        categoryNames: ["Finance", "Utilities", "Workplace", "Business"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2025,
@@ -215,7 +215,7 @@ export const projectData: NewProjectType[] = [
             "https://example.com/",
             "https://github.com/odisfm/hapi"
         ],
-        categoryName: "News",
+        categoryNames: ["News", "Education", "Entertainment"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2025,
@@ -253,7 +253,7 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx"
         ],
         featured: true,
-        categoryName: "Entertainment",
+        categoryNames: ["Social Media", "Entertainment"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2025,
@@ -278,7 +278,7 @@ export const projectData: NewProjectType[] = [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
             "https://github.com/odisfm/hapi"
         ],
-        categoryName: "Entertainment",
+        categoryNames: ["Entertainment", "Education"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2025,
@@ -317,7 +317,7 @@ export const projectData: NewProjectType[] = [
             "https://github.com/odisfm/hapi",
             "https://example.com/"
         ],
-        categoryName: "Social Media",
+        categoryNames: ["Social Media", "Creative"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2025,
@@ -380,7 +380,7 @@ export const projectData: NewProjectType[] = [
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
         featured: true,
-        categoryName: "Entertainment",
+        categoryNames: ["News", "Entertainment"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2025,
@@ -434,7 +434,7 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx"
         ],
         featured: true,
-        categoryName: "Social Media",
+        categoryNames: ["Social Media", "Games"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2025,
@@ -467,7 +467,7 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx",
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
-        categoryName: "Entertainment",
+        categoryNames: ["Social Media", "Games", "Entertainment"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2025,
@@ -516,7 +516,7 @@ export const projectData: NewProjectType[] = [
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
         featured: true,
-        categoryName: "Games",
+        categoryNames: ["Games"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2025,
@@ -580,7 +580,7 @@ export const projectData: NewProjectType[] = [
             "https://example.com/"
         ],
         featured: true,
-        categoryName: "Education",
+        categoryNames: ["Education"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2026,
@@ -620,7 +620,7 @@ export const projectData: NewProjectType[] = [
         approvalStatus: "APPROVED",
         rejectionReason: null,
         links: [],
-        categoryName: "Education",
+        categoryNames: ["Education", "Creative"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2026,
@@ -677,7 +677,7 @@ export const projectData: NewProjectType[] = [
             "https://github.com/odisfm/hapi"
         ],
         featured: true,
-        categoryName: "Education",
+        categoryNames: ["Education", "Health", "Games"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2026,
@@ -720,7 +720,7 @@ export const projectData: NewProjectType[] = [
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
         featured: true,
-        categoryName: "Education",
+        categoryNames: ["Education", "Workplace", "Business"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2026,
@@ -768,7 +768,7 @@ export const projectData: NewProjectType[] = [
             "https://github.com/odisfm/hapi"
         ],
         featured: true,
-        categoryName: "Games",
+        categoryNames: ["Games"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2026,
@@ -845,7 +845,7 @@ export const projectData: NewProjectType[] = [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
             "https://github.com/odisfm/hapi"
         ],
-        categoryName: "Finance",
+        categoryNames: ["Finance", "Utilities"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2026,
@@ -898,7 +898,7 @@ export const projectData: NewProjectType[] = [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
             "https://example.com/"
         ],
-        categoryName: "Health",
+        categoryNames: ["Social Media", "Health"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2026,
@@ -946,7 +946,7 @@ export const projectData: NewProjectType[] = [
             "https://example.com/",
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
-        categoryName: "Photo & Video",
+        categoryNames: ["Photo & Video", "Creative", "Utilities"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2026,
@@ -995,7 +995,7 @@ export const projectData: NewProjectType[] = [
         links: [
             "https://testflight.apple.com/join/xxxxxx"
         ],
-        categoryName: "Business",
+        categoryNames: ["Business", "Workplace"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2026,
@@ -1060,7 +1060,7 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx",
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
-        categoryName: "Social Media",
+        categoryNames: ["Social Media", "Photo & Video"],
         showcase: {
             name: "Apple Foundation Program",
             year: 2026,
@@ -1111,7 +1111,7 @@ export const projectData: NewProjectType[] = [
             "https://github.com/odisfm/hapi",
             "https://example.com/"
         ],
-        categoryName: "Utilities",
+        categoryNames: ["Utilities", "Photo & Video"],
         showcase: {
             name: "Capstone",
             year: 2026,
@@ -1156,7 +1156,7 @@ export const projectData: NewProjectType[] = [
             "https://github.com/odisfm/hapi",
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
-        categoryName: "Health",
+        categoryNames: ["Health"],
         showcase: {
             name: "Capstone",
             year: 2026,
@@ -1208,7 +1208,7 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx",
             "https://example.com/"
         ],
-        categoryName: "Entertainment",
+        categoryNames: ["Education", "Entertainment"],
         showcase: {
             name: "Capstone",
             year: 2026,
@@ -1261,7 +1261,7 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx"
         ],
         featured: true,
-        categoryName: "Social Media",
+        categoryNames: ["Social Media"],
         showcase: {
             name: "Capstone",
             year: 2026,
@@ -1323,7 +1323,7 @@ export const projectData: NewProjectType[] = [
             "https://testflight.apple.com/join/xxxxxx",
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
         ],
-        categoryName: "Utilities",
+        categoryNames: ["Utilities", "Business"],
         showcase: {
             name: "Capstone",
             year: 2026,
@@ -1348,7 +1348,7 @@ export const projectData: NewProjectType[] = [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
             "https://github.com/odisfm/hapi"
         ],
-        categoryName: "Entertainment",
+        categoryNames: ["Entertainment", "Creative"],
         showcase: {
             name: "Capstone",
             year: 2026,
@@ -1424,7 +1424,7 @@ export const projectData: NewProjectType[] = [
             "https://example.com/"
         ],
         featured: true,
-        categoryName: "Utilities",
+        categoryNames: ["Utilities"],
         showcase: {
             name: "Capstone",
             year: 2026,
@@ -1490,7 +1490,7 @@ export const projectData: NewProjectType[] = [
         links: [
             "https://github.com/odisfm/hapi"
         ],
-        categoryName: "Health",
+        categoryNames: ["Health"],
         showcase: {
             name: "Capstone",
             year: 2026,
@@ -1524,7 +1524,7 @@ export const projectData: NewProjectType[] = [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
             "https://testflight.apple.com/join/xxxxxx"
         ],
-        categoryName: "Social Media",
+        categoryNames: ["Social Media"],
         showcase: {
             name: "Capstone",
             year: 2026,

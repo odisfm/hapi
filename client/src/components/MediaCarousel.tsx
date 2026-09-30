@@ -131,8 +131,8 @@ export function MediaCarousel({media, videoUrl, projectName}: Props) {
             resolveStorageUrl(MEDIA_BUCKET_URL, screenshot.uri, ".webp"),
             `${projectName} screenshot`,
             {
-                previous: index > 0 ? () => openScreenshot(index - 1) : undefined,
-                next: index < media.length - 1 ? () => openScreenshot(index + 1) : undefined,
+                previous: index > 0 ? () => openScreenshot(index - 1) : () => openScreenshot(media.length - 1),
+                next: index < media.length - 1 ? () => openScreenshot(index + 1) : () => openScreenshot(0),
             }
         );
     }

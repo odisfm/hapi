@@ -1,11 +1,11 @@
 import {MEDIA_BUCKET_URL} from "./MediaCarousel";
-import {useModal} from "../contexts/modal/useModal.ts";
 import type { ProjectMediaType } from "@hapi/shared/types/projectMedia";
 import {type Dispatch, type RefObject, type SetStateAction, useCallback, useState} from "react";
 import {resolveStorageUrl} from "../utils/misc.ts";
 
 type Props = {
     media: ProjectMediaType,
+    openImage: () => void,
     projectName: string,
     updateMediaScrollState: () => void,
     mediaCarouselRef: RefObject<HTMLDivElement | null>,
@@ -18,12 +18,12 @@ type Props = {
 export function CarouselScreenshot(
     {
         media,
+        openImage,
         projectName,
         updateMediaScrollState,
         mediaCarouselRef,
         setCarouselSidePadding
     }: Props) {
-    const modalContext = useModal();
     const [animatePulse, setAnimatePulse] = useState<boolean>(false);
 
     const _setAnimatePulse = useCallback((state: boolean) => {
@@ -44,10 +44,7 @@ export function CarouselScreenshot(
                 }}
                 onDoubleClick={() => {
                     _setAnimatePulse(false)
-                    modalContext.dispatchImage(
-                    resolveStorageUrl(MEDIA_BUCKET_URL, media.uri, ".webp"),
-                    `${projectName} screenshot`
-                    )
+                    openImage()
                 }}
                 onLoad={() => {
                     updateMediaScrollState();

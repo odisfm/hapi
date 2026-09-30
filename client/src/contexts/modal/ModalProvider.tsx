@@ -11,6 +11,7 @@ type QueuedModal = ModalInteraction & {
 type QueuedImage = {
     url: string;
     altText: string;
+    navigation?: {previous?: () => void, next?: () => void};
     id: string;
     resolve: (buttonId: string) => void;
 }
@@ -26,19 +27,40 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         });
     }, []);
 
-    const dispatchImage = useCallback((url: string, altText: string) => {
+    const dispatchImage = useCallback((
+        url: string,
+        altText: string,
+        navigation?: {previous?: () => void, next?: () => void}
+    ) => {
         return new Promise<string>((resolve) => {
             const id = createUuid();
-            setImage({url, altText, id, resolve});
+            setImage({url, altText, navigation, id, resolve});
         });
     }, []);
 
     useEffect(() => {
         if (!image) return;
 
-        function handleKeyDown(e: unknown) {
-            if ((e as React.KeyboardEvent).key === "Escape") {
+        function handleKeyDown(event: KeyboardEvent) {
+            const currentImage = image;
+
+            if (!currentImage) {
+                return;
+            }
+
+            if (event.key === "Escape") {
                 setImage(null);
+                return;
+            }
+
+            if (event.key === "ArrowLeft") {
+                currentImage.navigation?.previous?.();
+                event.preventDefault();
+            }
+
+            if (event.key === "ArrowRight") {
+                currentImage.navigation?.next?.();
+                event.preventDefault();
             }
         }
 

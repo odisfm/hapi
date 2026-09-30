@@ -3,6 +3,7 @@ import {MdChevronLeft, MdChevronRight} from "react-icons/md";
 import type {ProjectMediaType} from "@hapi/shared/types/projectMedia";
 import {CarouselScreenshot} from "./CarouselScreenshot.tsx";
 import {resolveStorageUrl} from "../utils/misc.ts";
+import {useModal} from "../contexts/modal/useModal.ts";
 
 export const MEDIA_BUCKET_URL = import.meta.env.VITE_S3_MEDIA_BUCKET;
 
@@ -13,6 +14,7 @@ type Props = {
 }
 
 export function MediaCarousel({media, videoUrl, projectName}: Props) {
+    const modalContext = useModal();
     const [canScrollMediaLeft, setCanScrollMediaLeft] = useState(false);
     const [canScrollMediaRight, setCanScrollMediaRight] = useState(false);
     const [carouselSidePadding, setCarouselSidePadding] = useState({left: 0, right: 0});
@@ -118,6 +120,23 @@ export function MediaCarousel({media, videoUrl, projectName}: Props) {
         });
     }
 
+    function openScreenshot(index: number) {
+        const screenshot = media[index];
+
+        if (!screenshot) {
+            return;
+        }
+
+        modalContext.dispatchImage(
+            resolveStorageUrl(MEDIA_BUCKET_URL, screenshot.uri, ".webp"),
+            `${projectName} screenshot`,
+            {
+                previous: index > 0 ? () => openScreenshot(index - 1) : undefined,
+                next: index < media.length - 1 ? () => openScreenshot(index + 1) : undefined,
+            }
+        );
+    }
+
     return (
         <>
             <div
@@ -134,10 +153,11 @@ export function MediaCarousel({media, videoUrl, projectName}: Props) {
                         className={`rounded-lg`}
                     />
                 }
-                {media.map((m) => (
+                {media.map((m, index) => (
                     <CarouselScreenshot
                         key={m.id}
                         media={m}
+                        openImage={() => openScreenshot(index)}
                         projectName={projectName}
                         updateMediaScrollState={updateMediaScrollState}
                         mediaCarouselRef={mediaCarouselRef || null}

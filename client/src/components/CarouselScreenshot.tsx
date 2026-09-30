@@ -1,6 +1,6 @@
 import {MEDIA_BUCKET_URL} from "./MediaCarousel";
 import type { ProjectMediaType } from "@hapi/shared/types/projectMedia";
-import {type Dispatch, type RefObject, type SetStateAction, useCallback, useState} from "react";
+import {type Dispatch, type RefObject, type SetStateAction} from "react";
 import {resolveStorageUrl} from "../utils/misc.ts";
 
 type Props = {

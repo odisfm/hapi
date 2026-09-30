@@ -68,6 +68,7 @@ export default function AdminLoginPage() {
                         type={"email"}
                         ref={emailRef}
                         required
+                        aria-label="Email"
                         className={inputClasses}
                     />
                 </fieldset>
@@ -77,6 +78,7 @@ export default function AdminLoginPage() {
                         type={"password"}
                         ref={passwordRef}
                         required
+                        aria-label="Password"
                         className={inputClasses}
                     />
                 </fieldset>

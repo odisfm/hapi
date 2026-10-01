@@ -90,7 +90,6 @@ export function ProjectEditor() {
                 throw new Error("Failed to fetch category/showcase details")
             }
 
-            const categoryJson: CategoryResponse = await categoryRes.json();
             const showcaseJson: ShowcaseListResponse = await showcaseRes.json();
             console.log(showcaseJson)
             const showcaseId = (() => {
@@ -111,7 +110,7 @@ export function ProjectEditor() {
                 media: [],
                 showcaseId,
                 links: [],
-                categoryId: categoryJson.categories[0].id,
+                categoryIds: [],
                 order: "zzzz",
                 slug: "",
                 description: "",

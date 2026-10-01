@@ -373,7 +373,7 @@ projectRouter.post("/", needsAuth, async (c) => {
         return c.json({error: e}, 400)
     }
     try {
-        const { media, ...project } = body.project;
+        const { media, categoryIds, ...project } = body.project;
         await db.project.create({
             data: {
                 ...project,

@@ -332,7 +332,7 @@ export default function ProjectPage() {
 
     return (
         <article className="w-full max-w-5xl font-copy">
-            <section className="rounded-2xl bg-[#C6C6C6] p-4 text-black sm:p-5">
+            <section className="rounded-2xl bg-neutral-200 p-4 text-black sm:p-5">
                 <div className="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_auto] md:items-center md:gap-8 lg:gap-12">
                     <div className="flex min-w-0 items-center gap-4">
                         <AppIcon uri={project.iconUrl} width={80} />
@@ -469,7 +469,7 @@ export default function ProjectPage() {
                 </div>
             </section>
             <section className={`
-            project-description mt-4 px-6 pt-10 pb-4 text-black sm:px-7
+            project-description mt-4 px-0 pt-10 pb-4 text-black
             `}>
                 <div className={`
                 pr-6 md:pr-32 overflow-hidden

@@ -72,8 +72,9 @@ export default function HomePage() {
 
     return (
         <div className="-mt-8 w-full px-4 md:px-6 ">
-            <section className="relative left-1/2 h-[22.5rem] w-screen -translate-x-1/2 overflow-hidden bg-r-red">
-                <div className="absolute inset-0 bg-r-red" aria-hidden="true" />
+            {/*carousel*/}
+            <section className="relative left-1/2 min-h-10 w-screen -translate-x-1/2 overflow-hidden bg-r-red">
+                <div className="absolute inset-0" aria-hidden="true" />
             </section>
 
             <section className="w-full py-12 text-black sm:py-16">

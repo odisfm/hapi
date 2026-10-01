@@ -1,11 +1,11 @@
 import {MEDIA_BUCKET_URL} from "./MediaCarousel";
-import {useModal} from "../contexts/modal/useModal.ts";
 import type { ProjectMediaType } from "@hapi/shared/types/projectMedia";
-import {type Dispatch, type RefObject, type SetStateAction, useCallback, useState} from "react";
+import {type Dispatch, type RefObject, type SetStateAction} from "react";
 import {resolveStorageUrl} from "../utils/misc.ts";
 
 type Props = {
     media: ProjectMediaType,
+    openImage: () => void,
     projectName: string,
     updateMediaScrollState: () => void,
     mediaCarouselRef: RefObject<HTMLDivElement | null>,
@@ -18,21 +18,12 @@ type Props = {
 export function CarouselScreenshot(
     {
         media,
+        openImage,
         projectName,
         updateMediaScrollState,
         mediaCarouselRef,
         setCarouselSidePadding
     }: Props) {
-    const modalContext = useModal();
-    const [animatePulse, setAnimatePulse] = useState<boolean>(false);
-
-    const _setAnimatePulse = useCallback((state: boolean) => {
-        if (!state) return setAnimatePulse(false);
-        setAnimatePulse(true);
-        setTimeout(() => {
-            setAnimatePulse(false);
-        }, 1000)
-    }, [])
 
     return (
         <div key={media.uri} className="h-full shrink-0 snap-center">
@@ -40,14 +31,7 @@ export function CarouselScreenshot(
                 src={resolveStorageUrl(MEDIA_BUCKET_URL, media.uri, ".webp")}
                 alt={`${projectName} screenshot`}
                 onClick={() => {
-                    _setAnimatePulse(true);
-                }}
-                onDoubleClick={() => {
-                    _setAnimatePulse(false)
-                    modalContext.dispatchImage(
-                    resolveStorageUrl(MEDIA_BUCKET_URL, media.uri, ".webp"),
-                    `${projectName} screenshot`
-                    )
+                    openImage();
                 }}
                 onLoad={() => {
                     updateMediaScrollState();
@@ -64,8 +48,7 @@ export function CarouselScreenshot(
                     }
                 }}
                 className={`
-                    h-full w-auto max-w-none rounded-lg object-contain 
-                    cursor-pointer ${animatePulse && `animate-pulse`}
+                    h-full w-auto max-w-none rounded-lg object-contain cursor-pointer
                     `}
             />
         </div>

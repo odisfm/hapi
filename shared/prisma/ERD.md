@@ -3,6 +3,7 @@ erDiagram
 
         UserRole {
             ADMIN ADMIN
+STUDENT STUDENT
         }
     
 
@@ -33,10 +34,12 @@ TV TV
     
 
 
-        ApprovalStatus {
-            PENDING PENDING
+        SubmissionStatus {
+            NOT_SUBMITTED NOT_SUBMITTED
+PENDING PENDING
 APPROVED APPROVED
 REJECTED REJECTED
+SUPERSEDED SUPERSEDED
         }
     
   "Category" {
@@ -62,6 +65,7 @@ REJECTED REJECTED
     String name 
     UserRole role 
     Boolean needsPasswordReset 
+    Int videoTranscodeCredits "❓"
     }
   
 
@@ -73,19 +77,32 @@ REJECTED REJECTED
 
   "Project" {
     String id "🗝️"
+    Boolean canBeHero 
+    String order "❓ Lexo-rank"
+    Boolean published 
+    Boolean featured 
+    }
+  
+
+  "ProjectVersion" {
+    String id "🗝️"
     String name 
     String subtitle "❓"
     String description 
     String iconUrl 
-    String developers 
-    ApprovalStatus approvalStatus 
-    String rejectionReason "❓ only relevant when approvalStatus = REJECTED"
+    String developerNames 
+    SubmissionStatus submissionStatus 
+    String rejectionReason "❓ only relevant when submissionStatus = REJECTED"
+    DateTime reviewedAt "❓"
     String links "parsed on frontend (GitHub/App Store/etc.)"
-    String order "❓ Lexo-rank"
-    Boolean published 
-    Boolean featured 
-    Boolean canBeHero 
     String heroArtUrl "❓"
+    DateTime createdAt 
+    DateTime submittedAt "❓"
+    }
+  
+
+  "ProjectOwner" {
+
     }
   
 
@@ -93,14 +110,18 @@ REJECTED REJECTED
     String id "🗝️"
     String mediaUrl "🔒"
     MediaType mediaType 
-    DeviceType deviceType 
-    String order "Lexo-rank"
     MediaStatus status 
     }
   
 
+  "ProjectVersionMedia" {
+    String order "Lexo-rank"
+    DeviceType deviceType 
+    }
+  
+
   "ProjectCategory" {
-    String id "🗝️"
+
     }
   
 
@@ -124,14 +145,20 @@ REJECTED REJECTED
   
     "User" |o--|| "UserRole" : "enum:role"
     "Session" }o--|| "User" : "user"
-    "Project" |o--|| "ApprovalStatus" : "enum:approvalStatus"
     "Project" }o--|| "Showcase" : "showcase"
+    "ProjectVersion" }o--|| "Project" : "project"
+    "ProjectVersion" |o--|| "SubmissionStatus" : "enum:submissionStatus"
+    "ProjectVersion" }o--|o "User" : "reviewer"
+    "ProjectOwner" }o--|| "Project" : "project"
+    "ProjectOwner" }o--|| "User" : "owner"
     "ProjectMedia" }o--|| "Project" : "project"
     "ProjectMedia" |o--|| "MediaType" : "enum:mediaType"
-    "ProjectMedia" |o--|| "DeviceType" : "enum:deviceType"
     "ProjectMedia" |o--|| "MediaStatus" : "enum:status"
-    "ProjectCategory" }o--|| "Project" : "project"
+    "ProjectVersionMedia" }o--|| "ProjectMedia" : "media"
+    "ProjectVersionMedia" }o--|| "ProjectVersion" : "projectVersion"
+    "ProjectVersionMedia" |o--|| "DeviceType" : "enum:deviceType"
     "ProjectCategory" }o--|| "Category" : "category"
+    "ProjectCategory" }o--|| "ProjectVersion" : "projectVersion"
     "ProjectSlug" }o--|| "Project" : "project"
     "ShowcaseSlug" }o--|| "Showcase" : "showcase"
     "PasswordResetRequest" }o--|| "User" : "user"

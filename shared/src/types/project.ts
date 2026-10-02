@@ -1,5 +1,5 @@
 import * as z from "zod"
-import {ApprovalStatus} from "../generated/prisma/enums.js";
+import {SubmissionStatus} from "../generated/prisma/enums.js";
 import {ProjectMediaSchema} from "./projectMedia.js";
 
 
@@ -28,10 +28,17 @@ export const ProjectPublicSchema = ProjectPreviewSchema.extend({
 
 export type ProjectPublicType = z.infer<typeof ProjectPublicSchema>
 
-export const ProjectAdminSchema = ProjectPublicSchema.extend({
-    approvalStatus: z.enum(ApprovalStatus),
+export const ProjectStudentSchema = ProjectPublicSchema.extend({
+    submissionStatus: z.enum(SubmissionStatus),
     rejectionReason: z.string().nullable(),
-    published: z.boolean()
+
+})
+
+export type ProjectStudentType = z.infer<typeof ProjectStudentSchema>
+
+export const ProjectAdminSchema = ProjectStudentSchema.extend({
+    published: z.boolean(),
+    canBeHero: z.boolean(),
 })
 
 export type ProjectAdminType = z.infer<typeof ProjectAdminSchema>

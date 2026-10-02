@@ -42,18 +42,22 @@ model Showcase {
 }
 
 model User {
-  id                   String                 @id @default(uuid()) @db.Uuid
-  email                String                 @unique
-  password             String
-  name                 String
-  role                 UserRole
-  needsPasswordReset   Boolean                @default(false)
-  Session              Session[]
-  passwordResetRequest PasswordResetRequest[]
+  id                    String                 @id @default(uuid()) @db.Uuid
+  email                 String                 @unique
+  password              String
+  name                  String
+  role                  UserRole
+  needsPasswordReset    Boolean                @default(false)
+  Session               Session[]
+  passwordResetRequest  PasswordResetRequest[]
+  projectOwnerships     ProjectOwner[]
+  videoTranscodeCredits Int? // 1 credit === 1 minute of transcode, null means unlimited (admins)
+  reviewedVersions      ProjectVersion[]
 }
 
 enum UserRole {
   ADMIN
+  STUDENT
 }
 
 model Session {
@@ -64,46 +68,78 @@ model Session {
 }
 
 model Project {
-  id              String            @id @default(uuid()) @db.Uuid
-  name            String
-  subtitle        String?
-  description     String
-  iconUrl         String
-  developers      String[]
-  approvalStatus  ApprovalStatus    @default(PENDING)
-  rejectionReason String? /// only relevant when approvalStatus = REJECTED
-  links           String[] /// parsed on frontend (GitHub/App Store/etc.)
-  order           String? /// Lexo-rank
-  showcaseId      String            @db.Uuid
-  showcase        Showcase          @relation(fields: [showcaseId], references: [id])
-  published       Boolean
-  featured        Boolean
-  canBeHero       Boolean           @default(false)
-  heroArtUrl      String?
-  media           ProjectMedia[]
-  slugs           ProjectSlug[]
-  categories      ProjectCategory[]
+  id         String           @id @default(uuid()) @db.Uuid
+  canBeHero  Boolean          @default(false)
+  order      String? /// Lexo-rank
+  showcaseId String           @db.Uuid
+  showcase   Showcase         @relation(fields: [showcaseId], references: [id])
+  published  Boolean
+  featured   Boolean
+  slugs      ProjectSlug[]
+  versions   ProjectVersion[]
+  ownerships ProjectOwner[]
+  media      ProjectMedia[]
+}
+
+model ProjectVersion {
+  id               String                @id @default(uuid()) @db.Uuid
+  projectId        String                @db.Uuid
+  project          Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name             String
+  subtitle         String?
+  description      String
+  iconUrl          String
+  developerNames   String[]
+  submissionStatus SubmissionStatus      @default(NOT_SUBMITTED)
+  rejectionReason  String? /// only relevant when submissionStatus = REJECTED
+  reviewerId       String?               @db.Uuid
+  reviewer         User?                 @relation(fields: [reviewerId], references: [id])
+  reviewedAt       DateTime?
+  links            String[] /// parsed on frontend (GitHub/App Store/etc.)
+  heroArtUrl       String?
+  categories       ProjectCategory[]
+  media            ProjectVersionMedia[]
+  createdAt        DateTime
+  submittedAt      DateTime?
+}
+
+model ProjectOwner {
+  projectId String  @db.Uuid
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  ownerId   String  @db.Uuid
+  owner     User    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@id([ownerId, projectId])
 }
 
 model ProjectMedia {
-  id         String      @id @default(uuid()) @db.Uuid
-  projectId  String      @db.Uuid
-  project    Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  mediaUrl   String      @unique
-  mediaType  MediaType
-  deviceType DeviceType
-  order      String /// Lexo-rank
-  status     MediaStatus
+  id                String                @id @default(uuid()) @db.Uuid
+  projectId         String                @db.Uuid
+  project           Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  mediaUrl          String                @unique
+  mediaType         MediaType
+  status            MediaStatus
+  versionInclusions ProjectVersionMedia[]
+}
+
+model ProjectVersionMedia {
+  mediaId          String         @db.Uuid
+  media            ProjectMedia   @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  projectVersionId String         @db.Uuid
+  projectVersion   ProjectVersion @relation(fields: [projectVersionId], references: [id], onDelete: Cascade)
+  order            String /// Lexo-rank
+  deviceType       DeviceType
+
+  @@id([projectVersionId, mediaId])
 }
 
 model ProjectCategory {
-  id         String   @id @default(uuid()) @db.Uuid
-  projectId  String   @db.Uuid
-  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  categoryId String   @db.Uuid
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId       String         @db.Uuid
+  category         Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  projectVersionId String         @db.Uuid
+  projectVersion   ProjectVersion @relation(fields: [projectVersionId], references: [id], onDelete: Cascade)
 
-  @@unique([projectId, categoryId])
+  @@id([projectVersionId, categoryId])
 }
 
 model ProjectSlug {
@@ -123,7 +159,7 @@ model ShowcaseSlug {
 model PasswordResetRequest {
   id     String    @id @default(uuid()) @db.Uuid
   userId String    @db.Uuid
-  user   User      @relation(fields: [userId], references: [id])
+  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiry DateTime?
   code   String
 }
@@ -148,8 +184,10 @@ enum DeviceType {
   TV
 }
 
-enum ApprovalStatus {
-  PENDING
-  APPROVED
+enum SubmissionStatus {
+  NOT_SUBMITTED // newly created version
+  PENDING // version submitted, pending approval
+  APPROVED // version is live to public (assuming Project and Showcase published)
   REJECTED
+  SUPERSEDED // previously approved version, replaced by new approved version
 }

@@ -1,4 +1,11 @@
-import type {Showcase, Category, Project, ProjectMedia} from "../../generated/prisma/client.js";
+import type {
+    Showcase,
+    Category,
+    Project,
+    ProjectMedia,
+    ProjectVersion,
+    ProjectVersionMedia
+} from "../../generated/prisma/client.js";
 
 type NewShowcaseType = Omit<Showcase, 'id'> & {
     slug: string
@@ -85,7 +92,13 @@ type ShowcaseSearch = {
     semester: number,
 }
 
-export type NewProjectType = Omit<Project, 'categoryId' | 'showcaseId' | 'order' | 'featured' | 'canBeHero' | 'heroArtUrl'> & {
+type ProjectVersionUnion = Project & ProjectVersion
+
+export type NewProjectType = Omit<
+    ProjectVersionUnion,
+    'projectId' | 'categoryId' | 'showcaseId' | 'order' | 'featured' | 'canBeHero' | 'heroArtUrl' |
+    'reviewerId' | 'createdAt' | 'reviewedAt' | 'submittedAt'
+> & {
     categoryNames: string[],
     showcase: ShowcaseSearch,
     slug: string,
@@ -120,8 +133,8 @@ export const projectData: NewProjectType[] = [
         subtitle: "Videos, Creators & Friends",
         iconUrl: "ad1987aa-6278-4408-b35f-304863998196",
         heroArtUrl: "77272cab-8f1f-4fb1-b021-a8da5fa12fd5",
-        developers: ["Frantzisko Monifa", "Earl Sue"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Frantzisko Monifa", "Earl Sue"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
@@ -186,8 +199,8 @@ export const projectData: NewProjectType[] = [
             "Download Smart Receipts today and take control of your expenses, deductions, and tax returns.",
         subtitle: "Receipt Scanner, Tracker",
         iconUrl: "ecdd9658-a03d-4eb3-8370-6386fc70d9ee",
-        developers: ["Orion Nestan"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Orion Nestan"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://example.com/"
@@ -207,8 +220,8 @@ export const projectData: NewProjectType[] = [
         description: "",
         subtitle: "Videos, writing & Podcasts",
         iconUrl: "261be61a-cb4d-4de4-a9aa-0abf3156493a",
-        developers: ["Iouri Bilal", "Sven Ameer"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Iouri Bilal", "Sven Ameer"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://testflight.apple.com/join/xxxxxx",
@@ -246,8 +259,8 @@ export const projectData: NewProjectType[] = [
             "*GET* to know other fans and let other fans get to know you through personalised fan profiles.",
         subtitle: "Exclusive creator communities",
         iconUrl: "e484563e-99e2-4820-bb23-0b0b0aa1adc0",
-        developers: ["Nazaire Sa'dia", "Disha Anu", "Olympas Iuppiter"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Nazaire Sa'dia", "Disha Anu", "Olympas Iuppiter"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://testflight.apple.com/join/xxxxxx"
@@ -271,8 +284,8 @@ export const projectData: NewProjectType[] = [
             "DocPlay Premium is a paid membership that gets you ad-free access to the entire DocPlay catalog in HD.\n",
         subtitle: "The World's Best Documentaries",
         iconUrl: "e3605c03-2a72-4416-a137-79b99a8a6f90",
-        developers: ["Yoel Dileep", "Zoila Sara"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Yoel Dileep", "Zoila Sara"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
@@ -308,8 +321,8 @@ export const projectData: NewProjectType[] = [
             "- Edit your profile settings",
         subtitle: "The social app for film lovers",
         iconUrl: "68d5dee6-9ede-4d52-a3eb-1c734b87f0d6",
-        developers: ["Liss Azize"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Liss Azize"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://testflight.apple.com/join/xxxxxx",
@@ -371,8 +384,8 @@ export const projectData: NewProjectType[] = [
             "Life sounds better with ABC listen - download the free app today!&#x20;",
         subtitle: "Music, Sport, News, Audiobooks",
         iconUrl: "4b469e71-1672-4fae-873c-d55244afd584",
-        developers: ["Erik Astrid"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Erik Astrid"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://github.com/odisfm/hapi",
@@ -426,8 +439,8 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "On your PC, phone or console, you can still hang out on Discord. Easily switch between devices and use tools to manage multiple group chats with friends.",
         iconUrl: "aa765045-ce5c-494b-bb9f-f7652b38266c",
-        developers: ["Jaska Arend", "Elsa Grozdana", "Ramzan Alam"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Jaska Arend", "Elsa Grozdana", "Ramzan Alam"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://example.com/",
@@ -459,8 +472,8 @@ export const projectData: NewProjectType[] = [
             "- You never know what you’ll find: Popular games are always live, but so are music festivals, rocket launches, street tours of Tokyo, and goat yoga. Yes, really.\n" +
             "- Dark mode: Y’all love this one. Black and purple have never looked this good together.",
         iconUrl: "0b87b97e-0c10-42f9-bfa0-ca311e60d845",
-        developers: ["Tina Nora", "Misi Meena", "Reuel Liberato"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Tina Nora", "Misi Meena", "Reuel Liberato"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://example.com/",
@@ -508,8 +521,8 @@ export const projectData: NewProjectType[] = [
             "Just like the animated series, Bluey’s Quest for the Gold Pen sparks laughter and encourages players of all ages to discover through play. Packed full of trifficult puzzles and wholesome moments, this is an adventure for the whole household.",
         iconUrl: "d4911a18-5b87-4109-968f-cc7346832c38",
         heroArtUrl: "7b2970ed-ebf3-4a6d-8f69-5199594a30a8",
-        developers: ["Viktorie Haiyang", "Natalija Zoilus"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Viktorie Haiyang", "Natalija Zoilus"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://testflight.apple.com/join/xxxxxx",
@@ -571,8 +584,8 @@ export const projectData: NewProjectType[] = [
             ">\"I Can't Stop Playing Duolingo Chess.\" - Wired",
         iconUrl: "58e26c42-a120-4c08-9b46-be2749243817",
         heroArtUrl: "c546b654-226a-4f0b-9759-5ae38c32bc3a",
-        developers: ["Märyäm Agapitos", "Aisha Anand"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Märyäm Agapitos", "Aisha Anand"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
@@ -616,8 +629,8 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Enjoy Playing!",
         iconUrl: "65405e6c-4eab-4cab-bacb-8623e222fd6f",
-        developers: ["Kristofor Lal"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Kristofor Lal"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [],
         categoryNames: ["Education", "Creative"],
@@ -668,8 +681,8 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Elevate's games are designed in collaboration with experts in neuroscience and cognitive learning and are based on extensive scientific research. Elevate’s brain training algorithms further focus the learning experience by drawing from research in memory studies to develop a personalized training program for each member.",
         iconUrl: "d7beb5b9-b958-44e1-894d-649bc5ce4192",
-        developers: ["Giosuè Rollie", "Víkingr Ela"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Giosuè Rollie", "Víkingr Ela"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://example.com/",
@@ -713,8 +726,8 @@ export const projectData: NewProjectType[] = [
             "- Software development",
         iconUrl: "dab6bd42-0b5f-46b0-ad4c-1a0e8dd2f0f1",
         heroArtUrl: "ff28e1d1-2b82-4348-93e8-673f2fcec3d9",
-        developers: ["Aucaman Krystiana", "Zabulon Nindaanis", "Su-bin Barak"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Aucaman Krystiana", "Zabulon Nindaanis", "Su-bin Barak"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://apps.apple.com/au/app/rmit-app/id1584926663"
@@ -761,8 +774,8 @@ export const projectData: NewProjectType[] = [
             "It's easy to sync the game between devices and unlock full game features when connected to the Internet or Wifi.",
         iconUrl: "9fb303f7-5b03-43c7-8310-15aeb4857d26",
         heroArtUrl: "7294ee97-d5c5-42d4-ae00-c2307970f562",
-        developers: ["Geno Ceallach", "Deasún Ron"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Geno Ceallach", "Deasún Ron"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://github.com/odisfm/hapi"
@@ -837,8 +850,8 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "> “Life Changing! I don’t review many things, but this app has seriously improved my quality of life. It has saved my sanity when it comes to splitting utilities, mortgage, groceries, dog expenses...the list goes on. No more saving receipts, making spreadsheets, and manually calculating each month. So handy for group trips/weekends, too! THANK YOU!!” – Courtney via the App Store\n",
         iconUrl: "f9ab8a29-f90f-4f01-bdae-dd91bd276bad",
-        developers: ["Jitender Yannick", "Sachiko Yuliy"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Jitender Yannick", "Sachiko Yuliy"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://example.com/",
@@ -890,8 +903,8 @@ export const projectData: NewProjectType[] = [
             "Strava uses HealthKit to export your Strava activities into the Health app and to read heart rate and biometric data.",
         iconUrl: "b10b346b-1277-479c-9068-b03f660e86be",
         heroArtUrl: "49aecc1f-5973-4477-8eda-04894d32ead1",
-        developers: ["Yami Briggs", "Czarek Nina"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Yami Briggs", "Czarek Nina"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         featured: true,
         links: [
@@ -939,8 +952,8 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "When shooting with Blackmagic Camera, the video you capture can be instantly uploaded as a proxy file, followed by the camera originals, and saved to Blackmagic Cloud Storage. This means you can start editing quickly using your proxies, speeding up your workflow.",
         iconUrl: "d6e6f63c-9690-41f0-a20d-3c96bb45bc9a",
-        developers: ["Sawsan Victoria", "Chip Sharia"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Sawsan Victoria", "Chip Sharia"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://example.com/",
@@ -989,8 +1002,8 @@ export const projectData: NewProjectType[] = [
             "- Keep communities safe by allowing owners to remove inappropriate content or members.\n" +
             "- Enterprise-level security and compliance you expect from Microsoft 365.",
         iconUrl: "63b7e43c-6480-470f-8b3f-b16ad7d09af3",
-        developers: ["Ariadna Subramanian", "Regin Anselma"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Ariadna Subramanian", "Regin Anselma"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://testflight.apple.com/join/xxxxxx"
@@ -1052,8 +1065,8 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Happy Snapping!",
         iconUrl: "546fac9b-76f2-4c9f-adf3-6a11991ae254",
-        developers: ["Cyra Favour", "Elkan Starla"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Cyra Favour", "Elkan Starla"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://example.com/",
@@ -1104,8 +1117,8 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Download Swipewipe and get swiping!",
         iconUrl: "7b0ad2ac-fcfd-4272-a260-77d374f56a79",
-        developers: ["Laurentino Wulfric"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Laurentino Wulfric"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://github.com/odisfm/hapi",
@@ -1148,8 +1161,8 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "The best part is that custom routing is available on the iPhone and Apple Watch. Of course, being out in nature often means losing cell service, so Pedometer++ allows you to download offline map data for large areas, not just for your specific route. Offline map data is also available on the iPhone and Apple Watch, as long as your Watch is within range of your phone.",
         iconUrl: "76731acf-95cc-4461-b0bb-aa3845bfb6b6",
-        developers: ["Arushi Dechen", "Gautam Audrius"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Arushi Dechen", "Gautam Audrius"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://testflight.apple.com/join/xxxxxx",
@@ -1200,8 +1213,8 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "All you need is a free library card from a participating library.",
         iconUrl: "308c396b-2a14-42b5-ae39-354212f89993",
-        developers: ["Osiris Zigmantas", "Ophiuchus Semisi", "Muzaffar Adeyemi"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Osiris Zigmantas", "Ophiuchus Semisi", "Muzaffar Adeyemi"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
@@ -1251,8 +1264,8 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Download Roost and launch your first flight.",
         iconUrl: "38dfdd5b-a44a-4469-b751-040a03b23a86",
-        developers: ["Silvia Brage", "Þórgunnr Raginfrid", "Heidi Serafina"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Silvia Brage", "Þórgunnr Raginfrid", "Heidi Serafina"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://github.com/odisfm/hapi",
@@ -1315,8 +1328,8 @@ export const projectData: NewProjectType[] = [
             "- Print documents directly from the app\n" +
             "- Use widgets for quick access to key actions",
         iconUrl: "72ffdc60-1d22-46a9-8315-dcbf605cd6bb",
-        developers: ["Tutku Magnus"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Tutku Magnus"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://example.com/",
@@ -1340,8 +1353,8 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "The Bandcamp app lets fans explore a vast catalog of music by artists from every corner of the globe, allows them to directly support artists by buying their merch (and wishlisting albums & tracks for purchase at a later time), and lets them instantly listen to the music they've purchased, online or offline."
         ,iconUrl: "e5d956fd-0583-4cf4-9c04-544384eee795",
-        developers: ["Myranda Onouphrios", "Raz Aoede"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Myranda Onouphrios", "Raz Aoede"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://testflight.apple.com/join/xxxxxx",
@@ -1415,8 +1428,8 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "Choose focus types through seat options, such as study, work, reading, or creative time. Make every flight better matched to your current task, and make focusing more flexible and fun.",
         iconUrl: "594d534e-99cd-4041-93c1-46c273a848ec",
-        developers: ["Gunta Ingulf"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Gunta Ingulf"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
@@ -1484,8 +1497,8 @@ export const projectData: NewProjectType[] = [
             "Mr Health uses ingredient analysis, nutritional balance frameworks, and additive research to provide comparative product ratings.\n" +
             "Scores are designed to help you compare products — not to diagnose, treat, or replace professional advice.",
         iconUrl: "c6409053-52db-440a-8583-3e2a9ee60383",
-        developers: ["Emiliya Aada"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Emiliya Aada"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://github.com/odisfm/hapi"
@@ -1517,8 +1530,8 @@ export const projectData: NewProjectType[] = [
             "\n" +
             "So, what are you waiting for?",
         iconUrl: "fb634641-fc81-4342-9f52-0dd154a22781",
-        developers: ["Muireann Onnophris", "Mira Nontle"],
-        approvalStatus: "APPROVED",
+        developerNames: ["Muireann Onnophris", "Mira Nontle"],
+        submissionStatus: "APPROVED",
         rejectionReason: null,
         links: [
             "https://apps.apple.com/au/app/rmit-app/id1584926663",
@@ -1534,7 +1547,12 @@ export const projectData: NewProjectType[] = [
     }
 ]
 
-type NewProjectMediaType = Omit<ProjectMedia, "id" | "status" | "order">
+type ProjectMediaVersionUnion = ProjectMedia & ProjectVersionMedia
+
+type NewProjectMediaType = Omit<
+    ProjectMediaVersionUnion,
+    "id" | "status" | "order" | "mediaId" | "projectVersionId"
+>
 
 export const projectMediaData: NewProjectMediaType[] = [
 // Instagram | media

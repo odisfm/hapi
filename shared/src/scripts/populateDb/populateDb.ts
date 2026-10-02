@@ -3,6 +3,7 @@ import {db} from "../../db.js"
 import {categoryData, projectData, projectMediaData, showcaseData} from "./populateDbData.js";
 import {hashPassword} from "@hapi/api/src/helpers/password";
 import {LexoRank} from "@dalet-oss/lexorank";
+import {Prisma} from "../../generated/prisma/client";
 
 const cliArgDefinitions = [
     { name: "use-external-db", type: Boolean }
@@ -88,80 +89,95 @@ console.log(`Done`)
 
 console.log(`Populating table Project`)
 let lastLexoRank = LexoRank.middle()
-for (const project of projectData) {
+for (const projectD of projectData) {
     try {
         let showcaseId: string
         const showcaseRecord = await db.showcase.findFirst({
             where: {
-                name: project.showcase.name,
-                year: project.showcase.year,
-                semester: project.showcase.semester
+                name: projectD.showcase.name,
+                year: projectD.showcase.year,
+                semester: projectD.showcase.semester
             }
         })
         if (!showcaseRecord) {
-            throw new Error(`No showcase found with: Name: ${project.showcase.name}, Year: ${project.showcase.year}, Semester: ${project.showcase.semester}`)
+            throw new Error(`No showcase found with: Name: ${projectD.showcase.name}, Year: ${projectD.showcase.year}, Semester: ${projectD.showcase.semester}`)
         }
         showcaseId = showcaseRecord.id
         const categoryRecords = await db.category.findMany({
-            where: {name: {in: project.categoryNames}}
+            where: {name: {in: projectD.categoryNames}}
         })
         const categoryIds = categoryRecords.map(cr => cr.id)
 
-        await db.project.create({
+        const projectRecord = await db.project.create({
             data: {
-                id: project.id,
-                name: project.name,
-                subtitle: project.subtitle,
-                description: project.description,
-                iconUrl: project.iconUrl,
-                developers: project.developers,
-                approvalStatus: project.approvalStatus,
-                rejectionReason: project.rejectionReason,
-                links: project.links,
+                id: projectD.id,
                 order: (() => {
-                    if (!project.featured) return ""
+                    if (!projectD.featured) return ""
                     lastLexoRank = lastLexoRank.genNext()
                     return lastLexoRank["value"]
                 })(),
                 showcaseId,
-                published: project.published,
-                featured: project.featured === true,
+                published: projectD.published,
+                featured: projectD.featured === true,
                 canBeHero: true,
-                heroArtUrl: project.heroArtUrl || null
             }
         })
 
         await db.projectSlug.create({
             data: {
-                projectId: project.id,
-                slug: project.slug,
+                projectId: projectD.id,
+                slug: projectD.slug,
                 assignedDate: new Date()
             }
         })
 
+        const thisProjectMediaData = projectMediaData.filter((m) => {
+            return m.projectId === projectRecord.id
+        })
+
+        const projectMediaRecords = await db.projectMedia.createManyAndReturn({
+            data: thisProjectMediaData.map(({ deviceType, ...m }) => ({
+                ...m,
+                status: "AVAILABLE",
+            })),
+        })
+
+        const projectVersionRecord = await db.projectVersion.create({
+            data: {
+                projectId: projectRecord.id,
+                name: projectD.name,
+                subtitle: projectD.subtitle,
+                description: projectD.description,
+                iconUrl: projectD.iconUrl,
+                createdAt: new Date(),
+                submissionStatus: "APPROVED",
+                developerNames: projectD.developerNames,
+                heroArtUrl: projectD.heroArtUrl,
+            }
+        })
+
+        await db.projectVersionMedia.createMany({
+            data: projectMediaRecords.map((r) => {
+                return {
+                    order: "",
+                    mediaId: r.id,
+                    projectVersionId: projectVersionRecord.id,
+                    deviceType: projectMediaData.find((m) => m.mediaUrl === r.mediaUrl)!.deviceType
+                }
+            })
+        })
+
         for (const categoryId of categoryIds) {
             await db.projectCategory.create({
-                data: {categoryId, projectId: project.id}
+                data: {categoryId, projectVersionId: projectVersionRecord.id}
             })
         }
 
     } catch (error) {
-        console.error(`Error inserting project: ${project.name}`)
+        console.error(`Error inserting project: ${projectD.name}`)
         console.error(error)
         process.exit(1)
     }
-}
-console.log(`Done`)
-
-console.log(`Populating table ProjectMedia`)
-try {
-    await db.projectMedia.createMany({data: projectMediaData.map((m) => {
-        return {...m, order: "", status: "AVAILABLE"}
-        })})
-} catch (e) {
-    console.error("Error inserting media")
-    console.error(e)
-    process.exit(1)
 }
 console.log(`Done`)
 
@@ -184,6 +200,40 @@ if (!process.env.DEFAULT_ADMIN_EMAIL || !process.env.DEFAULT_ADMIN_PASSWORD) {
         console.error(e)
         process.exit(1)
     }
+}
+
+if (process.env.DEFAULT_STUDENT_EMAILS) {
+    console.log("Creating default student account(s)")
+    if (!process.env.DEFAULT_STUDENT_PASSWORDS) {
+        console.error(`Missing "DEFAULT_STUDENT_PASSWORDS" in .env`)
+        process.exit(1)
+    }
+    if (!process.env.DEFAULT_STUDENT_NAMES) {
+        console.error(`Missing "DEFAULT_STUDENT_NAMES" in .env`)
+        process.exit(1)
+    }
+    const studentEmails = process.env.DEFAULT_STUDENT_EMAILS.split(",")
+    const studentPasswords = process.env.DEFAULT_STUDENT_PASSWORDS.split(",")
+    const studentNames = process.env.DEFAULT_STUDENT_NAMES.split(",")
+    if (studentEmails.length !== studentPasswords.length || studentEmails.length !== studentNames.length) {
+        console.error(`Mismatched length between "DEFAULT_STUDENT_EMAILS", "DEFAULT_STUDENT_PASSWORDS", "DEFAULT_STUDENT_NAMES"`)
+        process.exit(1)
+    }
+    const studentData: Prisma.UserCreateManyInput[] = []
+    for (let i = 0; i < studentEmails.length; i++) {
+        studentData.push({
+            email: studentEmails[i].toLowerCase(),
+            password: await hashPassword(studentPasswords[i]),
+            name: studentNames[i],
+            role: "STUDENT"
+        })
+    }
+    await db.user.createMany({
+        data: studentData
+    })
+
+} else {
+    console.warn(`Missing "DEFAULT_STUDENT_EMAILS" in .env, not creating default student accounts`)
 }
 
 console.log(`Script finished successfully :)`)

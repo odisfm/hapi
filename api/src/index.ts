@@ -4,10 +4,13 @@ import { csrf } from 'hono/csrf';
 import { cors } from 'hono/cors';
 import {type CategoryResponse} from "@hapi/shared/types/apiResponses"
 import {showcaseRouter} from "./routes/showcaseRouter";
-import {projectRouter} from "./routes/projectRouter";
+import {projectRouterGet} from "./routes/projectRouter/projectRouterGet";
 import {authRouter} from "./routes/authRouter";
 import {mediaRouter} from "./routes/mediaRouter";
 import {sessionMiddleware} from "./middleware/session";
+import {projectRouterPatch} from "./routes/projectRouter/projectRouterPatch";
+import {projectRouterPost} from "./routes/projectRouter/projectRouterPost";
+import {projectRouterDelete} from "./routes/projectRouter/projectRouterDelete";
 let serverDelay = [0, 0]
 if (process.env.SERVER_DELAY) {
     const delayNum = Number(process.env.SERVER_DELAY);
@@ -39,7 +42,11 @@ app.use("*", sessionMiddleware)
 
 app.route("/auth", authRouter)
 app.route("/showcase", showcaseRouter)
-app.route("/project", projectRouter)
+app
+    .route("/project", projectRouterGet)
+    .route("/project", projectRouterPatch)
+    .route("/project", projectRouterPost)
+    .route("/project", projectRouterDelete)
 app.route("/media", mediaRouter)
 
 app.get("/category", async (c) => {

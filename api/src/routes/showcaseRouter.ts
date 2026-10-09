@@ -13,8 +13,6 @@ import {addYears} from "date-fns";
 import {AlterProjectSlugRequestSchema, UpdateShowcaseRequestSchema} from "@hapi/shared/types/apiRequests";
 import {Prisma} from "@hapi/shared/prisma/client";
 import {createUuid} from "@hapi/client/src/utils/misc";
-import {filterProject} from "../utils/filters/filterProject";
-import {projectRouter} from "./projectRouter";
 import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
 
 const NUM_FEATURED_SHOWCASES = 3

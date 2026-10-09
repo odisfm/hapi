@@ -24,7 +24,7 @@ vi.mock("../middleware/session", () => ({
 
 
 import { db } from "@hapi/shared"
-import {DEFAULT_SEARCH_LIMIT, MAX_SEARCH_LIMIT, projectRouter} from "./projectRouter";
+import {DEFAULT_SEARCH_LIMIT, MAX_SEARCH_LIMIT, projectRouterGet} from "./projectRouterGet";
 import type {ProjectSlugGetPayload} from "@hapi/shared/prisma/models/ProjectSlug";
 import type {
     ProjectDetailsAdminResponse,
@@ -32,7 +32,7 @@ import type {
     ProjectSearchResponse
 } from "@hapi/shared/types/apiResponses";
 import type {ProjectGetPayload} from "@hapi/shared/prisma/models/Project";
-import {app} from "../index";
+import {app} from "../../index";
 
 beforeEach(() => {
     vi.clearAllMocks()
@@ -98,7 +98,7 @@ describe("GET /project", async () => {
                 ],
             },
         } as unknown as SlugWithProject)
-        const res = await projectRouter.request("/my-cool-app")
+        const res = await projectRouterGet.request("/my-cool-app")
         const json = await res.json() as ProjectDetailsResponse
         expect(json.project).toBeDefined()
         expect(json.project.slug).toEqual("my-cool-app")
@@ -106,7 +106,7 @@ describe("GET /project", async () => {
 
     test("404s on a non-existing slug", async () => {
         vi.mocked(db.projectSlug.findUnique).mockResolvedValue(null)
-        const res = await projectRouter.request("/sfdjsdjf")
+        const res = await projectRouterGet.request("/sfdjsdjf")
         expect(res.status).toEqual(404)
     })
 
@@ -123,7 +123,7 @@ describe("GET /project", async () => {
                 ],
             },
         } as unknown as SlugWithProject)
-        const res = await projectRouter.request("/my-cool-app")
+        const res = await projectRouterGet.request("/my-cool-app")
         expect(res.status).toEqual(404)
     })
 })
@@ -157,7 +157,7 @@ describe("GET /project/search", async () => {
         const params = new URLSearchParams({
             "searchTerm": "game"
         })
-        const res = await projectRouter.request(`/search?${params}`)
+        const res = await projectRouterGet.request(`/search?${params}`)
         expect(res.status).toBe(200)
         const json = await res.json() as ProjectSearchResponse
         for (const p of json.projects) {
@@ -210,7 +210,7 @@ describe("GET /project/search", async () => {
         let params = new URLSearchParams({
             "limit": "1",
         })
-        let res = await projectRouter.request(`/search?${params}`)
+        let res = await projectRouterGet.request(`/search?${params}`)
         let json = await res.json() as ProjectSearchResponse
 
         let id = json.projects[0].id
@@ -219,7 +219,7 @@ describe("GET /project/search", async () => {
         params = new URLSearchParams({
             "limit": "1", "cursor": "a"
         })
-        res = await projectRouter.request(`/search?${params}`)
+        res = await projectRouterGet.request(`/search?${params}`)
         json = await res.json() as ProjectSearchResponse
 
         id = json.projects[0].id
@@ -228,7 +228,7 @@ describe("GET /project/search", async () => {
         params = new URLSearchParams({
             "limit": "1", "cursor": "b"
         })
-        res = await projectRouter.request(`/search?${params}`)
+        res = await projectRouterGet.request(`/search?${params}`)
         json = await res.json() as ProjectSearchResponse
 
         id = json.projects[0].id
@@ -237,25 +237,25 @@ describe("GET /project/search", async () => {
         params = new URLSearchParams({
             "limit": "1", "cursor": "c"
         })
-        res = await projectRouter.request(`/search?${params}`)
+        res = await projectRouterGet.request(`/search?${params}`)
         json = await res.json() as ProjectSearchResponse
         expect(json.projects.length).toBe(0)
         expect(json.info.totalResults).toBe(3)
 
-        res = await projectRouter.request(`/search?cursor=0`)
+        res = await projectRouterGet.request(`/search?cursor=0`)
         expect(res.status).toBe(400)
     })
 
     test("enforces search limit", async () => {
         vi.mocked(db.project.findMany).mockResolvedValue(validFindMany)
-        const res = await projectRouter.request("/search?limit=100")
+        const res = await projectRouterGet.request("/search?limit=100")
         const json = (await res.json()) as ProjectSearchResponse
         expect(json.projects.length).toBe(MAX_SEARCH_LIMIT)
     })
 
     test("ignores malformed limit", async () => {
         vi.mocked(db.project.findMany).mockResolvedValue(validFindMany)
-        const res = await projectRouter.request("/search?limit=dsdsf")
+        const res = await projectRouterGet.request("/search?limit=dsdsf")
         const json = (await res.json()) as ProjectSearchResponse
         expect(json.projects.length).toBe(DEFAULT_SEARCH_LIMIT)
     })
@@ -264,11 +264,11 @@ describe("GET /project/search", async () => {
         vi.mocked(db.project.findMany).mockResolvedValue(
             validFindMany.map((r, i) => ({ ...r, id: String(i + 1) }))
         );
-        let res =  await projectRouter.request("/search?page=0")
+        let res =  await projectRouterGet.request("/search?page=0")
         let json = (await res.json()) as ProjectSearchResponse
         expect(json.projects[0].id).toBe("1")
         expect(json.projects[9].id).toBe("10")
-        res =  await projectRouter.request("/search?page=1")
+        res =  await projectRouterGet.request("/search?page=1")
         json = (await res.json()) as ProjectSearchResponse
         expect(json.projects[0].id).toBe("11")
         expect(json.projects[9].id).toBe("20")
@@ -288,7 +288,7 @@ describe("GET /project/search", async () => {
                 publishedDate: new Date(Date.now() - 1000),
             }
         }] as unknown as ProjectFindMany)
-        const res = await projectRouter.request("/search?limit=1")
+        const res = await projectRouterGet.request("/search?limit=1")
         const json = (await res.json()) as ProjectSearchResponse
         expect(json.projects.length).toBe(0)
     })

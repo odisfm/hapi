@@ -1,31 +1,29 @@
-import {createHono} from "../helpers/createHono";
+import {createHono} from "../../helpers/createHono";
 import { db } from "@hapi/shared"
-import {filterProject, filterProjectPreview} from "../utils/filters/filterProject.js";
+import {filterProject, filterProjectPreview} from "../../utils/filters/filterProject";
 import {
     AlterProjectSlugRequestSchema,
     type ProjectSearchQuery,
-    UpdateProjectRequestSchema
 } from "@hapi/shared/types/apiRequests";
-import type {ApprovalStatus} from "@hapi/shared/prisma/enums";
+import type {SubmissionStatus} from "@hapi/shared/prisma/enums";
 import type {
     ProjectDetailsAdminResponse,
     ProjectDetailsResponse, ProjectGetSlugsResponse,
     ProjectSearchResponse
 } from "@hapi/shared/types/apiResponses";
 import Fuse from "fuse.js"
-import {needsAuth} from "../middleware/needsAuth";
+import {needsAuth} from "../../middleware/needsAuth";
 import type {ProjectAdminType} from "@hapi/shared/types/project";
-import {Prisma} from "@hapi/shared/prisma/client";
 import {NUM_HERO_PROJECTS_FRONT_PAGE} from "@hapi/shared/consts";
 
 const SEARCH_SCORE_CUTOFF = 0.6 // 0 - exact match, 1 - no match
 
-export const projectRouter = createHono()
+export const projectRouterGet = createHono()
 
 export const MAX_SEARCH_LIMIT = 20
 export const DEFAULT_SEARCH_LIMIT = 10
 
-projectRouter.get("/featured", async (c) => {
+projectRouterGet.get("/featured", async (c) => {
     try {
         const records = await db.project.findMany({
             where: {
@@ -78,14 +76,14 @@ projectRouter.get("/featured", async (c) => {
     }
 })
 
-projectRouter.get("/search", async (c) => {
+projectRouterGet.get("/search", async (c) => {
     const query = c.req.query()
     const searchQuery: ProjectSearchQuery = {
         searchTerm: query.searchTerm,
         cursor: query?.cursor,
         category: query?.category,
         showcase: query?.showcase,
-        approvalStatus: query.approvalStatus ? query.approvalStatus as ApprovalStatus : undefined,
+        approvalStatus: query.approvalStatus ? query.approvalStatus as SubmissionStatus : undefined,
         page: query.page !== undefined ? Number(query.page) : undefined,
         published: (query.published === "published" || query.published === "unpublished") ? query.published : undefined
     }
@@ -231,7 +229,7 @@ projectRouter.get("/search", async (c) => {
     } satisfies ProjectSearchResponse)
 })
 
-projectRouter.get("/:projectSlug", async (c) => {
+projectRouterGet.get("/:projectSlug", async (c) => {
     const projectSlug = c.req.param("projectSlug").toLowerCase()
     const slugRecord = await db.projectSlug.findUnique({
             where: {
@@ -277,7 +275,7 @@ projectRouter.get("/:projectSlug", async (c) => {
     } satisfies ProjectDetailsResponse)
 })
 
-projectRouter.get("/id/:projectId", needsAuth, async (c) => {
+projectRouterGet.get("/id/:projectId", needsAuth, async (c) => {
     const projectId = c.req.param("projectId")
     try {
         const record = await db.project.findUnique({
@@ -305,125 +303,7 @@ projectRouter.get("/id/:projectId", needsAuth, async (c) => {
     }
 })
 
-projectRouter.patch("/", needsAuth, async (c) => {
-    let body
-    try {
-        body = UpdateProjectRequestSchema.parse(await c.req.json())
-    } catch (e) {
-        console.error(e)
-        return c.json({error: "Malformed input"}, 400)
-    }
-    try {
-        const { media, categoryIds, ...project } = body.project;
-        await db.project.upsert({
-            where: {id: project.id},
-            create: {
-                ...project,
-                featured: false
-            },
-            update: {
-                ...project
-            }
-        })
-        for (const m of media) {
-            await db.projectMedia.update({
-                where: {id: m.id},
-                data: {
-                    mediaType: m.mediaType,
-                    deviceType: m.deviceType,
-                    mediaUrl: m.uri,
-                    order: m.order
-                }
-            })
-        }
-        await db.projectCategory.deleteMany({
-            where: {
-                projectId: project.id,
-            }
-        })
-        await db.projectCategory.createMany({
-            data: categoryIds.map((cid) => {
-                return {
-                    projectId: project.id,
-                    categoryId: cid
-                }
-            })
-        })
-
-        const slugRecords = await db.projectSlug.findMany({where: {projectId: project.id}})
-        if (!slugRecords.length) {
-            await db.projectSlug.create({data: {slug: project.id, projectId: project.id, assignedDate: new Date()}})
-        }
-
-        return c.json({}, 201)
-    } catch (e) {
-        console.error(e)
-        return c.json({error: "Internal server error"}, 500)
-    }
-})
-
-projectRouter.post("/", needsAuth, async (c) => {
-    const user = c.get("user")!
-    let body
-    try {
-        const json = await c.req.json()
-        body = UpdateProjectRequestSchema.parse(json)
-    } catch (e) {
-        console.error(e)
-        return c.json({error: e}, 400)
-    }
-    try {
-        const { media, categoryIds, ...project } = body.project;
-        await db.project.create({
-            data: {
-                ...project,
-                featured: false
-            },
-        })
-        await db.projectSlug.create({
-            data: {
-                projectId: project.id,
-                slug: project.id,
-                assignedDate: new Date()
-            }
-        })
-        // need another query to get the `includes`
-        const record = await db.project.findUnique({
-            where: {id: project.id},
-            include: {
-                showcase: true,
-                media: true,
-                categories: {include: {category: true}},
-                slugs: {take: 1, orderBy: {assignedDate: "desc"}}
-            }
-        })
-
-        const p = filterProject(record!, user.role) as ProjectAdminType
-
-        return c.json({project: p} satisfies ProjectDetailsAdminResponse, 201)
-    } catch (e) {
-        console.error(e)
-        return c.json({error: "Internal server error"}, 500)
-    }
-})
-
-projectRouter.delete("/:projectId", needsAuth, async (c) => {
-    const user = c.get("user")!
-    if (user.role !== "ADMIN") {
-        return c.json({error: "Unauthorised"}, 403)
-    }
-    const projectId = c.req.param("projectId")
-
-    try {
-        await db.project.delete({where: {id: projectId}})
-        return c.json({}, 200)
-    } catch (e) {
-        console.error(e)
-        return c.json({error: "Internal server error"}, 500)
-    }
-})
-
-projectRouter.get("/id/:projectId/slug", needsAuth, async (c) => {
+projectRouterGet.get("/id/:projectId/slug", needsAuth, async (c) => {
     const projectId = c.req.param("projectId")
     try {
         const record = await db.project.findUnique({
@@ -445,76 +325,3 @@ projectRouter.get("/id/:projectId/slug", needsAuth, async (c) => {
     }
 })
 
-projectRouter.post("/id/:projectId/slug", needsAuth, async (c) => {
-    const projectId = c.req.param("projectId")
-    let body
-    try {
-        body = AlterProjectSlugRequestSchema.parse(await c.req.json())
-    } catch {
-        return c.json({error: "Malformed data"}, 400)
-    }
-    try {
-        await db.projectSlug.create({
-            data: {
-                projectId,
-                slug: body.slug.toLowerCase(),
-                assignedDate: new Date()
-            }
-        })
-        return c.json({}, 200)
-    } catch (e) {
-        if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-            const existingSlugRecord = await db.projectSlug.findUnique({
-                where: {slug: body.slug.toLowerCase()}, include: {project: true}
-            })
-            return c.json({
-                error: `Slug already taken by project with name "${existingSlugRecord!.project.name}"`}
-            , 409)
-
-        }
-        return c.json({error: "Internal server error"}, 500)
-    }
-})
-
-projectRouter.delete("/id/:projectId/slug", needsAuth, async (c) => {
-    const projectId = c.req.param("projectId")
-    let body
-    try {
-        body = AlterProjectSlugRequestSchema.parse(await c.req.json())
-    } catch {
-        return c.json({error: "Malformed data"}, 400)
-    }
-    try {
-        await db.projectSlug.delete({
-            where: {slug: body.slug.toLowerCase(), projectId: projectId}
-        })
-        return c.json({}, 200)
-    } catch (e) {
-        return c.json({error: "Internal server error"}, 500)
-    }
-})
-
-projectRouter.patch("/batch", needsAuth, async (c) => {
-    try {
-        const user = c.get("user")!
-        if (user.role !== "ADMIN") return c.json({error: "Unauthorised"}, 403)
-        const body = await c.req.json()
-        const updates = body.projects
-
-        console.log(updates)
-
-        await db.$transaction(
-            updates.map(({ id, ...data }: { id: string } & Prisma.ProjectUpdateInput) =>
-                db.project.update({
-                    where: { id },
-                    data,
-                })
-            )
-        )
-        return c.json({}, 200)
-
-    } catch (e) {
-        console.error(e)
-        return c.json({error: "Internal server error"}, 500)
-    }
-})

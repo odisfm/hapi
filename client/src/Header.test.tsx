@@ -9,7 +9,6 @@ vi.mock('./contexts/auth/useAuth.ts', () => ({
     useAuth: vi.fn(),
 }))
 
-// Stand-in so these tests only cover Header, not SearchOverlay's own behaviour
 vi.mock('./components/SearchOverlay.tsx', () => ({
     default: ({ onClose }: { onClose: () => void }) => (
         <div role="dialog" aria-label="Search overlay">

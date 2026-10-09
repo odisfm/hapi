@@ -15,6 +15,7 @@ import Fuse from "fuse.js"
 import {needsAuth} from "../../middleware/needsAuth";
 import type {ProjectAdminType} from "@hapi/shared/types/project";
 import {NUM_HERO_PROJECTS_FRONT_PAGE} from "@hapi/shared/consts";
+import type {ProjectGetPayload} from "@hapi/shared/prisma/models/Project";
 
 const SEARCH_SCORE_CUTOFF = 0.6 // 0 - exact match, 1 - no match
 
@@ -23,9 +24,13 @@ export const projectRouterGet = createHono()
 export const MAX_SEARCH_LIMIT = 20
 export const DEFAULT_SEARCH_LIMIT = 10
 
+function filterNoVersion<T extends { versions: unknown[] }>(projects: T[]): T[] {
+    return projects.filter((p) => p.versions.length > 0)
+}
+
 projectRouterGet.get("/featured", async (c) => {
     try {
-        const records = await db.project.findMany({
+        let records = await db.project.findMany({
             where: {
                 featured: true,
                 published: true,
@@ -39,17 +44,28 @@ projectRouterGet.get("/featured", async (c) => {
             orderBy: {order: "asc"},
             include: {
                 showcase: true,
-                categories: {
+                slugs: true,
+                versions: {
+                    take: 1,
+                    where: {
+                        submissionStatus: "APPROVED",
+                    },
                     include: {
-                        category: true
+                        categories: {
+                            include: {category: true}
+                        },
+                        media: {
+                            include: {media: true}
+                        }
                     }
-                },
-                media: true,
-                slugs: true
+                }
             }
         })
+        records = filterNoVersion(records)
 
-        const projects = records.map((r) => filterProjectPreview(r))
+        const projects = records.map(
+            (r) => filterProjectPreview(r)
+        )
 
         let numHeroProjectsToGet = NUM_HERO_PROJECTS_FRONT_PAGE
         // do we have enough to fill this number ?
@@ -116,7 +132,7 @@ projectRouterGet.get("/search", async (c) => {
         searchQuery.published = "published"
     }
 
-    const records = await db.project.findMany({
+    let records = await db.project.findMany({
         where: {
             ...(searchQuery.showcase && {showcaseId: searchQuery.showcase}),
             ...(searchQuery.approvalStatus && {approvalStatus: searchQuery.approvalStatus}),
@@ -124,22 +140,30 @@ projectRouterGet.get("/search", async (c) => {
         },
         include: {
             showcase: true,
-            categories: {
-                include: {category: true}
-            },
-            media: true,
             slugs: {
                 take: 1,
                 orderBy: {
                     assignedDate: "desc"
                 }
+            },
+            versions: {
+                take: 1,
+                where: {
+                    submissionStatus: "APPROVED"
+                },
+                include: {
+                    media: {include: {media: true}},
+                    categories: {include: {category: true}}
+                }
             }
+
         },
         orderBy: [
             {showcase: {publishedDate: "desc"}},
-            {name: "asc"}
+            {order: "asc"}
         ]
     })
+    records = filterNoVersion(records)
     const now = new Date()
 
     let queryCategoryIds: string[] = []
@@ -161,13 +185,12 @@ projectRouterGet.get("/search", async (c) => {
         if (!r.showcase.publishedDate || r.showcase.publishedDate > now) {
             return false
         }
-        if (userRole !== "ADMIN" && !r.published) return false
         return true
     })
 
     if (queryCategoryIds.length > 0) {
         filteredRecords = filteredRecords.filter(r => {
-            for (const c of r.categories) {
+            for (const c of r.versions[0].categories) {
                 if (queryCategoryIds.includes(c.categoryId)) return true
             }
             return false
@@ -175,26 +198,29 @@ projectRouterGet.get("/search", async (c) => {
     }
 
     if (searchQuery.searchTerm) {
-        const fuse = new Fuse(filteredRecords, {
-            useTokenSearch: true,
-            ignoreLocation: true,
-            ignoreDiacritics: true,
-            fieldNormWeight: 0.7,
-            threshold: 0.8,
-            includeScore: true,
-            keys: [
-                { name: "name", weight: 5 },
-                { name: "subtitle", weight: 3 },
-                { name: "description", weight: 1 },
-                { name: "developers", weight: 1 },
-                { name: "categories.category.name", weight: 3 },
-            ],
-        });
+        const fuse = new Fuse(
+            filteredRecords.map(record => ({ record, version: record.versions[0] })),
+            {
+                useTokenSearch: true,
+                ignoreLocation: true,
+                ignoreDiacritics: true,
+                fieldNormWeight: 0.7,
+                threshold: 0.8,
+                includeScore: true,
+                keys: [
+                    { name: "version.name", weight: 5 },
+                    { name: "version.subtitle", weight: 3 },
+                    { name: "version.description", weight: 1 },
+                    { name: "version.developers", weight: 1 },
+                    { name: "version.categories.category.name", weight: 3 },
+                ],
+            },
+        );
 
         filteredRecords = fuse
             .search(searchQuery.searchTerm)
             .filter(r => r.score !== undefined && r.score <= SEARCH_SCORE_CUTOFF)
-            .map(r => r.item);
+            .map(r => r.item.record);
     }
 
     let processedRecords = filteredRecords.map((r) => {
@@ -239,10 +265,14 @@ projectRouterGet.get("/:projectSlug", async (c) => {
                 project: {
                     include: {
                         showcase: true,
-                        media: true,
-                        categories: {
+                        versions: {
+                            take: 1,
+                            where: {
+                                submissionStatus: "APPROVED",
+                            },
                             include: {
-                                category: true
+                                categories: {include: {category: true}},
+                                media: {include: {media: true}}
                             }
                         },
                         slugs: {
@@ -256,7 +286,7 @@ projectRouterGet.get("/:projectSlug", async (c) => {
             }
         }
     )
-    if (!slugRecord || !slugRecord.project.published) {
+    if (!slugRecord || !slugRecord.project.published || !slugRecord.project.versions.length) {
         return c.json({
             error: `No project found called '${projectSlug}'`
         }, 404)
@@ -275,33 +305,30 @@ projectRouterGet.get("/:projectSlug", async (c) => {
     } satisfies ProjectDetailsResponse)
 })
 
-projectRouterGet.get("/id/:projectId", needsAuth, async (c) => {
-    const projectId = c.req.param("projectId")
-    try {
-        const record = await db.project.findUnique({
-            where: {id: projectId},
-            include: {
-                media: true,
-                categories: {
-                    include: {category: true}
-                },
-                showcase: true,
-                slugs: true
-            }
-        })
-
-        if (!record) {
-            return c.json({error: "Project not found"}, 404)
-        }
-
-        const project = filterProject(record!, c.get("user")!.role) as ProjectAdminType
-        return c.json({project: project} satisfies ProjectDetailsAdminResponse, 200)
-
-    } catch (e) {
-        console.error(e)
-        return c.json({error: "Internal server error"}, 500)
-    }
-})
+// projectRouterGet.get("/id/:projectId", needsAuth, async (c) => {
+//     const projectId = c.req.param("projectId")
+//     try {
+//         const record = await db.project.findUnique({
+//             where: {id: projectId},
+//             include: {
+//                 showcase: true,
+//                 slugs: true,
+//
+//             }
+//         })
+//
+//         if (!record) {
+//             return c.json({error: "Project not found"}, 404)
+//         }
+//
+//         const project = filterProject(record!, c.get("user")!.role) as ProjectAdminType
+//         return c.json({project: project} satisfies ProjectDetailsAdminResponse, 200)
+//
+//     } catch (e) {
+//         console.error(e)
+//         return c.json({error: "Internal server error"}, 500)
+//     }
+// })
 
 projectRouterGet.get("/id/:projectId/slug", needsAuth, async (c) => {
     const projectId = c.req.param("projectId")

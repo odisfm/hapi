@@ -1,5 +1,5 @@
 import { ModalContext, type ModalInteraction, type ModalButton } from "./ModalContext.tsx";
-import {useState, useCallback, useEffect} from "react";
+import {useState, useCallback, useEffect, isValidElement} from "react";
 import {createUuid} from "../../utils/misc.ts";
 import {Button} from "../../components/generic/Button.tsx";
 import {FaChevronCircleLeft, FaChevronCircleRight} from "react-icons/fa";
@@ -23,6 +23,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     const [image, setImage] = useState<QueuedImage | null>(null);
 
     const dispatchModal = useCallback((modal: ModalInteraction) => {
+        if (!modal.buttons) {
+            modal.buttons = [{id: "ok", text: "Ok", variant: "default"}]
+        }
         return new Promise<string>((resolve) => {
             const id = createUuid();
             setModals((prev) => [...prev, { ...modal, id, resolve }]);
@@ -75,12 +78,13 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
                     <div className="relative max-w-[90vw] max-h-[90vh] rounded-lg bg-white p-6 shadow-xl">
                         {m.headline && <h2 className={`text-xl font-bold mb-4`}>{m.headline}</h2>}
-                        {m.body && m.body.split("\n").map((p) => {
+                        {m.body && typeof m.body === "string" && m.body.split("\n").map((p) => {
                             return <p>{p}</p>
                         })
                         }
+                        {m.body && isValidElement(m.body) && m.body}
                         <div className="mt-4 flex gap-2">
-                            {m.buttons.map((b: ModalButton) => {
+                            {m.buttons!.map((b: ModalButton) => {
                                 return (
                                     <Button
                                         key={b.id}

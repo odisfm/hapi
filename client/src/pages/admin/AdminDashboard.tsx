@@ -15,6 +15,9 @@ export function AdminDashboard() {
         if (!authContext.user && !authContext.authPending) {
             navigate("/admin-login");
         }
+        if (!authContext.authPending && authContext.user?.role !== "ADMIN") {
+            navigate("/protected")
+        }
     }, [authContext.user, authContext.authPending, navigate]);
 
     return (
@@ -33,7 +36,7 @@ export function AdminDashboard() {
                 </div>
             }
             <div className={`self-start flex flex-wrap gap-2 mt-4`}>
-                {["Projects", "Featured Projects", "Showcases", "Categories", "Users", "Analytics"].map((viewName, i) => {
+                {["Projects", "Featured Projects", "Project Queue", "Showcases", "Categories", "Users", "Analytics"].map((viewName, i) => {
                     const view = viewName.toLowerCase().replace(" ", "-")
                     return (
                         <Link

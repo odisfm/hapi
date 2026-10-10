@@ -305,31 +305,6 @@ projectRouterGet.get("/:projectSlug", async (c) => {
     } satisfies ProjectDetailsResponse)
 })
 
-// projectRouterGet.get("/id/:projectId", needsAuth, async (c) => {
-//     const projectId = c.req.param("projectId")
-//     try {
-//         const record = await db.project.findUnique({
-//             where: {id: projectId},
-//             include: {
-//                 showcase: true,
-//                 slugs: true,
-//
-//             }
-//         })
-//
-//         if (!record) {
-//             return c.json({error: "Project not found"}, 404)
-//         }
-//
-//         const project = filterProject(record!, c.get("user")!.role) as ProjectAdminType
-//         return c.json({project: project} satisfies ProjectDetailsAdminResponse, 200)
-//
-//     } catch (e) {
-//         console.error(e)
-//         return c.json({error: "Internal server error"}, 500)
-//     }
-// })
-
 projectRouterGet.get("/id/:projectId/slug", needsAuth, async (c) => {
     const projectId = c.req.param("projectId")
     try {

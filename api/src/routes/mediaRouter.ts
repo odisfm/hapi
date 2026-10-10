@@ -120,9 +120,7 @@ mediaRouter.post("/screenshot", needsAuth, async (c) => {
                 mediaUrl: uri,
                 mediaType: "SCREENSHOT",
                 projectId: data.projectId,
-                deviceType: data.deviceType,
                 status: "AVAILABLE",
-                order: ""
             }
         })
 

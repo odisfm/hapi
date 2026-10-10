@@ -19,6 +19,10 @@ import SearchResultsPage from "./pages/SearchResultsPage.tsx";
 import {PasswordReset} from "./pages/admin/PasswordReset/PasswordReset.tsx";
 import {RootErrorBoundary} from "./components/RootErrorBoundary.tsx";
 import {ShowcasePage} from "./pages/ShowcasePage.tsx";
+import {StudentDashboard} from "./pages/student/StudentDashboard.tsx";
+import {Protected} from "./pages/admin/Protected.tsx";
+import {StudentNewProject} from "./pages/student/StudentNewProject.tsx";
+import {ProjectQueue} from "./components/ProjectQueue/ProjectQueue.tsx";
 
 const router = createBrowserRouter([
     {
@@ -33,6 +37,10 @@ const router = createBrowserRouter([
             {
                 path: "/search",
                 element: <SearchResultsPage />
+            },
+            {
+                path: "/protected",
+                element: <Protected />
             },
             {
                 path: "/admin-login",
@@ -59,6 +67,10 @@ const router = createBrowserRouter([
                         element: <FeaturedProjectsEditor />
                     },
                     {
+                        path: "/dashboard/project-queue",
+                        element: <ProjectQueue />
+                    },
+                    {
                         path: "/dashboard/showcases",
                         element: <ShowcaseList />
                     },
@@ -81,8 +93,20 @@ const router = createBrowserRouter([
                 element: <ProjectEditor />
             },
             {
+                path: "/student/project/:projectId",
+                element: <ProjectEditor />
+            },
+            {
                 path: "/dashboard/showcase/:showcaseId",
                 element: <ShowcaseEditor />
+            },
+            {
+                path: "/student",
+                element: <StudentDashboard/>,
+            },
+            {
+                path: "/student/new-project",
+                element: <StudentNewProject />
             },
             {
                 path: "/project/:projectSlug",

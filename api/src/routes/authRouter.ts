@@ -1,8 +1,18 @@
 import {createHono} from "../helpers/createHono";
-import type {LoginSuccessResponse, PasswordChangeFailureResponse, UserDetails} from "@hapi/shared/types/apiResponses";
-import {CreateUserRequestSchema, LoginRequestSchema, PasswordChangeRequestSchema} from "@hapi/shared/types/apiRequests";
+import type {
+    LoginSuccessResponse,
+    PasswordChangeFailureResponse,
+    UserDetails,
+    UserListResponse
+} from "@hapi/shared/types/apiResponses";
+import {
+    BatchCreateUserRequestSchema,
+    CreateUserRequestSchema,
+    LoginRequestSchema,
+    PasswordChangeRequestSchema
+} from "@hapi/shared/types/apiRequests";
 import {db} from "@hapi/shared";
-import {checkPassword, hashPassword} from "../helpers/password";
+import {checkPassword, generatePassword, hashPassword} from "../helpers/password";
 import {SESSION_EXPIRY} from "../consts";
 import {deleteCookie, setCookie} from "hono/cookie";
 import {authCookieOptions} from "../utils/cookieOptions";
@@ -166,14 +176,29 @@ authRouter.post("/create", needsAuth, async (c) => {
     }
 
     try {
+        const password = generatePassword()
         await db.user.create({
             data: {
                 name: body.name,
                 email: body.email.toLowerCase(),
-                password: await hashPassword(body.password),
+                password: await hashPassword(password),
                 role: body.role as UserRole
             }
         })
+
+        await sendEmail(
+            body.email,
+            "A HAPI showcase account has been created for you",
+            `
+            Hello, ${body.name},
+            
+            An account has been created for you on the RMIT Hub for Apple Platform Innovation showcase website.
+            
+            Username: ${body.email}
+            Password: ${password}`
+        )
+
+        // todo: link to site
 
         return c.json({}, 200)
     } catch (e) {
@@ -190,6 +215,79 @@ authRouter.post("/create", needsAuth, async (c) => {
         }
     }
 })
+
+authRouter.post("/create/batch", needsAuth, async (c) => {
+    const requestingUser = c.get("user")!
+    if (requestingUser.role !== "ADMIN") {
+        return c.json({error: "Insufficient privileges to create user"}, 403)
+    }
+    let body
+    try {
+        body = BatchCreateUserRequestSchema.parse(await c.req.json())
+    } catch (e) {
+        if (e instanceof z.ZodError) {
+            return c.json({
+                error: "Malformed input"}, 400)
+        } else {
+            // shouldn't happen
+            console.error(e)
+            return c.json({error: "Internal server error"}, 500)
+        }
+    }
+
+    try {
+        const userList = await Promise.all(
+            body.users.map(async (u) => {
+                const plainPassword = generatePassword()
+                return {
+                    name: u.name,
+                    email: u.email,
+                    role: u.role,
+                    plainPassword,
+                    password: await hashPassword(plainPassword),
+                }
+            })
+        )
+
+        const existingUsers = await db.user.findMany()
+        const existingEmails = new Set(existingUsers.map((u) => u.email))
+        const newUsers = userList.filter((u) => !existingEmails.has(u.email))
+
+
+        await db.$transaction(async () => {
+            try {
+                await db.user.createMany({
+                    data: newUsers.map(({plainPassword, ...ud}) => ud),
+                })
+            } catch (e) {
+                console.error(e)
+                return c.json({error: "Internal server error"})
+            }
+        })
+
+        for (const u of newUsers) {
+            await sendEmail(
+                u.email,
+                "A HAPI showcase account has been created for you",
+                `
+                Hello, ${u.name},
+                
+                An account has been created for you on the RMIT Hub for Apple Platform Innovation showcase website.
+                
+                Username: ${u.email}
+                Password: ${u.plainPassword}`
+            )
+        }
+
+        // todo: link to site
+
+        return c.json({}, 200)
+    } catch (e) {
+        console.error(e)
+        return c.json({error: "Internal server error"}, 500)
+    }
+})
+
 
 authRouter.get("/me", needsAuth, (c) => {
     return c.json({
@@ -310,3 +408,56 @@ authRouter.post("/forgot-password/verify", async (c) => {
     }
 })
 
+authRouter.get("/users", needsAuth, async (c) => {
+    const user = c.get("user")!
+    if (user.role !== "ADMIN") {
+        return c.json({error: "Unauthorised"}, 403)
+    }
+
+    const records = await db.user.findMany()
+
+    const users = records.map((u) => {
+        return {
+            name: u.name,
+            email: u.email,
+            role: u.role,
+            needsPasswordReset: u.needsPasswordReset
+        }
+    })
+
+    return c.json({users} satisfies UserListResponse, 200)
+})
+
+authRouter.delete("/user", needsAuth, async (c) => {
+    const user = c.get("user")!
+    if (user.role !== "ADMIN") {
+        return c.json({error: "Unauthorised"}, 403)
+    }
+
+    const body = await c.req.json()
+    if (!body.email) {
+        return c.json({error: "Malformed input"}, 400)
+    }
+
+    const record = await db.user.findUnique({
+        where: {email: body.email}
+    })
+
+    if (!record) {
+        return c.json({error: "Not found"}, 404)
+    }
+
+    if (record.id === user.id) {
+        return c.json({error: "Can't delete own account"}, 400)
+    }
+
+    try {
+        await db.user.delete({
+            where: {id: record.id}
+        })
+        return c.json({}, 200)
+    } catch (e) {
+        console.error(e)
+        return c.json({error: "Internal server error"}, 500)
+    }
+})

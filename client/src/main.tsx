@@ -23,6 +23,8 @@ import {StudentDashboard} from "./pages/student/StudentDashboard.tsx";
 import {Protected} from "./pages/admin/Protected.tsx";
 import {StudentNewProject} from "./pages/student/StudentNewProject.tsx";
 import {ProjectQueue} from "./components/ProjectQueue/ProjectQueue.tsx";
+import {UserPage} from "./components/UserPage/UserPage.tsx";
+import {CreateUserPage} from "./components/UserPage/CreateUserPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -80,13 +82,17 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "/dashboard/users",
-                        element: <UnderConstruction />
+                        element: <UserPage />
                     },
                     {
                         path: "/dashboard/analytics",
                         element: <UnderConstruction />
                     }
                 ]
+            },
+            {
+                path: "/dashboard/users/create",
+                element: <CreateUserPage />
             },
             {
                 path: "/dashboard/project/:projectId",

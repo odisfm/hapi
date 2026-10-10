@@ -68,6 +68,10 @@ export const UserDetailsSchema = z.object({
 
 export type UserDetails = z.infer<typeof UserDetailsSchema>
 
+export type UserListResponse = {
+    users: UserDetails[]
+}
+
 export const LoginSuccessResponseSchema = z.object({
     user: UserDetailsSchema
 })

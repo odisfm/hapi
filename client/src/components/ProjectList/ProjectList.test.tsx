@@ -32,6 +32,7 @@ function makeProjects(count: number): ProjectPreviewType[] {
         slug: `project-${i + 1}`,
         developers: ['Alice'],
         featured: false,
+        versionId: `aaa-${i+1}`
     }))
 }
 
@@ -97,13 +98,13 @@ describe('ProjectList', () => {
             expect(screen.queryByText('Loading...')).not.toBeInTheDocument()
         })
 
-        it('requests the first page of ten projects', async () => {
+        it('requests the first page of fifteen projects', async () => {
             const fetchMock = mockApi({projects: makeProjects(3)})
             renderList()
 
             await screen.findByText('3 projects found.')
 
-            expect(lastSearchParams(fetchMock).get('limit')).toBe('10')
+            expect(lastSearchParams(fetchMock).get('limit')).toBe('15')
             expect(lastSearchParams(fetchMock).get('page')).toBe('0')
         })
     })
@@ -128,10 +129,10 @@ describe('ProjectList', () => {
         })
 
         it('shows which results are visible when there is more than one page', async () => {
-            mockApi({projects: makeProjects(10), totalResults: 25})
+            mockApi({projects: makeProjects(15), totalResults: 25})
             renderList()
 
-            expect(await screen.findByText('25 projects found, showing 1-10.')).toBeInTheDocument()
+            expect(await screen.findByText('25 projects found, showing 1-15.')).toBeInTheDocument()
         })
 
         it('shows the empty state and no list when nothing matches', async () => {
@@ -168,13 +169,13 @@ describe('ProjectList', () => {
 
         it('loads and describes the next page when a page button is clicked', async () => {
             const user = userEvent.setup()
-            const fetchMock = mockApi({projects: makeProjects(10), totalResults: 25})
+            const fetchMock = mockApi({projects: makeProjects(15), totalResults: 25})
             renderList()
-            await screen.findByText('25 projects found, showing 1-10.')
+            await screen.findByText('25 projects found, showing 1-15.')
 
             await user.click(screen.getAllByRole('button', {name: '2'})[0])
 
-            expect(await screen.findByText('25 projects found, showing 11-20.')).toBeInTheDocument()
+            expect(await screen.findByText('25 projects found, showing 16-25.')).toBeInTheDocument()
             expect(lastSearchParams(fetchMock).get('page')).toBe('1')
         })
     })
@@ -194,11 +195,11 @@ describe('ProjectList', () => {
 
         it('goes back to the first page when the search term changes', async () => {
             const user = userEvent.setup()
-            const fetchMock = mockApi({projects: makeProjects(10), totalResults: 25})
+            const fetchMock = mockApi({projects: makeProjects(15), totalResults: 25})
             renderList()
-            await screen.findByText('25 projects found, showing 1-10.')
+            await screen.findByText('25 projects found, showing 1-15.')
             await user.click(screen.getAllByRole('button', {name: '2'})[0])
-            await screen.findByText('25 projects found, showing 11-20.')
+            await screen.findByText('25 projects found, showing 16-25.')
 
             await user.type(screen.getByRole('textbox'), 'maps')
             await user.click(screen.getByRole('button', {name: 'Search'}))
@@ -211,11 +212,11 @@ describe('ProjectList', () => {
     describe('filtering', () => {
         it('searches with the chosen filter and returns to the first page', async () => {
             const user = userEvent.setup()
-            const fetchMock = mockApi({projects: makeProjects(10), totalResults: 25})
+            const fetchMock = mockApi({projects: makeProjects(15), totalResults: 25})
             renderList()
-            await screen.findByText('25 projects found, showing 1-10.')
+            await screen.findByText('25 projects found, showing 1-15.')
             await user.click(screen.getAllByRole('button', {name: '2'})[0])
-            await screen.findByText('25 projects found, showing 11-20.')
+            await screen.findByText('25 projects found, showing 16-25.')
 
             await user.click(screen.getByRole('button', {name: 'Pick games category'}))
 

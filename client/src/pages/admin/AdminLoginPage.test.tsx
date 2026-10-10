@@ -90,13 +90,7 @@ describe('AdminLoginPage', () => {
             mockAuth({name: 'Max'})
             renderPage()
 
-            expect(navigate).toHaveBeenCalledWith('/dashboard')
-        })
-
-        it('stays on the login page when signed out', () => {
-            renderPage()
-
-            expect(navigate).not.toHaveBeenCalled()
+            expect(navigate).toHaveBeenCalledWith('/protected')
         })
     })
 

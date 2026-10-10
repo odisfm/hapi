@@ -545,7 +545,7 @@ export function ProjectEditor() {
                                         >
                                             <RiImageUploadFill />
                                         </button>
-                                        <SaveButton onClick={() => submit()} hasChanged={hasChanged} />
+                                        <SaveButton onClick={async () => { console.log("editor onClick"); await submit() }} hasChanged={hasChanged} />
                                     </div>
                             </form>
                         </div>
@@ -572,8 +572,6 @@ export function ProjectEditor() {
                                 onChange={(e) => {
                                     setHasChanged(true)
                                     setProjectName(e.target.value)
-                                    console.log(`set name to ${e.target.value}`)
-                                    console.log(project)
                                 }}
                                 className={`${inputStyles} w-full`}
                                 required

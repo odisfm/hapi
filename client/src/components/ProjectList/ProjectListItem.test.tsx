@@ -14,9 +14,10 @@ const project: ProjectPreviewType = {
     slug: 'example-project',
     developers: ['Alice'],
     featured: false,
+    versionId: "aaa"
 }
 
-const editorPath = `/dashboard/project/${project.id}`
+const editorPath = `/dashboard/project/${project.versionId}`
 
 function renderItem(overrides: Partial<ProjectPreviewType> = {}) {
     return render(

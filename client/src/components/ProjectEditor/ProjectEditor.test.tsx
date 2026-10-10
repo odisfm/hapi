@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import {MemoryRouter, Route, Routes} from 'react-router'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import {ProjectEditor} from './ProjectEditor.tsx'
+import {AuthContext} from "../../contexts/auth/AuthContext.tsx";
 
 const {navigate, dispatchModal, modalContext} = vi.hoisted(() => {
     const dispatchModal = vi.fn()
@@ -76,6 +77,7 @@ vi.mock('./TextItemEditor.tsx', () => ({
 const projectId = '123e4567-e89b-42d3-a456-426614174000'
 const showcaseId = '223e4567-e89b-42d3-a456-426614174001'
 const categoryId = '323e4567-e89b-42d3-a456-426614174002'
+const versionId = '423e4567-e89b-42d3-a456-426614174002'
 
 function makeProject(overrides: Record<string, unknown> = {}) {
     return {
@@ -93,6 +95,7 @@ function makeProject(overrides: Record<string, unknown> = {}) {
         showcaseId,
         published: true,
         featured: false,
+        versionId,
         ...overrides,
     }
 }
@@ -133,11 +136,18 @@ function requestsWithMethod(method: string) {
 
 function renderEditorPage() {
     return render(
-        <MemoryRouter initialEntries={[`/dashboard/project/${projectId}`]}>
-            <Routes>
-                <Route path="/dashboard/project/:projectId" element={<ProjectEditor/>}/>
-            </Routes>
-        </MemoryRouter>,
+        <AuthContext.Provider value={{
+            user: {email: "a", name: "a", needsPasswordReset: false, role: "ADMIN"},
+            setUserDetails: () => {},
+            logOut: () => {},
+            authPending: false
+        }}>
+            <MemoryRouter initialEntries={[`/dashboard/project/${projectId}`]}>
+                <Routes>
+                    <Route path="/dashboard/project/:projectId" element={<ProjectEditor/>}/>
+                </Routes>
+            </MemoryRouter>
+        </AuthContext.Provider>
     )
 }
 
@@ -301,7 +311,10 @@ describe('ProjectEditor', () => {
             expect(url).toMatch(/\/project$/)
             expect(init.credentials).toBe('include')
             expect(JSON.parse(init.body).project).toEqual(
-                expect.objectContaining({id: projectId, name: 'Example project v2', showcaseId}),
+                expect.objectContaining({id: projectId, published: true, showcaseId}),
+            )
+            expect(JSON.parse(init.body).projectVersion).toEqual(
+                expect.objectContaining({id: versionId, name: "Example project v2"}),
             )
             expect(await screen.findByRole('button', {name: 'no changes'})).toBeDisabled()
         })

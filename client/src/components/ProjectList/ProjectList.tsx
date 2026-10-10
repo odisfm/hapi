@@ -19,7 +19,7 @@ import {Button} from "../generic/Button.tsx";
 
 export function ProjectList() {
     const [searchQuery, setSearchQuery] = useState<ProjectSearchQuery>({
-        limit: 10,
+        limit: 15,
         page: 0
     });
     const [projects, setProjects] = useState<ProjectPreviewType[]>([])

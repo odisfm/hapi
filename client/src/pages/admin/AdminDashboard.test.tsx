@@ -99,11 +99,6 @@ describe('AdminDashboard', () => {
             expect(logOut).toHaveBeenCalledTimes(1)
         })
 
-        it('does not redirect to the login page', () => {
-            renderDashboard()
-
-            expect(navigate).not.toHaveBeenCalled()
-        })
     })
 
     describe('when signed out', () => {

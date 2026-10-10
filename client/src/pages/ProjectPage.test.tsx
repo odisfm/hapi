@@ -74,14 +74,20 @@ function renderPage(slug = 'example-project') {
     )
 }
 
+const fetchMock = vi.fn()
+const scrollIntoView = vi.fn()
+
 async function renderLoaded(overrides: Record<string, unknown> = {}) {
     fetchMock.mockResolvedValue(projectResponse(makeProject(overrides)))
     renderPage()
     await screen.findByRole('heading', {name: 'Example project'})
 }
 
-const fetchMock = vi.fn()
-const scrollIntoView = vi.fn()
+async function waitForShowing(label: string) {
+    await waitFor(() =>
+        expect(screen.getByRole('button', {name: /showing/i})).toHaveTextContent(`Showing ${label}`),
+    )
+}
 
 describe('ProjectPage', () => {
     beforeEach(() => {
@@ -305,6 +311,8 @@ describe('ProjectPage', () => {
         it('starts on the desktop screenshots on a non-touch device', async () => {
             await renderLoaded({media: [makeMedia('phone-shot', 'PHONE'), makeMedia('desktop-shot', 'DESKTOP')]})
 
+            await waitForShowing(deviceEnumFriendly.DESKTOP)
+
             const screenshots = within(screen.getByRole('list', {name: 'Screenshots'}))
             expect(screenshots.getByText('desktop-shot')).toBeInTheDocument()
             expect(screenshots.queryByText('phone-shot')).not.toBeInTheDocument()
@@ -315,10 +323,7 @@ describe('ProjectPage', () => {
             setScreenSize(390, 844)
             await renderLoaded({media: [makeMedia('phone-shot', 'PHONE'), makeMedia('desktop-shot', 'DESKTOP')]})
 
-            await waitFor(() =>
-                expect(screen.getByRole('button', {name: /showing/i}))
-                    .toHaveTextContent(`Showing ${deviceEnumFriendly.PHONE}`),
-            )
+            await waitForShowing(deviceEnumFriendly.PHONE)
 
             const screenshots = within(screen.getByRole('list', {name: 'Screenshots'}))
             expect(screenshots.getByText('phone-shot')).toBeInTheDocument()
@@ -326,21 +331,13 @@ describe('ProjectPage', () => {
         })
 
         it('falls back to the phone screenshots when none match the device', async () => {
-            await renderLoaded({
-                media: [
-                    makeMedia('tv-shot', 'TV'),
-                    makeMedia('phone-shot', 'PHONE'),
-                ],
-            })
+            await renderLoaded({media: [makeMedia('tv-shot', 'TV'), makeMedia('phone-shot', 'PHONE')]})
 
-            const screenshots = within(
-                screen.getByRole('list', { name: 'Screenshots' }),
-            )
+            await waitForShowing(deviceEnumFriendly.PHONE)
 
-            await waitFor(() => {
-                expect(screenshots.getByText('phone-shot')).toBeInTheDocument()
-                expect(screenshots.queryByText('tv-shot')).not.toBeInTheDocument()
-            })
+            const screenshots = within(screen.getByRole('list', {name: 'Screenshots'}))
+            expect(screenshots.getByText('phone-shot')).toBeInTheDocument()
+            expect(screenshots.queryByText('tv-shot')).not.toBeInTheDocument()
         })
     })
 
@@ -350,16 +347,18 @@ describe('ProjectPage', () => {
         it('is hidden when the project has only one kind of device', async () => {
             await renderLoaded({media: [makeMedia('desktop-shot', 'DESKTOP')]})
 
+            await waitFor(() =>
+                expect(within(screen.getByRole('list', {name: 'Screenshots'})).getByText('desktop-shot'))
+                    .toBeInTheDocument(),
+            )
+
             expect(screen.queryByRole('button', {name: /showing/i})).not.toBeInTheDocument()
         })
 
         it('says which device is being shown', async () => {
             await renderLoaded({media: twoDevices()})
 
-            await waitFor(() =>
-                expect(screen.getByRole('button', {name: /showing/i}))
-                    .toHaveTextContent(`Showing ${deviceEnumFriendly.DESKTOP}`),
-            )
+            await waitForShowing(deviceEnumFriendly.DESKTOP)
         })
 
         it('opens a menu of devices and closes it again when Escape is pressed', async () => {
@@ -388,6 +387,7 @@ describe('ProjectPage', () => {
         it('switches the screenshots to the chosen device', async () => {
             const user = userEvent.setup()
             await renderLoaded({media: twoDevices()})
+            await waitForShowing(deviceEnumFriendly.DESKTOP)
 
             await user.click(screen.getByRole('button', {name: /showing/i}))
             await user.click(screen.getByRole('menuitem', {name: new RegExp(`View ${deviceEnumFriendly.PHONE}$`)}))
@@ -400,6 +400,7 @@ describe('ProjectPage', () => {
         it('shows every device again when "View all devices" is chosen', async () => {
             const user = userEvent.setup()
             await renderLoaded({media: twoDevices()})
+            await waitForShowing(deviceEnumFriendly.DESKTOP)
 
             await user.click(screen.getByRole('button', {name: /showing/i}))
             await user.click(screen.getByRole('menuitem', {name: 'View all devices'}))

@@ -20,7 +20,7 @@ const setUserDetails = vi.fn()
 const fetchMock = vi.fn()
 
 function mockAuth(user: {name: string} | null) {
-    const context = {user, setUserDetails}
+     const context = {user, setUserDetails}
     vi.mocked(useAuth).mockReturnValue(context as unknown as ReturnType<typeof useAuth>)
 }
 

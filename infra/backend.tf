@@ -25,7 +25,7 @@ resource "aws_lambda_function" "api" {
       BUCKET_MEDIA = aws_s3_bucket.screenshots_bucket.bucket
 
       MAILGUN_DOMAIN = var.mailgun_domain
-      MAILGUIN_KEY = var.mailgun_key
+      MAILGUN_KEY = var.mailgun_key
     }
   }
 }

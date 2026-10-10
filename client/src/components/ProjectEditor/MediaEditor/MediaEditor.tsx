@@ -181,14 +181,14 @@ export function MediaEditor({media, setMedia, setHasChanged, project, submitProj
 
             setMedia([...media, {
                 uri: record.mediaUrl,
-                deviceType: record.deviceType,
+                deviceType: deviceType,
                 order: "",
                 mediaType: "SCREENSHOT",
                 id: record.id,
                 status: record.status
 
             }])
-            await submitProject()
+            setHasChanged(true)
 
         } catch (e) {
             console.error(e) // todo

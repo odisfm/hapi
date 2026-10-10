@@ -1,5 +1,5 @@
 import * as z from "zod"
-import {type ApprovalStatus, DeviceType, UserRole} from "../generated/prisma/enums.js";
+import {DeviceType, SubmissionStatus, UserRole} from "../generated/prisma/enums.js";
 import {PasswordSchema} from "./password";
 import {ProjectAdminSchema} from "./project";
 import {ProjectMediaSchema} from "./projectMedia";
@@ -17,7 +17,7 @@ export type ProjectSearchQuery = {
     /** UUID of capstone **/
     showcase?: string,
     /** admin only **/
-    approvalStatus?: ApprovalStatus,
+    approvalStatus?: SubmissionStatus,
     published?: "published" | "unpublished"
 }
 
@@ -37,14 +37,31 @@ export const CreateUserRequestSchema = z.object({
     role: z.enum(UserRole)
 })
 
+export const CreateProjectRequestSchema = z.object({
+    showcaseId: z.uuidv4().optional(),
+})
+
 export const UpdateProjectRequestSchema = z.object({
-    project: ProjectAdminSchema.omit({slug: true, categories: true}).extend({
-        iconUrl: z.string(),
+    project: z.object({
+        id: z.uuidv4(),
+        canBeHero: z.boolean().optional(),
         order: z.string().optional(),
-        categoryIds: z.array(z.uuidv4()),
-        showcaseId: z.uuidv4(),
-        media: z.array(ProjectMediaSchema)
-    })
+        showcaseId: z.uuidv4().optional(),
+        published: z.boolean().optional(),
+        featured: z.boolean().optional(),
+    }).optional(),
+    projectVersion: z.object({
+        id: z.uuidv4(),
+        name: z.string().optional(),
+        subtitle: z.string().optional(),
+        description: z.string().optional(),
+        iconUrl: z.string().optional(),
+        developerNames: z.array(z.string()).optional(),
+        links: z.array(z.string()).optional(),
+        heroArtUrl: z.string().optional(),
+        categoryIds: z.array(z.uuidv4()).optional(),
+        media: z.array(ProjectMediaSchema).optional(),
+    }).optional(),
 })
 
 export type UpdateProjectRequestType = z.infer<typeof UpdateProjectRequestSchema>
@@ -73,3 +90,10 @@ export const UpdateShowcaseRequestSchema = z.object({
 })
 
 export type UpdateShowcaseRequestType = z.infer<typeof UpdateShowcaseRequestSchema>
+
+export const UpdateProjectVersionStatusRequestSchema = z.object({
+    status: z.enum(SubmissionStatus),
+    rejectionReason: z.string().optional(),
+})
+
+export type UpdateProjectVersionStatusRequestType = z.infer<typeof UpdateProjectVersionStatusRequestSchema>

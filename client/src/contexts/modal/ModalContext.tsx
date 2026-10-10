@@ -8,8 +8,8 @@ export type ModalButton = {
 
 export type ModalInteraction = {
     headline?: string,
-    body?: string,
-    buttons: ModalButton[]
+    body?: string | React.ReactNode,
+    buttons?: ModalButton[]
 }
 
 export type ModalContextValue = {

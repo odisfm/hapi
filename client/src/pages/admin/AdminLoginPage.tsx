@@ -17,7 +17,7 @@ export default function AdminLoginPage() {
 
     useEffect(() => {
         if (authContext.user) {
-            navigate("/dashboard")
+            navigate("/protected")
         }
     }, [authContext, navigate])
 

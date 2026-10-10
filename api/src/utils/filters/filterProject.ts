@@ -34,6 +34,7 @@ export function filterProjectPreview(project: ProjectPayload): ProjectPreviewTyp
     return {
         iconUrl: version.iconUrl,
         id: project.id,
+        versionId: version.id,
         name: version.name,
         order: project.order || DEFAULT_ORDER,
         subtitle: version.subtitle || "",
@@ -52,6 +53,7 @@ export function filterProject(project: ProjectPayload, role: UserRole | null): P
         iconUrl: version.iconUrl,
         heroArtUrl: version.heroArtUrl || undefined,
         id: project.id,
+        versionId: version.id,
         name: version.name,
         order: project.order || DEFAULT_ORDER,
         links: version.links,

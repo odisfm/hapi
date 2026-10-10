@@ -77,7 +77,7 @@ showcaseRouter.get("all", async (c) => {
         const records = await db.showcase.findMany({
             where: {
                 publishedDate: {
-                    ...(user?.role !== "ADMIN" && {
+                    ...(!user?.role && {
                         lt: new Date(),
                         not: null,
                     }),

@@ -1,6 +1,12 @@
 import * as z from "zod"
 import type {ShowcaseAdminType, ShowcaseType} from "./showcase.js";
-import type {ProjectAdminType, ProjectPreviewType, ProjectType} from "./project.js";
+import type {
+    ProjectAdminType,
+    ProjectPreviewType,
+    ProjectStudentType,
+    ProjectType,
+    ProjectVersionSummaryType
+} from "./project.js";
 import {type Category, UserRole} from "../generated/prisma/client.js";
 import type {ShowcaseGetPayload} from "../generated/prisma/models/Showcase";
 import type {ProjectMediaModel} from "../generated/prisma/models/ProjectMedia";
@@ -41,8 +47,16 @@ export type ProjectDetailsResponse = {
     project: ProjectType
 }
 
+export type ProjectDetailsStudentResponse = {
+    project: ProjectStudentType
+}
+
 export type ProjectDetailsAdminResponse = {
     project: ProjectAdminType
+}
+
+export type ProjectVersionsSearchResponse = {
+    versions: ProjectVersionSummaryType[]
 }
 
 export const UserDetailsSchema = z.object({
@@ -65,6 +79,11 @@ export const PasswordChangeFailureResponseSchema = z.object({
 })
 
 export type PasswordChangeFailureResponse = z.infer<typeof PasswordChangeFailureResponseSchema>
+
+export type CreateProjectResponse = {
+    projectId: string,
+    versionId: string,
+}
 
 export type CreateProjectMediaResponse = {
     projectMedia: ProjectMediaModel

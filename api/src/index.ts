@@ -11,6 +11,7 @@ import {sessionMiddleware} from "./middleware/session";
 import {projectRouterPatch} from "./routes/projectRouter/projectRouterPatch";
 import {projectRouterPost} from "./routes/projectRouter/projectRouterPost";
 import {projectRouterDelete} from "./routes/projectRouter/projectRouterDelete";
+import {projectVersionRouter} from "./routes/projectRouter/projectVersionRouter";
 let serverDelay = [0, 0]
 if (process.env.SERVER_DELAY) {
     const delayNum = Number(process.env.SERVER_DELAY);
@@ -43,6 +44,7 @@ app.use("*", sessionMiddleware)
 app.route("/auth", authRouter)
 app.route("/showcase", showcaseRouter)
 app
+    .route("/project", projectVersionRouter)
     .route("/project", projectRouterGet)
     .route("/project", projectRouterPatch)
     .route("/project", projectRouterPost)

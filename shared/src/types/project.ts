@@ -6,6 +6,7 @@ import {ProjectMediaSchema} from "./projectMedia.js";
 
 export const ProjectPreviewSchema = z.object({
     id: z.uuidv4(),
+    versionId: z.uuidv4(),
     name: z.string(),
     subtitle: z.string().optional(),
     iconUrl: z.string(),
@@ -44,3 +45,35 @@ export const ProjectAdminSchema = ProjectStudentSchema.extend({
 export type ProjectAdminType = z.infer<typeof ProjectAdminSchema>
 
 export type ProjectType = ProjectPublicType
+
+export const ProjectVersionFeedbackItemSchema = z.object({
+    reviewedAt: z.coerce.date(),
+    reviewer: z.string(),
+    feedback: z.string()
+})
+
+export type ProjectVersionFeedbackItemType = z.infer<typeof ProjectVersionFeedbackItemSchema>
+
+export const ProjectVersionSummarySchema = z.object({
+    name: z.string(),
+    projectId: z.uuidv4(),
+    projectSlug: z.string(),
+    approvedVersion: z.object({
+        id: z.uuidv4(),
+        reviewedAt: z.coerce.date().optional(),
+        live: z.boolean(),
+    }).optional(),
+    alternateVersion: z.object({
+        id: z.uuidv4(),
+        reviewedAt: z.coerce.date().optional(),
+        rejectionReason: z.string().optional(),
+        status: z.enum(SubmissionStatus)
+    }).optional(),
+    users: z.array(z.object({
+        id: z.uuidv4(),
+        name: z.string(),
+    })),
+    feedbackHistory: z.array(ProjectVersionFeedbackItemSchema),
+})
+
+export type ProjectVersionSummaryType = z.infer<typeof ProjectVersionSummarySchema>

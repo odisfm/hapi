@@ -68,7 +68,7 @@ export function UserPage() {
         (async () => {
             getUsers()
         })()
-    })
+    }, [getUsers])
 
     const {adminUsers, studentUsers} = useMemo(() => {
         const adminUsers: UserDetails[] = []

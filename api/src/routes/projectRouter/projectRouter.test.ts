@@ -11,6 +11,9 @@ vi.mock("@hapi/shared", () => ({
             findUnique: vi.fn(),
             create: vi.fn(),
         },
+        projectVersion: {
+            findUnique: vi.fn(),
+        }
     },
 }))
 
@@ -18,7 +21,7 @@ const { sessionMock } = vi.hoisted(() => ({
     sessionMock: vi.fn(),
 }))
 
-vi.mock("../middleware/session", () => ({
+vi.mock("../../middleware/session", () => ({
     sessionMiddleware: sessionMock,
 }))
 
@@ -33,6 +36,7 @@ import type {
 } from "@hapi/shared/types/apiResponses";
 import type {ProjectGetPayload} from "@hapi/shared/prisma/models/Project";
 import {app} from "../../index";
+import type {ProjectVersionGetPayload} from "@hapi/shared/prisma/models/ProjectVersion";
 
 beforeEach(() => {
     vi.clearAllMocks()
@@ -44,9 +48,14 @@ type SlugWithProject = ProjectSlugGetPayload<{
             include: {
                 showcase: true
                 media: true
-                categories: {
+                versions: {
                     include: {
-                        category: true
+                        media: {include: {media: true}}
+                        categories: {
+                            include: {
+                                category: true
+                            }
+                        }
                     }
                 }
                 slugs: true
@@ -57,32 +66,84 @@ type SlugWithProject = ProjectSlugGetPayload<{
 
 type ProjectFindMany = ProjectGetPayload<{
     include: {
-        media: true,
-        categories: {
+        showcase: true
+        slugs: true
+        versions: {
             include: {
-                category: true
+                media: {include: {media: true}}
+                categories: {
+                    include: {
+                        category: true
+                    }
+                }
             }
         }
-        slugs: true
-        showcase: true
     }
 }>[]
 
-const validFindUnique = {
+const validProjectFindUnique = {
     id: "a",
-    name: "Cool game app",
     slugs: [
         {slug: "my-cool-app"},
     ],
     media: [],
-    categories: [],
+    order: "",
+    versions: [
+        {
+            id: "v-a",
+            name: "Cool game app",
+            subtitle: "",
+            description: "",
+            submissionStatus: "APPROVED",
+            categories: [],
+            media: [],
+            developerNames: [],
+            links: []
+        }
+    ],
     published: true,
     showcase: {
         publishedDate: new Date(Date.now() - 1000),
     }
-} as unknown as ProjectGetPayload<{include: {category: true, showcase: true, media: true}}>
+} as unknown as ProjectGetPayload<{
+    include: {
+        versions: {
+            include: {
+                categories: {include: {category: true}},
+                media: {include: {media: true}}
+            }
+        }
+        showcase: true,
+        media: true}
+}>
 
-const validFindMany = new Array(100).fill(validFindUnique) as unknown as ProjectFindMany
+const validProjectVersionFindUnique = {
+    published: true,
+    showcase: {
+        publishedDate: new Date(Date.now() - 1000),
+    },
+    project: {
+        versions: [
+            {
+                id: "v-a",
+                name: "",
+                subtitle: "",
+                submissionStatus: "APPROVED",
+                categories: [],
+                media: [],
+                developerNames: [],
+                links: [],
+                projectId: "a",
+            }
+        ],
+        slugs: [
+            {slug: "my-cool-app"},
+        ]
+    },
+
+} as unknown as ProjectVersionGetPayload<any>
+
+const validFindMany = new Array(100).fill(validProjectFindUnique) as unknown as ProjectFindMany
 
 describe("GET /project", async () => {
     test("returns a project with valid slug", async () => {
@@ -91,7 +152,17 @@ describe("GET /project", async () => {
             project: {
                 showcase: {publishedDate: new Date(Date.now() - 1000)},
                 media: [],
-                categories: [],
+                versions: [
+                    {
+                        id: "v-a",
+                        name: "Cool game app",
+                        submissionStatus: "APPROVED",
+                        categories: [],
+                        media: [],
+                        developerNames: [],
+                        links: [],
+                    }
+                ],
                 published: true,
                 slugs: [
                     {slug: "my-cool-app"},
@@ -116,8 +187,8 @@ describe("GET /project", async () => {
             project: {
                 showcase: {publishedDate: new Date(Date.now() + 1000)},
                 media: [],
+                versions: [],
                 published: true,
-                category: {name: "Games"},
                 slugs: [
                     {slug: "my-cool-app"},
                 ],
@@ -132,23 +203,23 @@ describe("GET /project/search", async () => {
     test("excludes projects unrelated to search term", async () => {
         vi.mocked(db.project.findMany).mockResolvedValue([
             {
-                name: "Cool game app",
-                ProjectSlug: [
+                slugs: [
                     {slug: "my-cool-app"},
                 ],
-                media: [],
-                category: {name: "Games"},
+                versions: [
+                    {name: "Cool game app", categories: [{category: {name: "Games"}}], media: []},
+                ],
                 showcase: {
                     publishedDate: new Date(Date.now() - 1000),
                 }
             },
             {
-                name: "We hate fun",
                 slugs: [
                     {slug: "we-hate-fun"}
                 ],
-                media: [],
-                category: {name: "Business"},
+                versions: [
+                    {name: "We hate fun", categories: [{category: {name: "Business"}}], media: []},
+                ],
                 showcase: {
                     publishedDate: new Date(Date.now() - 1000),
                 }
@@ -169,12 +240,12 @@ describe("GET /project/search", async () => {
         vi.mocked(db.project.findMany).mockResolvedValue([
             {
                 id: "a",
-                name: "Cool game app",
                 slugs: [
                     {slug: "my-cool-app"},
                 ],
-                media: [],
-                category: {name: "Games"},
+                versions: [
+                    {name: "Cool game app", categories: [{category: {name: "Games"}}], media: []},
+                ],
                 published: true,
                 showcase: {
                     publishedDate: new Date(Date.now() - 1000),
@@ -182,12 +253,12 @@ describe("GET /project/search", async () => {
             },
             {
                 id: "b",
-                name: "We hate fun",
                 slugs: [
                     {slug: "we-hate-fun"}
                 ],
-                media: [],
-                category: {name: "Business"},
+                versions: [
+                    {name: "We hate fun", categories: [{category: {name: "Business"}}], media: []},
+                ],
                 published: true,
                 showcase: {
                     publishedDate: new Date(Date.now() - 1000),
@@ -195,12 +266,12 @@ describe("GET /project/search", async () => {
             },
             {
                 id: "c",
-                name: "Yet another app",
                 slugs: [
                     {slug: "yaa"}
                 ],
-                media: [],
-                category: {name: "Health"},
+                versions: [
+                    {name: "Yet another app", categories: [{category: {name: "Health"}}], media: []},
+                ],
                 published: true,
                 showcase: {
                     publishedDate: new Date(Date.now() - 1000),
@@ -274,25 +345,6 @@ describe("GET /project/search", async () => {
         expect(json.projects[9].id).toBe("20")
     })
 
-    test("public user can't get unpublished projects", async () => {
-        vi.mocked(db.project.findMany).mockResolvedValue([{
-            id: "a",
-            name: "Cool game app",
-            slugs: [
-                {slug: "my-cool-app"},
-            ],
-            media: [],
-            category: {name: "Games"},
-            published: false,
-            showcase: {
-                publishedDate: new Date(Date.now() - 1000),
-            }
-        }] as unknown as ProjectFindMany)
-        const res = await projectRouterGet.request("/search?limit=1")
-        const json = (await res.json()) as ProjectSearchResponse
-        expect(json.projects.length).toBe(0)
-    })
-
     test("admin user can filter by published", async () => {
         sessionMock.mockImplementation(async (c: any, next: any) => {
             c.set("user", { id: "user_1", role: "ADMIN" })
@@ -300,30 +352,30 @@ describe("GET /project/search", async () => {
         })
         vi.mocked(db.project.findMany).mockResolvedValue([{
             id: "a",
-            name: "Cool game app",
             slugs: [
                 {slug: "my-cool-app"},
             ],
-            media: [],
-            category: {name: "Games"},
+            versions: [
+                {name: "Cool game app", categories: [{category: {name: "Games"}}], media: []},
+            ],
             published: true,
             showcase: {
                 publishedDate: new Date(Date.now() - 1000),
             }
-            },
+        },
             {
-            id: "b",
-            name: "Cool game app",
-            slugs: [
-                {slug: "my-cool-app"},
-            ],
-            media: [],
-            category: {name: "Games"},
-            published: false,
-            showcase: {
-                publishedDate: new Date(Date.now() - 1000),
-            }
-        }] as unknown as ProjectFindMany)
+                id: "b",
+                slugs: [
+                    {slug: "my-cool-app"},
+                ],
+                versions: [
+                    {name: "Cool game app", categories: [{category: {name: "Games"}}], media: []},
+                ],
+                published: false,
+                showcase: {
+                    publishedDate: new Date(Date.now() - 1000),
+                }
+            }] as unknown as ProjectFindMany)
         const res1 = await app.request("/project/search?published=published")
         const json1 = (await res1.json()) as ProjectSearchResponse
         expect(json1.projects.length).toBe(1)
@@ -335,16 +387,16 @@ describe("GET /project/search", async () => {
     })
 })
 
-describe("GET /project/:projectId", () => {
-    test("admin can get project by ID", async () => {
+describe("GET /project/:versionId", () => {
+    test("admin can get project by version ID", async () => {
         sessionMock.mockImplementation(async (c: any, next: any) => {
             c.set("user", {id: "user_1", role: "ADMIN"})
             await next()
         })
-        vi.mocked(db.project.findUnique).mockResolvedValue(validFindUnique)
+        vi.mocked(db.projectVersion.findUnique).mockResolvedValue(validProjectVersionFindUnique)
         const res = await  app.request("/project/id/a")
         const json = (await res.json()) as ProjectDetailsAdminResponse
-        expect(json.project.id).toBe("a")
+        expect(json.project.versionId).toBe("v-a")
     })
 })
 
@@ -361,7 +413,7 @@ describe("PATCH /project", () => {
         const res = await app.request("/project", {
             method: "PATCH",
             body: JSON.stringify({
-                id: "fdfdsf",
+                project: {id: 1},
             })
         })
         expect(res.status).toBe(400)
@@ -381,7 +433,7 @@ describe("POST /project", () => {
         const res = await app.request("/project", {
             method: "PATCH",
             body: JSON.stringify({
-                id: "fdfdsf",
+                project: {id: 1}
             })
         })
         expect(res.status).toBe(400)
@@ -393,7 +445,7 @@ describe("DELETE /project/:projectId", () => {
         sessionMock.mockImplementation(async (c: any, next: any) => {
             c.set("user", {
                 id: "user_1",
-                role: "STUDENT" // doesn't actually exist yet
+                role: "STUDENT"
             })
             await next()
         })

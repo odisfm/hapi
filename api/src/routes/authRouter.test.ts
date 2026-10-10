@@ -14,6 +14,10 @@ vi.mock("@hapi/shared", () => ({
     },
 }))
 
+vi.mock("../helpers/sendEmail", () => ({
+    sendEmail: async () => {}
+}))
+
 import { db } from "@hapi/shared"
 import type {UserGetPayload} from "@hapi/shared/prisma/models/User";
 import {hashPassword} from "../helpers/password";
@@ -107,14 +111,14 @@ describe("create new user", () => {
             email: "",
             role: "ADMIN",
             password: "",
-            needsPasswordReset: false
+            needsPasswordReset: false,
+            videoTranscodeCredits: 0
         })
         const res = await app.request("/auth/create", {
             method: "POST",
             body: JSON.stringify({
                 name: "Other user",
                 email: "b@example.com",
-                password: "$trongP4ssword!",
                 role: "ADMIN"
             }),
             headers: {"Cookie": "sessionId=admin-session"}

@@ -4,9 +4,11 @@ import {filterProjectPreview, filterProject} from "./filterProject.js";
 
 type ProjectPayload = ProjectGetPayload<{
     include: {
-        media: true,
-        categories: {
-            include: {category: true}
+        versions: {
+            include: {
+                categories: {include: {category: true}},
+                media: {include: {media: true}}
+            }
         },
         showcase: true,
         slugs: true
@@ -14,19 +16,9 @@ type ProjectPayload = ProjectGetPayload<{
 }>
 
 const mockPayload: ProjectPayload = {
-    approvalStatus: "APPROVED",
-    categories: [],
-    description: "",
-    developers: [],
-    iconUrl: "",
     id: "",
-    links: [],
-    name: "",
     order: "a",
-    rejectionReason: null,
     showcaseId: "",
-    subtitle: "",
-    media: [],
     published: true,
     featured: false,
     showcase: {
@@ -44,7 +36,28 @@ const mockPayload: ProjectPayload = {
             projectId: "",
         }
     ],
-    heroArtUrl: null,
+    versions: [
+        {
+            id: "",
+            projectId: "",
+            name: "",
+            submissionStatus: "APPROVED",
+            categories: [],
+            description: "",
+            subtitle: "",
+            links: [],
+            developerNames: [],
+            iconUrl: "",
+            rejectionReason: null,
+            media: [],
+            submittedAt: null,
+            createdAt: new Date(),
+            reviewedAt: null,
+            reviewerId: null,
+            heroArtUrl: null,
+
+        }
+    ],
     canBeHero: true
 }
 
@@ -63,7 +76,7 @@ describe("Project details filtering by role and context", () => {
 
     test("should include privileged information for admin users", () => {
         const project: any = filterProject(mockPayload, "ADMIN")
-        expect(project?.approvalStatus).toEqual("APPROVED")
+        expect(project?.submissionStatus).toEqual("APPROVED")
         expect(project?.rejectionReason).toBeNull()
     })
 })

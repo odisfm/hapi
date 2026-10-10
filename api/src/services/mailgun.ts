@@ -8,7 +8,7 @@ export async function sendEmailWithMailgun(address: string, subject: string, bod
     if (!mailgunKey) {
         throw new Error('MAILGUN_KEY env var missing');
     }
-    form.append('from', `HAPI Showcase <password-reset@${emailDomain}>`);
+    form.append('from', `HAPI Team <hapi-team@${emailDomain}>`);
     form.append('to', address);
     form.append('subject', subject);
     form.append('text', body);

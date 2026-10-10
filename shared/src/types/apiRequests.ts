@@ -33,8 +33,11 @@ export const PasswordChangeRequestSchema = z.object({
 export const CreateUserRequestSchema = z.object({
     email: z.email(),
     name: z.string(),
-    password: PasswordSchema,
     role: z.enum(UserRole)
+})
+
+export const BatchCreateUserRequestSchema = z.object({
+    users: z.array(CreateUserRequestSchema)
 })
 
 export const CreateProjectRequestSchema = z.object({

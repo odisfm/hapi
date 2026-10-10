@@ -1,5 +1,6 @@
 import { randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'crypto';
 import { promisify } from 'util';
+import generator from "generate-password"
 
 const scrypt = promisify(scryptCallback);
 
@@ -25,4 +26,15 @@ export async function checkPassword(plainPassword: string, storedHash: string) {
     }
 
     return timingSafeEqual(keyBuffer, derivedKey);
+}
+
+export function generatePassword() {
+    return generator.generate({
+        length: 10,
+        numbers: true,
+        symbols: true,
+        lowercase: true,
+        uppercase: true,
+        excludeSimilarCharacters: true
+    })
 }

@@ -1,0 +1,16 @@
+{
+  "name": "@hapi/media_cleanup",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:lambda": "node esbuild.config.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1149.0"
+  }
+}

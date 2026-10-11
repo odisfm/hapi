@@ -87,6 +87,12 @@ jobs:
           npm run build:lambda
           zip -j dist/lambda.zip dist/lambda.mjs
           cd ..
+          
+          cd media_cleanup
+          npm ci
+          npm run build:lambda
+          zip -j dist/lambda.zip dist/lambda.mjs
+          cd ..
 
       - name: deploy aws
         id: deploy_aws

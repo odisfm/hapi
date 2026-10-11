@@ -92,6 +92,9 @@ export const handler = async function() {
         for (const m of v.media) {
             inUseMedia.add(m.media.mediaUrl)
         }
+        if (v.heroArtUrl) {
+            inUseMedia.add(v.heroArtUrl)
+        }
     }
 
     if (inUseMedia.size === 0) {

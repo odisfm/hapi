@@ -19,6 +19,8 @@ export function TextItemEditor({items, setItems, validator, placeholder}: {
         if (!inputRef.current?.value) return
         const value = inputRef.current?.value
         if (!inputValid) return;
+        console.log("setting items")
+        console.log([...items, value])
         setItems([...items, value])
         inputRef.current!.value = ""
     }, [items, setItems, inputValid])

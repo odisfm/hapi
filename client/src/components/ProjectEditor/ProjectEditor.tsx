@@ -249,7 +249,7 @@ export function ProjectEditor() {
                 ...( authContext.user!.role === "ADMIN" && {
                     project: {
                         id: submitProject.id,
-                        showcaseId: submitProject.showcaseId,
+                        showcaseId: selectedShowcase!.id,
                         published: (submitProject as ProjectAdminType).published,
 
                 }}),
@@ -259,8 +259,8 @@ export function ProjectEditor() {
                     subtitle: subtitle,
                     description: submitProject.description,
                     iconUrl: submitProject.iconUrl,
-                    developerNames: submitProject.developers,
-                    links: submitProject.links,
+                    developerNames: developers,
+                    links: links,
                     heroArtUrl: submitProject.heroArtUrl,
                     categoryIds: submitProject.categories.map((cName => {
                         return categories.find((c) => c.name === cName)!.id
@@ -298,7 +298,7 @@ export function ProjectEditor() {
         } catch (e) {
             console.error(e)
         }
-    }, [authContext.user, getProject, project, categories, projectName, subtitle])
+    }, [authContext.user, getProject, project, categories, projectName, subtitle, developers, links, selectedShowcase])
 
     const uploadIcon = useCallback(async (e: React.ChangeEvent) => {
         if (!project) return

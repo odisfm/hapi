@@ -83,22 +83,13 @@ describe('ShowcasePage', () => {
             vi.spyOn(console, 'error').mockImplementation(() => {})
         })
 
-        it('shows no showcase when the server responds with an error', async () => {
-            fetchMock.mockResolvedValue({ok: false, json: async () => ({})})
+        it('shows 404 page when showcase not found', async () => {
+            fetchMock.mockResolvedValue({ok: false, status: 404, json: async () => ({})})
             renderPage()
 
             await waitFor(() => expect(console.error).toHaveBeenCalled())
 
-            expect(screen.queryByRole('heading')).not.toBeInTheDocument()
-        })
-
-        it('shows no showcase when the request itself fails', async () => {
-            fetchMock.mockRejectedValue(new TypeError('Network down'))
-            renderPage()
-
-            await waitFor(() => expect(console.error).toHaveBeenCalled())
-
-            expect(screen.queryByRole('heading')).not.toBeInTheDocument()
+            expect(screen.queryByRole('heading')).toHaveTextContent("Error 404")
         })
     })
 

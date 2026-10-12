@@ -481,6 +481,12 @@ export function ProjectEditor() {
             })
         }
         try {
+            if (approvalStatus === "approved") {
+                await submit({
+                    ...project as ProjectAdminType,
+                    published: true
+                })
+            }
             const res = await fetch(`${API_URL}/project/version/${project.versionId}/status`, {
                 method: "PATCH",
                 credentials: "include",

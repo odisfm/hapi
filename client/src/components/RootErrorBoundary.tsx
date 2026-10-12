@@ -1,31 +1,13 @@
-import {isRouteErrorResponse, Link, useNavigate, useRouteError} from "react-router";
+import {isRouteErrorResponse, Link, useRouteError} from "react-router";
 import App from "../App.tsx";
-import {Button} from "./generic/Button.tsx";
+import {Error404} from "../pages/Error404.tsx";
 
 export function RootErrorBoundary() {
     const error = useRouteError()
-    const navigate = useNavigate();
     if (isRouteErrorResponse(error)) {
         return (
             <App>
-                <div className={`w-80 mt-20`}>
-                    <h1
-                        className={`text-5xl font-normal mb-6`}
-                    >
-                        Error 404
-                    </h1>
-                    <p className={`text-2xl mb-12`}>
-                        This page wandered off.
-                        <br/>
-                        Let's take you back.
-                    </p>
-                    <Button
-                        onClick={() => navigate("/")}
-                        variant={"hero"}
-                    >
-                        HOME PAGE
-                    </Button>
-                </div>
+                <Error404 />
             </App>
         )
     } else {

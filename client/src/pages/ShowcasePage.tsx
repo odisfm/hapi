@@ -51,30 +51,36 @@ export function ShowcasePage() {
     return (
         <div className={`flex flex-col p-4 md:p-12 w-full lg:w-4/5`}>
             <div className={`
-                grid grid-rows-auto grid-cols-1 md:grid-rows-1 md:grid-cols-2 
-                gap-2 md:gap-6 md:grid-cols-[300px_300px]
+                ${showcase.description ? "grid" : ""} grid-rows-auto grid-cols-1 md:grid-rows-1 md:grid-cols-2 
+                gap-2 md:gap-12 md:grid-cols-[300px_300px]
                 `}>
-                <div className={`flex flex-col items-start md:items-end text-left md:text-right gap-4`}>
+                <div className={`
+                    flex flex-col items-start text-left gap-4 
+                    ${showcase.description && `md:items-end md:text-right`} 
+                `}>
                     <h1 className={`text-5xl font-headline`}>
                         {showcase.name}{showcase.year && ` ${showcase.year}`}
                     </h1>
                     {
                         (showcase.year && showcase.semester) ?
                             <>
-                            <h2 className={`font-bold uppercase text-lg`}>Semester {showcase.semester}</h2>
+                                <h2 className={`font-bold uppercase text-lg`}>Semester {showcase.semester}</h2>
                             </>
                             :
                             null
                     }
                 </div>
-                <div className={`showcase-description`}>
-                    <Markdown>
-                        {showcase.description}
-                    </Markdown>
-                </div>
+                {
+                    showcase.description &&
+                    <div className={`showcase-description`}>
+                        <Markdown>
+                            {showcase.description}
+                        </Markdown>
+                    </div>
+                }
             </div>
 
-            <h3 className={`font-bold text-xl`}>PROJECTS</h3>
+            <h3 className={`font-bold text-xl mt-6`}>PROJECTS</h3>
 
             <div className={`mt-6 grid grid-cols-1 md:grid-cols-3 gap-6`}>
                 {showcase.projects.map((p) => {

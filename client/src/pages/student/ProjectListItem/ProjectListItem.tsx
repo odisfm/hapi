@@ -7,6 +7,8 @@ import {useModal} from "../../../contexts/modal/useModal.ts";
 import {API_URL} from "../../../consts.ts";
 import type {CreateProjectResponse} from "@hapi/shared/types/apiResponses";
 import {FeedbackHistory} from "./FeedbackHistory.tsx";
+import {FaClock} from "react-icons/fa";
+import { formatDistance } from "date-fns";
 
 export type Action = "edit" | "withdraw" | "delete" | "revise"
 
@@ -144,7 +146,10 @@ export function ProjectListItem({summary, refresh}: {summary: ProjectVersionSumm
                         <span>Approved version</span>
                         <StatusLabel status={"APPROVED"} />
                     { summary.approvedVersion.reviewedAt &&
-                        <span>Reviewed at: {String(summary.approvedVersion.reviewedAt)}</span>
+                        <span className={`flex items-center gap-1`}>
+                            <FaClock />
+                            {formatDistance(summary.approvedVersion.reviewedAt, new Date(), {addSuffix: true})}
+                        </span>
                     }
                     {
                         !summary.alternateVersion &&
@@ -160,7 +165,10 @@ export function ProjectListItem({summary, refresh}: {summary: ProjectVersionSumm
                         </span>
                         <StatusLabel status={summary.alternateVersion.status} />
                     { summary.alternateVersion.reviewedAt &&
-                        <span>Reviewed at: {String(summary.alternateVersion.reviewedAt)}</span>
+                        <span className={`flex items-center gap-1`}>
+                            <FaClock />
+                            {formatDistance(summary.alternateVersion.reviewedAt, new Date(), {addSuffix: true})}
+                        </span>
                     }
                     <ActionButtons actions={allowedActions} editFn={editFn} deleteFn={deleteFn} withdrawFn={withdrawFn} reviseFn={reviseFn} />
                 </>

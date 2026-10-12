@@ -2,9 +2,8 @@ import {createHono} from "../helpers/createHono";
 import {db} from "@hapi/shared"
 import {filterShowcase} from "../utils/filters/filterShowcase.js";
 import {
-    type ProjectDetailsAdminResponse, type ProjectGetSlugsResponse,
     type ShowcaseAdminDetailsResponse,
-    type ShowcaseFeaturedResponse, type ShowcaseGetSlugsResponse,
+    type ShowcaseGetSlugsResponse,
     type ShowcaseListResponse, type ShowcasePublicDetailsResponse
 } from "@hapi/shared/types/apiResponses"
 import type {ShowcaseAdminType} from "@hapi/shared/types/showcase";
@@ -14,9 +13,6 @@ import {AlterProjectSlugRequestSchema, UpdateShowcaseRequestSchema} from "@hapi/
 import {Prisma} from "@hapi/shared/prisma/client";
 import {createUuid} from "@hapi/client/src/utils/misc";
 import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
-
-const NUM_FEATURED_SHOWCASES = 3
-const NUM_FEATURED_PROJECTS = 9
 
 export const showcaseRouter = createHono()
 
@@ -59,14 +55,22 @@ showcaseRouter.get(":showcaseSlug", async (c) => {
                           published: true
                         },
                         include: {
-                            categories: {
-                                include: {category: true}
-                            },
-                            media: true,
                             showcase: true,
                             slugs: {
                                 take: 1,
-                                orderBy: {assignedDate: "desc"}
+                                orderBy: {
+                                    assignedDate: "desc"
+                                }
+                            },
+                            versions: {
+                                take: 1,
+                                where: {
+                                    submissionStatus: "APPROVED"
+                                },
+                                include: {
+                                    media: {include: {media: true}},
+                                    categories: {include: {category: true}}
+                                }
                             }
                         }
                     }
@@ -106,17 +110,23 @@ showcaseRouter.get("id/:showcaseId", async (c) => {
                         ...(userRole !== "ADMIN" && { published: true }),
                     },
                     include: {
+                        showcase: true,
                         slugs: {
                             take: 1,
                             orderBy: {
                                 assignedDate: "desc"
                             }
                         },
-                        media: true,
-                        categories: {
-                            include: {category: true}
-                        },
-                        showcase: true
+                        versions: {
+                            take: 1,
+                            where: {
+                                submissionStatus: "APPROVED"
+                            },
+                            include: {
+                                media: {include: {media: true}},
+                                categories: {include: {category: true}}
+                            }
+                        }
                     }
                 }
             }

@@ -6,13 +6,27 @@ import {filterProjectPreview} from "./filterProject.js";
 type ShowcasePayload = ShowcaseGetPayload<{
     include: {
         projects: {
+            where: {
+                published: true
+            },
             include: {
-                categories: {
-                    include: {category: true}
-                },
-                media: true,
                 showcase: true,
-                slugs: true
+                slugs: {
+                    take: 1,
+                    orderBy: {
+                        assignedDate: "desc"
+                    }
+                },
+                versions: {
+                    take: 1,
+                    where: {
+                        submissionStatus: "APPROVED"
+                    },
+                    include: {
+                        media: {include: {media: true}},
+                        categories: {include: {category: true}}
+                    }
+                }
             }
         }
     }

@@ -6,12 +6,15 @@ import type {ShowcaseType} from "@hapi/shared/types/showcase";
 import Markdown from "react-markdown";
 import {FaSpinner} from "react-icons/fa";
 import ProjectCard from "../components/ProjectCard.tsx";
+import {Error404} from "./Error404.tsx";
 
 export function ShowcasePage() {
     const [showcase, setShowcase] = useState<ShowcaseType | null>(null)
+    const [loading, setLoading] = useState(true)
     const {showcaseSlug} = useParams()
 
     const getShowcase = useCallback(async () => {
+        setLoading(true)
         try {
             const res = await fetch(`${API_URL}/showcase/${showcaseSlug}`)
             if (!res.ok) {
@@ -26,6 +29,8 @@ export function ShowcasePage() {
             // todo:
             console.error(e)
             setShowcase(null)
+        } finally {
+            setLoading(false)
         }
     }, [showcaseSlug])
 
@@ -35,7 +40,11 @@ export function ShowcasePage() {
         })()
     }, [getShowcase])
 
-    if (!showcase) {
+    if (!loading && !showcase) {
+        return <Error404 />
+    }
+
+    if (loading || !showcase) {
         return <FaSpinner size={30} className={`animate-spin`}/>
     }
 

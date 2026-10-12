@@ -34,7 +34,12 @@ export function StudentDashboard() {
                 throw new Error(res.statusText)
             }
             const json: ProjectVersionsSearchResponse = await res.json()
-            setProjects(json.versions)
+            setProjects(json.versions.map((v) => {
+                if (v.alternateVersion?.status === "SUPERSEDED") {
+                    return {...v, alternateVersion: undefined}
+                }
+                return v
+            }))
             console.log(json.versions)
         } catch (e) {
             console.error(e)

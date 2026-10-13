@@ -12,6 +12,7 @@ import {projectRouterPatch} from "./routes/projectRouter/projectRouterPatch";
 import {projectRouterPost} from "./routes/projectRouter/projectRouterPost";
 import {projectRouterDelete} from "./routes/projectRouter/projectRouterDelete";
 import {projectVersionRouter} from "./routes/projectRouter/projectVersionRouter";
+import { categoryRouter } from "./routes/categoryRouter";
 let serverDelay = [0, 0]
 if (process.env.SERVER_DELAY) {
     const delayNum = Number(process.env.SERVER_DELAY);
@@ -51,12 +52,7 @@ app
     .route("/project", projectRouterDelete)
 app.route("/media", mediaRouter)
 
-app.get("/category", async (c) => {
-    const records = await db.category.findMany()
-    return c.json({
-        categories: records
-    } satisfies CategoryResponse)
-})
+app.route("/category", categoryRouter)
 
 app.get('/', (c) => {
   return c.text('Hello Hono!')

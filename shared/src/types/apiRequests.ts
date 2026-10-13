@@ -100,3 +100,15 @@ export const UpdateProjectVersionStatusRequestSchema = z.object({
 })
 
 export type UpdateProjectVersionStatusRequestType = z.infer<typeof UpdateProjectVersionStatusRequestSchema>
+
+export const CategoryCreateRequestSchema = z.object({
+    name: z.string()
+})
+
+export type CategoryCreateRequestType = z.infer<typeof CategoryCreateRequestSchema>
+
+export const CategoryUpdateRequestSchema = z.object({
+    name: z.string().optional()
+})
+
+export type CategoryUpdateRequestType = z.infer<typeof CategoryUpdateRequestSchema>

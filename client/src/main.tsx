@@ -25,6 +25,7 @@ import {StudentNewProject} from "./pages/student/StudentNewProject.tsx";
 import {ProjectQueue} from "./components/ProjectQueue/ProjectQueue.tsx";
 import {UserPage} from "./components/UserPage/UserPage.tsx";
 import {CreateUserPage} from "./components/UserPage/CreateUserPage.tsx";
+import {CategoryEditor} from "./components/CategoryEditor/CategoryEditor.tsx";
 
 const router = createBrowserRouter([
     {
@@ -78,7 +79,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "/dashboard/categories",
-                        element: <UnderConstruction />
+                        element: <CategoryEditor />
                     },
                     {
                         path: "/dashboard/users",

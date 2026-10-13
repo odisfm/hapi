@@ -39,8 +39,12 @@ export type SearchInfo = {
     heroIds: string[]
 }
 
+export type CategoryType = Category & {
+    projectCount: number
+}
+
 export type CategoryResponse = {
-    categories: Category[]
+    categories: CategoryType[]
 }
 
 export type ProjectDetailsResponse = {

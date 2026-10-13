@@ -153,6 +153,7 @@ for (const projectD of projectData) {
                 submissionStatus: "APPROVED",
                 developerNames: projectD.developerNames,
                 heroArtUrl: projectD.heroArtUrl,
+                links: projectD.links
             }
         })
 

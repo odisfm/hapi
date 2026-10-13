@@ -46,7 +46,7 @@ function lastQuery(): ProjectSearchQuery {
 }
 
 function selectedCategories(query: ProjectSearchQuery) {
-    return (query.category ?? '').split(',').filter(Boolean)
+    return (query.categoryIds ?? '').split(',').filter(Boolean)
 }
 
 describe('FilterSection', () => {
@@ -111,7 +111,7 @@ describe('FilterSection', () => {
 
         it.each([
             ['a showcase', {showcase: 'show-1'}],
-            ['a category', {category: 'cat-1'}],
+            ['a category', {categoryIds: 'cat-1'}],
             ['a published filter', {published: 'published'}],
         ] as [string, Partial<ProjectSearchQuery>][])('is shown when %s is applied', (_label, filter) => {
             renderFilters(makeQuery(filter))
@@ -126,7 +126,7 @@ describe('FilterSection', () => {
                     page: 2,
                     searchTerm: 'maps',
                     showcase: 'show-1',
-                    category: 'cat-1,cat-2',
+                    categoryIds: 'cat-1,cat-2',
                     published: 'published',
                 }),
             )
@@ -177,7 +177,7 @@ describe('FilterSection', () => {
 
         it('adds another category to those already selected', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery({category: 'cat-1'}))
+            renderFilters(makeQuery({categoryIds: 'cat-1'}))
 
             await user.click(screen.getByRole('button', {name: 'Health'}))
 
@@ -186,7 +186,7 @@ describe('FilterSection', () => {
 
         it('removes a category that is already selected and keeps the others in order', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery({category: 'cat-1,cat-2,cat-3'}))
+            renderFilters(makeQuery({categoryIds: 'cat-1,cat-2,cat-3'}))
 
             await user.click(screen.getByRole('button', {name: 'Health'}))
 
@@ -195,7 +195,7 @@ describe('FilterSection', () => {
 
         it('can remove the only selected category', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery({category: 'cat-1'}))
+            renderFilters(makeQuery({categoryIds: 'cat-1'}))
 
             await user.click(screen.getByRole('button', {name: 'Games'}))
 
@@ -246,7 +246,7 @@ describe('FilterSection', () => {
 
         it('keeps the rest of the search', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery({searchTerm: 'maps', category: 'cat-1'}))
+            renderFilters(makeQuery({searchTerm: 'maps', categoryIds: 'cat-1'}))
 
             await user.click(screen.getByRole('button', {name: 'Published'}))
 

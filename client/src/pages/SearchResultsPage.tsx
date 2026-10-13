@@ -142,7 +142,7 @@ export default function SearchResultsPage() {
 
     function mutateSearchQuery(newQuery: ProjectSearchQuery) {
         let needsPageReset = false
-        if (newQuery.category !== searchQuery.category) needsPageReset = true
+        if (newQuery.categoryIds !== searchQuery.categoryIds) needsPageReset = true
         if (newQuery.showcase !== searchQuery.showcase) needsPageReset = true
         if (newQuery.searchTerm !== searchQuery.searchTerm) needsPageReset = true
 
@@ -162,14 +162,14 @@ export default function SearchResultsPage() {
         document.scrollingElement.scrollTop = 0
     }, []);
 
-    const activeFilterName = searchQuery.category
-        ? categories.find((category) => category.id === searchQuery.category)?.name
+    const activeFilterName = searchQuery.categoryIds
+        ? categories.find((category) => category.id === searchQuery.categoryIds)?.name
         : searchQuery.showcase
             ? showcases.find((showcase) => showcase.id === searchQuery.showcase)
                 ? getShowcaseName(showcases.find((showcase) => showcase.id === searchQuery.showcase)!)
                 : undefined
             : undefined;
-    const hasFilter = Boolean(searchQuery.category || searchQuery.showcase);
+    const hasFilter = Boolean(searchQuery.categoryIds || searchQuery.showcase);
     const noResultsText = hasFilter
         ? `No ${activeFilterName ?? "selected"} applications match your filters`
         : "No applications match your results";

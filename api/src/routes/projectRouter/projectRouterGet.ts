@@ -97,7 +97,8 @@ projectRouterGet.get("/search", async (c) => {
     const searchQuery: ProjectSearchQuery = {
         searchTerm: query.searchTerm,
         cursor: query?.cursor,
-        category: query?.category,
+        categoryIds: query?.categoryIds,
+        categoryNames: query?.categoryNames,
         showcase: query?.showcase,
         approvalStatus: query.approvalStatus ? query.approvalStatus as SubmissionStatus : undefined,
         page: query.page !== undefined ? Number(query.page) : undefined,
@@ -167,8 +168,12 @@ projectRouterGet.get("/search", async (c) => {
     const now = new Date()
 
     let queryCategoryIds: string[] = []
-    if (searchQuery.category) {
-        queryCategoryIds = searchQuery.category.split(",")
+    let queryCategoryNames: string[] = []
+    if (searchQuery.categoryIds) {
+        queryCategoryIds = searchQuery.categoryIds.split(",")
+    }
+    if (searchQuery.categoryNames) {
+        queryCategoryNames = searchQuery.categoryNames.split(",")
     }
 
     let filteredRecords = records.filter(r => {
@@ -192,6 +197,14 @@ projectRouterGet.get("/search", async (c) => {
         filteredRecords = filteredRecords.filter(r => {
             for (const c of r.versions[0].categories) {
                 if (queryCategoryIds.includes(c.categoryId)) return true
+            }
+            return false
+        })
+    }
+    if (queryCategoryNames.length > 0) {
+        filteredRecords = filteredRecords.filter(r => {
+            for (const c of r.versions[0].categories) {
+                if (queryCategoryNames.includes(c.category.name)) return true
             }
             return false
         })

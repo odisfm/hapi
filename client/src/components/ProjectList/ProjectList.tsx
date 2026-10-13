@@ -130,7 +130,7 @@ export function ProjectList() {
 
     function mutateSearchQuery(newQuery: ProjectSearchQuery) {
         let needsPageReset = false
-        if (newQuery.category !== searchQuery.category) needsPageReset = true
+        if (newQuery.categoryIds !== searchQuery.categoryIds) needsPageReset = true
         if (newQuery.showcase !== searchQuery.showcase) needsPageReset = true
         if (newQuery.searchTerm !== searchQuery.searchTerm) needsPageReset = true
 

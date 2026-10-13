@@ -13,7 +13,9 @@ export type ProjectSearchQuery = {
     cursor?: string,
     page?: number,
     /** UUIDs of categories to search, joined on "," **/
-    category?: string,
+    categoryIds?: string,
+    /** names of categories to search, joined on "," **/
+    categoryNames?: string,
     /** UUID of capstone **/
     showcase?: string,
     /** admin only **/

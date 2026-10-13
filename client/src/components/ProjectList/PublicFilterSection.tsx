@@ -17,19 +17,19 @@ export function PublicFilterSection({
     showcases
 }: Props) {
 
-    const hasFilter = searchQuery.showcase || searchQuery.category
+    const hasFilter = searchQuery.showcase || searchQuery.categoryIds
     function toggleCategory(categoryId: string) {
-        const categoriesSplit = searchQuery.category ? searchQuery.category.split(",") : []
+        const categoriesSplit = searchQuery.categoryIds ? searchQuery.categoryIds.split(",") : []
         if (categoriesSplit.includes(categoryId)) {
             const idx = categoriesSplit.indexOf(categoryId);
             setSearchQuery({
                 ...searchQuery,
-                category: categoriesSplit.toSpliced(idx, 1).join(",")
+                categoryIds: categoriesSplit.toSpliced(idx, 1).join(",")
             })
         } else {
             setSearchQuery({
                 ...searchQuery,
-                category: categoriesSplit.join(",") + "," + categoryId
+                categoryIds: categoriesSplit.join(",") + "," + categoryId
             })
         }
     }
@@ -43,7 +43,7 @@ export function PublicFilterSection({
                     styles={"self-start"}
                     onClick={() => {
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        const {showcase, category, ...rest} = searchQuery;
+                        const {showcase, categoryIds, ...rest} = searchQuery;
                         setSearchQuery(rest);
                     }}
                 >
@@ -78,7 +78,7 @@ export function PublicFilterSection({
                 <ul className={`flex flex-wrap gap-1`}>
                     {categories.map((c, i) => {
                         const active =
-                            searchQuery.category ? searchQuery.category.split(",").includes(c.id) : false
+                            searchQuery.categoryIds ? searchQuery.categoryIds.split(",").includes(c.id) : false
                         return (
                             <li key={i} className={`mb-1`}>
                                 <Button

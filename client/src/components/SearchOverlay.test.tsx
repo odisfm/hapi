@@ -75,7 +75,7 @@ describe('SearchOverlay', () => {
 
             await user.click(screen.getByRole('button', { name: 'Education' }))
 
-            expect(navigate).toHaveBeenCalledWith('/search?q=Education')
+            expect(navigate).toHaveBeenCalledWith('/search?categoryNames=Education')
             expect(onClose).toHaveBeenCalledTimes(1)
         })
     })

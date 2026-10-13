@@ -1,5 +1,5 @@
 import type {ProjectSearchQuery} from "@hapi/shared/types/apiRequests";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import type {ProjectPreviewType} from "@hapi/shared/types/project";
 import {API_URL} from "../../consts.ts";
 import type {
@@ -11,38 +11,33 @@ import type {
 import {ProjectListItem} from "./ProjectListItem.tsx";
 import {Paginator} from "../ProjectEditor/Paginator.tsx";
 import {FaPlus, FaSearch, FaSpinner} from "react-icons/fa";
-import {MdCancel} from "react-icons/md";
 import type {Category, Showcase} from "@hapi/shared/prisma/client";
 import {FilterSection} from "./FilterSection.tsx";
+import {SearchBar} from "./SearchBar.tsx";
+import {toApiSearchParams, useProjectSearchParams} from "./useProjectSearchParams.ts";
 import {Link} from "react-router";
-import {Button} from "../generic/Button.tsx";
+
+const PAGE_LIMIT = 15;
 
 export function ProjectList() {
-    const [searchQuery, setSearchQuery] = useState<ProjectSearchQuery>({
-        limit: 15,
-        page: 0
-    });
+    const [urlQuery, updateQuery] = useProjectSearchParams();
     const [projects, setProjects] = useState<ProjectPreviewType[]>([])
     const [searchResultInfo, setSearchResultInfo] = useState<SearchInfo | null>(null);
-    const [pageNumber, setPageNumber] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
     const [initialLoading, setInitialLoading] = useState<boolean>(true);
-    const searchBarRef = useRef<HTMLInputElement | null>(null);
-    const [searchBarText, setSearchBarText] = useState<string>("");
     const [categories, setCategories] = useState<Category[]>([]);
     const [showcases, setShowcases] = useState<Showcase[]>([]);
 
+    const pageNumber = urlQuery.page ?? 0;
+    const searchQuery: ProjectSearchQuery = useMemo(() => ({...urlQuery, limit: PAGE_LIMIT}), [urlQuery]);
+
     useEffect(() => {
+        let ignore = false;
         (async () => {
                 setLoading(true);
                 let res: Response
                 try {
-                    const params = new URLSearchParams(
-                        Object.fromEntries(
-                            Object.entries(searchQuery).map(([k, v]) => [k, String(v)])
-                        )
-                    );
-                    res = await fetch(`${API_URL}/project/search?${params}`, {
+                    res = await fetch(`${API_URL}/project/search?${toApiSearchParams(searchQuery)}`, {
                         credentials: "include",
                     })
                     if (!res.ok) {
@@ -50,33 +45,36 @@ export function ProjectList() {
                         throw new Error("Failed to get projects")
                     }
                     const json: ProjectSearchResponse = await res.json()
+                    if (ignore) return
                     setProjects(json.projects)
                     setSearchResultInfo(json.info)
-                    console.log(json.info)
                 } catch (e) {
                     console.error(e) // todo
                 }
+                if (ignore) return
                 setLoading(false)
                 setInitialLoading(false)
             }
         )()
-
+        return () => {
+            ignore = true
+        }
     }, [searchQuery])
 
     useEffect(() => {
         (async () => {
-           let res: Response
-           try {
-               res = await fetch(`${API_URL}/category`, {credentials: "include"})
-               if (!res.ok) {
-                   console.error(res)
-                   throw new Error("Failed to get category")
-               }
-               const json: CategoryResponse = await res.json()
-               setCategories(json.categories)
-           } catch (e) {
-               console.error(e)
-           }
+            let res: Response
+            try {
+                res = await fetch(`${API_URL}/category`, {credentials: "include"})
+                if (!res.ok) {
+                    console.error(res)
+                    throw new Error("Failed to get category")
+                }
+                const json: CategoryResponse = await res.json()
+                setCategories(json.categories)
+            } catch (e) {
+                console.error(e)
+            }
         })()
     }, []);
 
@@ -99,47 +97,19 @@ export function ProjectList() {
 
     const resultNumbers: number[] = useMemo(() => {
         if (!searchResultInfo || !projects) return [0, 0]
-        const limit = searchQuery.limit!
-        const lowerBound = limit * pageNumber + 1
-        const upperBound = Math.min((limit * pageNumber) + limit, searchResultInfo!.totalResults)
+        const lowerBound = PAGE_LIMIT * pageNumber + 1
+        const upperBound = Math.min((PAGE_LIMIT * pageNumber) + PAGE_LIMIT, searchResultInfo.totalResults)
         return [lowerBound, upperBound]
-    }, [searchQuery.limit, pageNumber, searchResultInfo, projects])
+    }, [pageNumber, searchResultInfo, projects])
 
     const pageCount: number = useMemo(() => {
         if (!projects) return 0
         if (!searchResultInfo?.totalResults) return 0
-        return Math.ceil(searchResultInfo.totalResults! / searchQuery.limit!)
-    }, [searchResultInfo, searchQuery.limit, projects])
-    
-    function _setPageNumber(pageNumber: number): void {
-        setPageNumber(pageNumber)
-        setSearchQuery({
-            ...searchQuery,
-            page: pageNumber
-        })
-    }
+        return Math.ceil(searchResultInfo.totalResults / PAGE_LIMIT)
+    }, [searchResultInfo, projects])
 
-    function setSearchTerm(value: string): void {
-        if (value !== searchQuery.searchTerm) {
-            mutateSearchQuery({
-                ...searchQuery,
-                searchTerm: value
-            })
-        }
-    }
-
-    function mutateSearchQuery(newQuery: ProjectSearchQuery) {
-        let needsPageReset = false
-        if (newQuery.categoryIds !== searchQuery.categoryIds) needsPageReset = true
-        if (newQuery.showcase !== searchQuery.showcase) needsPageReset = true
-        if (newQuery.searchTerm !== searchQuery.searchTerm) needsPageReset = true
-
-        const query = {
-            ...newQuery,
-            page: needsPageReset ? 0 : newQuery.page,
-        }
-        setPageNumber(newQuery.page || 0)
-        setSearchQuery(query)
+    function setPageNumber(page: number): void {
+        updateQuery({page})
     }
 
     let resultsText: string
@@ -152,7 +122,7 @@ export function ProjectList() {
         if (searchResultInfo.totalResults === 1) {
             resultsText = "1 project matching filters."
         } else {
-            if (searchResultInfo.totalResults <= (searchQuery.limit || 1)) {
+            if (searchResultInfo.totalResults <= PAGE_LIMIT) {
                 resultsText = `${searchResultInfo.totalResults} projects found.`
             } else {
                 resultsText = `${searchResultInfo.totalResults} projects found, showing ${resultNumbers[0]}-${resultNumbers[1]}.`
@@ -178,54 +148,21 @@ export function ProjectList() {
             </div>
             <span>{loading ? "Loading..." : resultsText}</span>
 
-            <form className={`flex items-center gap-2`} onSubmit={((e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                setSearchTerm(String(formData.get('searchBar')))
-            })}>
-                <input
-                    name={"searchBar"}
-                    className={`bg-neutral-200 rounded-lg p-2 flex-1`}
-                    placeholder={"search by project name, description, developers"}
-                    ref={searchBarRef}
-                    onChange={(e) => {setSearchBarText(e.target.value)}}
-                />
-                {searchBarText.length > 0 &&
-                    <Button
-                    buttonType={"button"}
-                    styles={`!p-3`}
-                    color={"yellow"}
-                    onClick={() => {
-                        setSearchTerm("")
-                        searchBarRef.current!.value = ""
-                    }}
-                >
-                    <MdCancel/>
-                </Button>
-                }
-                <Button
-                    buttonType={"submit"}
-                    color={"red"}
-                    styles={`!rounded-xl hover:!bg-r-yellow-500 `}
-                >
-                    <FaSearch />
-                    <span>Search</span>
-                </Button>
-            </form>
-            <Paginator pageCount={pageCount} activePage={pageNumber} setPage={_setPageNumber}/>
+            <SearchBar/>
+            <Paginator pageCount={pageCount} activePage={pageNumber} setPage={setPageNumber}/>
             <div className={`flex flex-col md:flex-row gap-2`}>
                 <FilterSection
-                    searchQuery={searchQuery}
-                    setSearchQuery={mutateSearchQuery}
+                    filters={["showcase", "category", "published"]}
                     categories={categories}
                     showcases={showcases}
+                    showTitle
                 />
                 <div className={`flex-1`}>
                     { initialLoading === false && projects.length > 0 ?
                         <ul>
-                        {projects.map((project: ProjectPreviewType) => (
-                            <ProjectListItem key={project.id} project={project}/>
-                        ))}
+                            {projects.map((project: ProjectPreviewType) => (
+                                <ProjectListItem key={project.id} project={project}/>
+                            ))}
                         </ul>
                         :
                         <div className={`flex flex-col gap-8 items-center mt-12`}>
@@ -235,7 +172,7 @@ export function ProjectList() {
                     }
                 </div>
             </div>
-            <Paginator pageCount={pageCount} activePage={pageNumber} setPage={_setPageNumber}/>
+            <Paginator pageCount={pageCount} activePage={pageNumber} setPage={setPageNumber}/>
 
         </div>
     )

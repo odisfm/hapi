@@ -9,58 +9,73 @@ import type {
     ShowcaseListResponse
 } from "@hapi/shared/types/apiResponses";
 import type {Category, Showcase} from "@hapi/shared/prisma/client";
-import {useLocation} from "react-router";
 import ProjectCard from "../components/ProjectCard.tsx";
 import {Paginator} from "../components/ProjectEditor/Paginator.tsx";
-import {PublicFilterSection} from "../components/ProjectList/PublicFilterSection.tsx";
+import {FilterSection} from "../components/ProjectList/FilterSection.tsx";
+import {SearchBar} from "../components/ProjectList/SearchBar.tsx";
+import {
+    splitList,
+    toApiSearchParams,
+    useProjectSearchParams
+} from "../components/ProjectList/useProjectSearchParams.ts";
 import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
 import {FaSearch} from "react-icons/fa";
-import {MdCancel} from "react-icons/md";
-import {Button} from "../components/generic/Button.tsx";
+
+/** Fewer results per page with the filter panel open, so the 2-column grid has no gap. */
+function pageLimit(filtersOpen: boolean): number {
+    return filtersOpen ? 14 : 15;
+}
+
+/**
+ * Index of the first result the user is looking at. Kept across filter-panel toggles so
+ * flipping between 14 and 15 per page doesn't drift; recomputed once they move to another page.
+ */
+function anchorIndexFor(anchorIndex: number, page: number, limit: number): number {
+    return Math.floor(anchorIndex / limit) === page ? anchorIndex : page * limit;
+}
 
 export default function SearchResultsPage() {
-    const location = useLocation();
-    const initialSearchTerm = new URLSearchParams(location.search).get("q") ?? "";
-    const [searchQuery, setSearchQuery] = useState<ProjectSearchQuery>({
-        limit: 15,
-        page: 0,
-        searchTerm: initialSearchTerm
-    });
+    const [urlQuery, updateQuery] = useProjectSearchParams();
     const [projects, setProjects] = useState<ProjectPreviewType[]>([])
     const [searchResultInfo, setSearchResultInfo] = useState<SearchInfo | null>(null);
-    const [pageNumber, setPageNumber] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
     const [initialLoading, setInitialLoading] = useState<boolean>(true);
     const [categories, setCategories] = useState<Category[]>([]);
     const [showcases, setShowcases] = useState<Showcase[]>([]);
-    const [filtersOpen, setFiltersOpen] = useState<boolean>(false);
+    // start open when arriving with filters already in the URL, so they're visible
+    const [filtersOpen, setFiltersOpen] = useState<boolean>(() => Boolean(urlQuery.categoryNames || urlQuery.showcase));
     const anchorIndexRef = useRef<number>(0);
-    const searchBarRef = useRef<HTMLInputElement | null>(null);
-    const [searchBarText, setSearchBarText] = useState<string>("");
+    // a page/limit pair that only exists for a render while a toggle's page change reaches the URL
+    const skipQueryRef = useRef<{page: number, limit: number} | null>(null);
+
+    const limit = pageLimit(filtersOpen);
+    const pageNumber = urlQuery.page ?? 0;
+    const searchQuery: ProjectSearchQuery = useMemo(() => ({...urlQuery, limit}), [urlQuery, limit]);
 
     function toggleFilters(): void {
         const nextFiltersOpen = !filtersOpen;
-        const newLimit = nextFiltersOpen ? 14 : 15;
-        const newPage = Math.floor(anchorIndexRef.current / newLimit);
+        const anchorIndex = anchorIndexFor(anchorIndexRef.current, pageNumber, limit);
+        const nextPage = Math.floor(anchorIndex / pageLimit(nextFiltersOpen));
+        anchorIndexRef.current = anchorIndex;
         setFiltersOpen(nextFiltersOpen);
-        mutateSearchQuery({
-            ...searchQuery,
-            limit: newLimit,
-            page: newPage
-        });
+        if (nextPage !== pageNumber) {
+            // the panel state lands before the URL does, so don't fetch the old page at the new size in between
+            skipQueryRef.current = {page: pageNumber, limit: pageLimit(nextFiltersOpen)};
+            updateQuery({page: nextPage}, {replace: true});
+        }
     }
 
     useEffect(() => {
+        const skip = skipQueryRef.current;
+        skipQueryRef.current = null;
+        if (skip && skip.page === searchQuery.page && skip.limit === searchQuery.limit) return;
+
+        let ignore = false;
         (async () => {
                 setLoading(true);
                 let res: Response
                 try {
-                    const params = new URLSearchParams(
-                        Object.fromEntries(
-                            Object.entries(searchQuery).map(([k, v]) => [k, String(v)])
-                        )
-                    );
-                    res = await fetch(`${API_URL}/project/search?${params}`, {
+                    res = await fetch(`${API_URL}/project/search?${toApiSearchParams(searchQuery)}`, {
                         credentials: "omit"
                     })
                     if (!res.ok) {
@@ -68,34 +83,38 @@ export default function SearchResultsPage() {
                         throw new Error("Failed to get projects")
                     }
                     const json: ProjectSearchResponse = await res.json()
+                    if (ignore) return
                     setProjects(json.projects)
                     setSearchResultInfo(json.info)
                 } catch (e) {
                     console.error(e)
                 }
+                if (ignore) return
                 setLoading(false)
                 setInitialLoading(false)
             }
         )()
-
+        return () => {
+            ignore = true
+        }
     }, [searchQuery])
 
     useEffect(() => {
         (async () => {
-           let res: Response
-           try {
-               res = await fetch(`${API_URL}/category`, {
-                   credentials: "omit"
-               })
-               if (!res.ok) {
-                   console.error(res)
-                   throw new Error("Failed to get category")
-               }
-               const json: CategoryResponse = await res.json()
-               setCategories(json.categories)
-           } catch (e) {
-               console.error(e)
-           }
+            let res: Response
+            try {
+                res = await fetch(`${API_URL}/category`, {
+                    credentials: "omit"
+                })
+                if (!res.ok) {
+                    console.error(res)
+                    throw new Error("Failed to get category")
+                }
+                const json: CategoryResponse = await res.json()
+                setCategories(json.categories)
+            } catch (e) {
+                console.error(e)
+            }
         })()
     }, []);
 
@@ -118,58 +137,31 @@ export default function SearchResultsPage() {
 
     const resultNumbers: number[] = useMemo(() => {
         if (!searchResultInfo || !projects) return [0, 0]
-        const limit = searchQuery.limit!
         const lowerBound = limit * pageNumber + 1
-        const upperBound = Math.min((limit * pageNumber) + limit, searchResultInfo!.totalResults)
+        const upperBound = Math.min((limit * pageNumber) + limit, searchResultInfo.totalResults)
         return [lowerBound, upperBound]
-    }, [searchQuery.limit, pageNumber, searchResultInfo, projects])
+    }, [limit, pageNumber, searchResultInfo, projects])
 
     const pageCount: number = useMemo(() => {
         if (!projects) return 0
         if (!searchResultInfo?.totalResults) return 0
-        const count = Math.ceil(searchResultInfo.totalResults! / (searchQuery?.limit || 0))
-        return count === Infinity ? 1 : count
-    }, [searchResultInfo, searchQuery.limit, projects])
-
-    function _setPageNumber(pageNumber: number): void {
-        anchorIndexRef.current = pageNumber * searchQuery.limit!;
-        setPageNumber(pageNumber)
-        setSearchQuery({
-            ...searchQuery,
-            page: pageNumber
-        })
-    }
-
-    function mutateSearchQuery(newQuery: ProjectSearchQuery) {
-        let needsPageReset = false
-        if (newQuery.categoryIds !== searchQuery.categoryIds) needsPageReset = true
-        if (newQuery.showcase !== searchQuery.showcase) needsPageReset = true
-        if (newQuery.searchTerm !== searchQuery.searchTerm) needsPageReset = true
-
-        const query = {
-            ...newQuery,
-            page: needsPageReset ? 0 : newQuery.page,
-        }
-        if (needsPageReset) {
-            anchorIndexRef.current = 0;
-        }
-        setPageNumber(newQuery.page || 0)
-        setSearchQuery(query)
-    }
+        return Math.ceil(searchResultInfo.totalResults / limit)
+    }, [searchResultInfo, limit, projects])
 
     useEffect(() => {
         if (!document.scrollingElement) return
         document.scrollingElement.scrollTop = 0
-    }, []);
+    }, [searchQuery.page]);
 
-    const activeFilterName = searchQuery.categoryIds
-        ? categories.find((category) => category.id === searchQuery.categoryIds)?.name
+    const selectedCategoryNames = splitList(searchQuery.categoryNames);
+    const activeFilterName = selectedCategoryNames.length > 0
+        ? (selectedCategoryNames.length === 1 ? selectedCategoryNames[0] : undefined)
         : searchQuery.showcase
             ? showcases.find((showcase) => showcase.id === searchQuery.showcase)
                 ? getShowcaseName(showcases.find((showcase) => showcase.id === searchQuery.showcase)!)
                 : undefined
             : undefined;
-    const hasFilter = Boolean(searchQuery.categoryIds || searchQuery.showcase);
+    const hasFilter = Boolean(searchQuery.categoryNames || searchQuery.showcase);
     const noResultsText = hasFilter
         ? `No ${activeFilterName ?? "selected"} applications match your filters`
         : "No applications match your results";
@@ -188,40 +180,7 @@ export default function SearchResultsPage() {
                 </p>
             </div>
 
-            <form className={`flex items-center gap-2`} onSubmit={((e) => {
-                e.preventDefault();
-                mutateSearchQuery({
-                    ...searchQuery, searchTerm: searchBarText
-                })
-            })}>
-                <input
-                    name={"searchBar"}
-                    className={`bg-neutral-200 rounded-lg p-2 flex-1`}
-                    placeholder={"search by project name, description, developers"}
-                    ref={searchBarRef}
-                    onChange={(e) => {setSearchBarText(e.target.value)}}
-                />
-                {searchBarText.length > 0 &&
-                    <Button
-                        buttonType={"button"}
-                        styles={`!p-3`}
-                        onClick={() => {
-                            setSearchBarText("")
-                            searchBarRef.current!.value = ""
-                        }}
-                    >
-                        <MdCancel/>
-                    </Button>
-                }
-                <Button
-                    buttonType={"submit"}
-                    color={"red"}
-                    styles={`hover:!bg-r-yellow-500`}
-                >
-                    <FaSearch />
-                    <span>Search</span>
-                </Button>
-            </form>
+            <SearchBar/>
 
             <div className={`flex items-center justify-between`}>
                 <button
@@ -235,11 +194,14 @@ export default function SearchResultsPage() {
                 </button>
             </div>
 
+            <Paginator pageCount={pageCount} activePage={pageNumber} setPage={(page) => updateQuery({page})}/>
+            <span className={`sr-only`}>{resultNumbers[0]}-{resultNumbers[1]}</span>
+
             <div className={`flex flex-col gap-6 md:flex-row`}>
+
                 {filtersOpen &&
-                    <PublicFilterSection
-                        searchQuery={searchQuery}
-                        setSearchQuery={mutateSearchQuery}
+                    <FilterSection
+                        filters={["showcase", "category"]}
                         categories={categories}
                         showcases={showcases}
                     />
@@ -259,9 +221,12 @@ export default function SearchResultsPage() {
                     }
                 </div>
             </div>
-
-            <Paginator pageCount={pageCount} activePage={pageNumber} setPage={_setPageNumber}/>
-            <span className={`sr-only`}>{resultNumbers[0]}-{resultNumbers[1]}</span>
+            {projects.length > 4 &&
+                <>
+                    <Paginator pageCount={pageCount} activePage={pageNumber} setPage={(page) => updateQuery({page})}/>
+                    <span className={`sr-only`}>{resultNumbers[0]}-{resultNumbers[1]}</span>
+                </>
+            }
         </div>
     )
 }

@@ -1,21 +1,9 @@
 import {render, screen, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {MemoryRouter} from 'react-router'
+import {MemoryRouter, useLocation, useNavigate} from 'react-router'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import type {ProjectPreviewType} from '@hapi/shared/types/project'
 import SearchResultsPage from './SearchResultsPage.tsx'
-
-// PublicFilterSection has its own behaviour; stub it so we can still drive a filter change
-vi.mock('../components/ProjectList/PublicFilterSection.tsx', () => ({
-    PublicFilterSection: ({searchQuery, setSearchQuery}: {
-        searchQuery: Record<string, unknown>
-        setSearchQuery: (query: Record<string, unknown>) => void
-    }) => (
-        <button type="button" onClick={() => setSearchQuery({...searchQuery, category: 'games'})}>
-            Pick games category
-        </button>
-    ),
-}))
 
 type MockApiOptions = {
     projects?: ProjectPreviewType[]
@@ -23,6 +11,8 @@ type MockApiOptions = {
     searchOk?: boolean
     categories?: {id: string; name: string}[]
 }
+
+const CATEGORIES = [{id: 'cat-1', name: 'Games'}, {id: 'cat-2', name: 'Health'}]
 
 function makeProjects(count: number): ProjectPreviewType[] {
     return Array.from({length: count}, (_, i) => ({
@@ -34,6 +24,7 @@ function makeProjects(count: number): ProjectPreviewType[] {
         slug: `project-${i + 1}`,
         developers: ['Alice'],
         featured: false,
+        versionId: `v-${i + 1}`,
     }))
 }
 
@@ -41,7 +32,7 @@ function jsonResponse(body: unknown, ok = true) {
     return {ok, json: async () => body}
 }
 
-function mockApi({projects = [], totalResults = projects.length, searchOk = true, categories = []}: MockApiOptions = {}) {
+function mockApi({projects = [], totalResults = projects.length, searchOk = true, categories = CATEGORIES}: MockApiOptions = {}) {
     const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
         void init
         if (url.includes('/project/search')) {
@@ -64,10 +55,25 @@ function lastSearchParams(fetchMock: ReturnType<typeof mockApi>) {
     return new URLSearchParams(calls[calls.length - 1][0].split('?')[1])
 }
 
+function LocationProbe() {
+    const location = useLocation()
+    const navigate = useNavigate()
+    return <>
+        <div data-testid="location">{location.search}</div>
+        <button type="button" onClick={() => navigate(-1)}>Go back</button>
+    </>
+}
+
+/** the address bar's query string, as shown */
+function search() {
+    return screen.getByTestId('location').textContent
+}
+
 function renderPage(path = '/search') {
     return render(
         <MemoryRouter initialEntries={[path]}>
             <SearchResultsPage/>
+            <LocationProbe/>
         </MemoryRouter>,
     )
 }
@@ -104,8 +110,8 @@ describe('SearchResultsPage', () => {
         })
     })
 
-    describe('search term from the URL', () => {
-        it('searches for the term in the address and shows it as a heading', async () => {
+    describe('search from the URL', () => {
+        it('searches for the term in the address, shows it as a heading and fills the search box', async () => {
             const fetchMock = mockApi({projects: makeProjects(2)})
             renderPage('/search?q=cats')
             await screen.findByText('2 results found')
@@ -113,6 +119,7 @@ describe('SearchResultsPage', () => {
             expect(lastSearchParams(fetchMock).get('searchTerm')).toBe('cats')
             const heading = screen.getByRole('heading', {name: /search results for/i})
             expect(heading).toHaveTextContent('cats')
+            expect(screen.getByRole('textbox')).toHaveValue('cats')
         })
 
         it('shows no heading when there is no search term', async () => {
@@ -121,6 +128,32 @@ describe('SearchResultsPage', () => {
             await screen.findByText('2 results found')
 
             expect(screen.queryByRole('heading', {level: 1})).not.toBeInTheDocument()
+        })
+
+        it('searches with the page and categories in the address', async () => {
+            const fetchMock = mockApi({projects: makeProjects(14), totalResults: 40})
+            renderPage('/search?categoryNames=Games,Health&page=2')
+            await screen.findByText('40 results found')
+
+            expect(lastSearchParams(fetchMock).get('categoryNames')).toBe('Games,Health')
+            expect(lastSearchParams(fetchMock).get('page')).toBe('1')
+            expect(lastSearchParams(fetchMock).has('categoryIds')).toBe(false)
+        })
+
+        it('runs the previous search again when the user goes back', async () => {
+            const user = userEvent.setup()
+            const fetchMock = mockApi({projects: makeProjects(3)})
+            renderPage('/search?q=cats')
+            await screen.findByText('3 results found')
+            await user.clear(screen.getByRole('textbox'))
+            await user.type(screen.getByRole('textbox'), 'dogs{Enter}')
+            await waitFor(() => expect(lastSearchParams(fetchMock).get('searchTerm')).toBe('dogs'))
+
+            await user.click(screen.getByRole('button', {name: 'Go back'}))
+
+            await waitFor(() => expect(lastSearchParams(fetchMock).get('searchTerm')).toBe('cats'))
+            expect(search()).toBe('?q=cats')
+            expect(screen.getByRole('textbox')).toHaveValue('cats')
         })
     })
 
@@ -153,14 +186,6 @@ describe('SearchResultsPage', () => {
     })
 
     describe('pagination', () => {
-        it('shows a single page button when everything fits on one page', async () => {
-            mockApi({projects: makeProjects(3)})
-            renderPage()
-            await screen.findByText('3 results found')
-
-            expect(screen.getByRole('button', {name: '1'})).toBeInTheDocument()
-            expect(screen.queryByRole('button', {name: '2'})).not.toBeInTheDocument()
-        })
 
         it('shows one button per page of fifteen', async () => {
             mockApi({projects: makeProjects(15), totalResults: 40})
@@ -171,20 +196,21 @@ describe('SearchResultsPage', () => {
             expect(screen.queryByRole('button', {name: '4'})).not.toBeInTheDocument()
         })
 
-        it('loads the chosen page', async () => {
+        it('loads the chosen page and puts it in the address', async () => {
             const user = userEvent.setup()
             const fetchMock = mockApi({projects: makeProjects(15), totalResults: 40})
-            renderPage()
+            renderPage('/search?q=cats')
             await screen.findByText('40 results found')
 
             await user.click(screen.getByRole('button', {name: '2'}))
 
             await waitFor(() => expect(lastSearchParams(fetchMock).get('page')).toBe('1'))
+            expect(search()).toBe('?q=cats&page=2')
         })
     })
 
     describe('searching', () => {
-        it('searches for the typed term and shows it as a heading', async () => {
+        it('searches for the typed term, shows it as a heading and puts it in the address', async () => {
             const user = userEvent.setup()
             const fetchMock = mockApi({projects: makeProjects(3)})
             renderPage()
@@ -195,6 +221,7 @@ describe('SearchResultsPage', () => {
 
             await waitFor(() => expect(lastSearchParams(fetchMock).get('searchTerm')).toBe('maps'))
             expect(await screen.findByRole('heading', {name: /search results for/i})).toHaveTextContent('maps')
+            expect(search()).toBe('?q=maps')
         })
 
         it('searches when the user presses Enter', async () => {
@@ -221,6 +248,23 @@ describe('SearchResultsPage', () => {
 
             await waitFor(() => expect(lastSearchParams(fetchMock).get('searchTerm')).toBe('maps'))
             expect(lastSearchParams(fetchMock).get('page')).toBe('0')
+            expect(search()).toBe('?q=maps')
+        })
+
+        it('clears the search, but not the filters, with the cancel button', async () => {
+            const user = userEvent.setup()
+            const fetchMock = mockApi({projects: makeProjects(3)})
+            renderPage('/search?q=cats&categoryNames=Games')
+            await screen.findByText('3 results found')
+            const callsBefore = searchCalls(fetchMock).length
+
+            // the cancel button is the only one without a name
+            await user.click(screen.getByRole('button', {name: ''}))
+
+            await waitFor(() => expect(searchCalls(fetchMock).length).toBe(callsBefore + 1))
+            expect(lastSearchParams(fetchMock).has('searchTerm')).toBe(false)
+            expect(search()).toBe('?categoryNames=Games')
+            expect(screen.getByRole('textbox')).toHaveValue('')
         })
     })
 
@@ -233,15 +277,37 @@ describe('SearchResultsPage', () => {
 
             const filterButton = screen.getByRole('button', {name: 'Filter'})
             expect(filterButton).toHaveAttribute('aria-expanded', 'false')
-            expect(screen.queryByRole('button', {name: 'Pick games category'})).not.toBeInTheDocument()
+            expect(screen.queryByRole('button', {name: 'Games'})).not.toBeInTheDocument()
 
             await user.click(filterButton)
             expect(filterButton).toHaveAttribute('aria-expanded', 'true')
-            expect(screen.getByRole('button', {name: 'Pick games category'})).toBeInTheDocument()
+            expect(screen.getByRole('button', {name: 'Games'})).toBeInTheDocument()
 
             await user.click(filterButton)
             expect(filterButton).toHaveAttribute('aria-expanded', 'false')
-            expect(screen.queryByRole('button', {name: 'Pick games category'})).not.toBeInTheDocument()
+            expect(screen.queryByRole('button', {name: 'Games'})).not.toBeInTheDocument()
+        })
+
+        it('offers categories and showcases but not the published filter', async () => {
+            const user = userEvent.setup()
+            mockApi({projects: makeProjects(3)})
+            renderPage()
+            await screen.findByText('3 results found')
+
+            await user.click(screen.getByRole('button', {name: 'Filter'}))
+
+            expect(screen.getByText('Showcase')).toBeInTheDocument()
+            expect(screen.getByText('Category')).toBeInTheDocument()
+            expect(screen.queryByRole('button', {name: 'Published'})).not.toBeInTheDocument()
+        })
+
+        it('start open when the address already has a filter', async () => {
+            const fetchMock = mockApi({projects: makeProjects(3)})
+            renderPage('/search?categoryNames=Games')
+            await screen.findByText('3 results found')
+
+            expect(screen.getByRole('button', {name: 'Filter'})).toHaveAttribute('aria-expanded', 'true')
+            expect(lastSearchParams(fetchMock).get('limit')).toBe('14')
         })
 
         it('shows fourteen results per page while open and fifteen when closed', async () => {
@@ -257,27 +323,69 @@ describe('SearchResultsPage', () => {
             await waitFor(() => expect(lastSearchParams(fetchMock).get('limit')).toBe('15'))
         })
 
-        it('searches with the chosen filter from the first page', async () => {
+        it('leaves the address alone when opening and closing them keeps the same page', async () => {
             const user = userEvent.setup()
-            const fetchMock = mockApi({projects: makeProjects(14), totalResults: 40})
-            renderPage()
-            await screen.findByText('40 results found')
+            const fetchMock = mockApi({projects: makeProjects(15), totalResults: 100})
+            // results 46-60; with fourteen per page they're still on page 4 (43-56)
+            renderPage('/search?q=cats&page=4')
+            await screen.findByText('100 results found')
+
+            await user.click(screen.getByRole('button', {name: 'Filter'}))
+            await waitFor(() => expect(lastSearchParams(fetchMock).get('limit')).toBe('14'))
+            expect(search()).toBe('?q=cats&page=4')
+
+            await user.click(screen.getByRole('button', {name: 'Filter'}))
+            await waitFor(() => expect(lastSearchParams(fetchMock).get('limit')).toBe('15'))
+            expect(search()).toBe('?q=cats&page=4')
+            expect(lastSearchParams(fetchMock).get('page')).toBe('3')
+        })
+
+        it('moves to the page that keeps the same results in view, with one search per toggle', async () => {
+            const user = userEvent.setup()
+            const fetchMock = mockApi({projects: makeProjects(15), totalResults: 300})
+            // results 211-225; with fourteen per page they're on page 16 (211-224)
+            renderPage('/search?page=15')
+            await screen.findByText('300 results found')
+            let callsBefore = searchCalls(fetchMock).length
+
             await user.click(screen.getByRole('button', {name: 'Filter'}))
 
-            await user.click(screen.getByRole('button', {name: 'Pick games category'}))
+            await waitFor(() => expect(search()).toBe('?page=16'))
+            await waitFor(() => expect(lastSearchParams(fetchMock).get('page')).toBe('15'))
+            expect(searchCalls(fetchMock).length).toBe(callsBefore + 1)
+            callsBefore = searchCalls(fetchMock).length
 
-            await waitFor(() => expect(lastSearchParams(fetchMock).get('category')).toBe('games'))
+            await user.click(screen.getByRole('button', {name: 'Filter'}))
+
+            await waitFor(() => expect(search()).toBe('?page=15'))
+            await waitFor(() => expect(lastSearchParams(fetchMock).get('page')).toBe('14'))
+            expect(searchCalls(fetchMock).length).toBe(callsBefore + 1)
+        })
+
+        it('searches with the chosen category from the first page and puts it in the address', async () => {
+            const user = userEvent.setup()
+            const fetchMock = mockApi({projects: makeProjects(15), totalResults: 40})
+            renderPage()
+            await screen.findByText('40 results found')
+            await user.click(screen.getByRole('button', {name: '2'}))
+            await waitFor(() => expect(lastSearchParams(fetchMock).get('page')).toBe('1'))
+            await user.click(screen.getByRole('button', {name: 'Filter'}))
+
+            await user.click(screen.getByRole('button', {name: 'Games'}))
+
+            await waitFor(() => expect(lastSearchParams(fetchMock).get('categoryNames')).toBe('Games'))
             expect(lastSearchParams(fetchMock).get('page')).toBe('0')
+            expect(search()).toBe('?categoryNames=Games')
         })
 
         it('names the filter in the message when nothing matches it', async () => {
             const user = userEvent.setup()
-            mockApi({projects: [], totalResults: 0, categories: [{id: 'games', name: 'Games'}]})
+            mockApi({projects: [], totalResults: 0})
             renderPage()
             await screen.findByText('No applications match your results')
 
             await user.click(screen.getByRole('button', {name: 'Filter'}))
-            await user.click(screen.getByRole('button', {name: 'Pick games category'}))
+            await user.click(screen.getByRole('button', {name: 'Games'}))
 
             expect(await screen.findByText('No Games applications match your filters')).toBeInTheDocument()
         })

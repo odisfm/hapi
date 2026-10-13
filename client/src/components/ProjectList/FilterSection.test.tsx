@@ -1,15 +1,13 @@
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
+import {MemoryRouter, useLocation} from 'react-router'
+import {beforeEach, describe, expect, it, vi} from 'vitest'
 import type {Category, Showcase} from '@hapi/shared/prisma/client'
-import type {ProjectSearchQuery} from '@hapi/shared/types/apiRequests'
-import {FilterSection} from './FilterSection.tsx'
+import {FilterSection, type FilterType} from './FilterSection.tsx'
 
 vi.mock('@hapi/shared/utils/getShowcaseName', () => ({
     getShowcaseName: (showcase: {name: string}) => showcase.name,
 }))
-
-const setSearchQuery = vi.fn()
 
 const showcases = [
     {id: 'show-1', name: 'Spring Showcase'},
@@ -22,41 +20,42 @@ const categories = [
     {id: 'cat-3', name: 'Education'},
 ] as unknown as Category[]
 
-function makeQuery(overrides: Partial<ProjectSearchQuery> = {}) {
-    return {limit: 10, page: 0, ...overrides} as ProjectSearchQuery
+const ALL_FILTERS: FilterType[] = ['showcase', 'category', 'published']
+
+function LocationProbe() {
+    const location = useLocation()
+    return <div data-testid="location" data-key={location.key}>{location.search}</div>
 }
 
 function renderFilters(
-    query: ProjectSearchQuery = makeQuery(),
-    options: {showcases?: Showcase[]; categories?: Category[]} = {},
+    path = '/projects',
+    options: {filters?: FilterType[]; showcases?: Showcase[]; categories?: Category[]; showTitle?: boolean} = {},
 ) {
     return render(
-        <FilterSection
-            searchQuery={query}
-            setSearchQuery={setSearchQuery}
-            showcases={options.showcases ?? showcases}
-            categories={options.categories ?? categories}
-        />,
+        <MemoryRouter initialEntries={[path]}>
+            <FilterSection
+                filters={options.filters ?? ALL_FILTERS}
+                showcases={options.showcases ?? showcases}
+                categories={options.categories ?? categories}
+                showTitle={options.showTitle}
+            />
+            <LocationProbe/>
+        </MemoryRouter>,
     )
 }
 
-function lastQuery(): ProjectSearchQuery {
-    const calls = setSearchQuery.mock.calls
-    return calls[calls.length - 1][0]
+/** the address bar's query string, as shown */
+function search() {
+    return screen.getByTestId('location').textContent
 }
 
-function selectedCategories(query: ProjectSearchQuery) {
-    return (query.categoryIds ?? '').split(',').filter(Boolean)
+function params() {
+    return new URLSearchParams(search() ?? '')
 }
 
 describe('FilterSection', () => {
     beforeEach(() => {
         vi.clearAllMocks()
-        vi.spyOn(console, 'log').mockImplementation(() => {})
-    })
-
-    afterEach(() => {
-        vi.restoreAllMocks()
     })
 
     describe('options', () => {
@@ -90,169 +89,192 @@ describe('FilterSection', () => {
         })
 
         it('offers only the published options when there are no showcases or categories', () => {
-            renderFilters(makeQuery(), {showcases: [], categories: []})
+            renderFilters('/projects', {showcases: [], categories: []})
 
             expect(screen.getAllByRole('button')).toHaveLength(3)
         })
 
-        it('does not change anything until an option is clicked', () => {
-            renderFilters()
+        it('shows only the filters it is given, in the order given', () => {
+            renderFilters('/projects', {filters: ['category', 'showcase']})
 
-            expect(setSearchQuery).not.toHaveBeenCalled()
+            expect(screen.queryByRole('button', {name: 'Published'})).not.toBeInTheDocument()
+            const category = screen.getByText('Category')
+            const showcase = screen.getByText('Showcase')
+            expect(category.compareDocumentPosition(showcase) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+        })
+
+        it('shows a "Filter" title only when asked to', () => {
+            const {unmount} = renderFilters()
+            expect(screen.queryByText('Filter')).not.toBeInTheDocument()
+            unmount()
+
+            renderFilters('/projects', {showTitle: true})
+            expect(screen.getByText('Filter')).toBeInTheDocument()
+        })
+
+        it('does not change the address until an option is clicked', () => {
+            renderFilters('/projects?q=maps')
+
+            expect(search()).toBe('?q=maps')
+            expect(screen.getByTestId('location')).toHaveAttribute('data-key', 'default')
         })
     })
 
     describe('clear all', () => {
         it('is hidden when no filter is applied', () => {
-            renderFilters(makeQuery())
+            renderFilters('/projects?q=maps')
 
             expect(screen.queryByRole('button', {name: 'clear all'})).not.toBeInTheDocument()
         })
 
         it.each([
-            ['a showcase', {showcase: 'show-1'}],
-            ['a category', {categoryIds: 'cat-1'}],
-            ['a published filter', {published: 'published'}],
-        ] as [string, Partial<ProjectSearchQuery>][])('is shown when %s is applied', (_label, filter) => {
-            renderFilters(makeQuery(filter))
+            ['a showcase', 'showcase=show-1'],
+            ['a category', 'categoryNames=Games'],
+            ['a published filter', 'published=published'],
+        ])('is shown when %s is applied', (_label, filter) => {
+            renderFilters(`/projects?${filter}`)
 
             expect(screen.getByRole('button', {name: 'clear all'})).toBeInTheDocument()
         })
 
-        it('removes the filters and keeps the rest of the search', async () => {
+        it('is hidden when the only filter applied is one it does not show', () => {
+            renderFilters('/projects?published=published', {filters: ['showcase', 'category']})
+
+            expect(screen.queryByRole('button', {name: 'clear all'})).not.toBeInTheDocument()
+        })
+
+        it('removes the filters, keeps the search term and goes back to the first page', async () => {
             const user = userEvent.setup()
-            renderFilters(
-                makeQuery({
-                    page: 2,
-                    searchTerm: 'maps',
-                    showcase: 'show-1',
-                    categoryIds: 'cat-1,cat-2',
-                    published: 'published',
-                }),
-            )
+            renderFilters('/projects?q=maps&page=3&showcase=show-1&categoryNames=Games,Health&published=published')
 
             await user.click(screen.getByRole('button', {name: 'clear all'}))
 
-            expect(setSearchQuery).toHaveBeenCalledTimes(1)
-            expect(setSearchQuery).toHaveBeenCalledWith({limit: 10, page: 2, searchTerm: 'maps'})
-            expect(lastQuery()).not.toHaveProperty('showcase')
-            expect(lastQuery()).not.toHaveProperty('category')
-            expect(lastQuery()).not.toHaveProperty('published')
+            expect(search()).toBe('?q=maps')
+        })
+
+        it('leaves filters it does not show alone', async () => {
+            const user = userEvent.setup()
+            renderFilters('/projects?showcase=show-1&published=published', {filters: ['showcase', 'category']})
+
+            await user.click(screen.getByRole('button', {name: 'clear all'}))
+
+            expect(search()).toBe('?published=published')
         })
     })
 
     describe('choosing a showcase', () => {
         it('searches within that showcase', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery({searchTerm: 'maps'}))
+            renderFilters('/projects?q=maps')
 
             await user.click(screen.getByRole('button', {name: 'Autumn Showcase'}))
 
-            expect(setSearchQuery).toHaveBeenCalledTimes(1)
-            expect(setSearchQuery).toHaveBeenCalledWith(
-                expect.objectContaining({showcase: 'show-2', searchTerm: 'maps', limit: 10}),
-            )
+            expect(params().get('showcase')).toBe('show-2')
+            expect(params().get('q')).toBe('maps')
         })
 
         it('goes back to the first page', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery({page: 3}))
+            renderFilters('/projects?page=4')
 
             await user.click(screen.getByRole('button', {name: 'Spring Showcase'}))
 
-            expect(lastQuery().page).toBe(0)
+            expect(params().has('page')).toBe(false)
+        })
+
+        it('leaves the address alone when the showcase is already selected', async () => {
+            const user = userEvent.setup()
+            renderFilters('/projects?showcase=show-1&page=4')
+
+            await user.click(screen.getByRole('button', {name: 'Spring Showcase'}))
+
+            expect(search()).toBe('?showcase=show-1&page=4')
+            expect(screen.getByTestId('location')).toHaveAttribute('data-key', 'default')
         })
     })
 
     describe('choosing categories', () => {
-        it('selects the first category', async () => {
+        it('selects the first category by name', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery())
+            renderFilters()
 
             await user.click(screen.getByRole('button', {name: 'Games'}))
 
-            expect(setSearchQuery).toHaveBeenCalledTimes(1)
-            expect(selectedCategories(lastQuery())).toEqual(['cat-1'])
+            expect(search()).toBe('?categoryNames=Games')
         })
 
-        it('adds another category to those already selected', async () => {
+        it('adds another category to those already selected, in one comma-joined param', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery({categoryIds: 'cat-1'}))
+            renderFilters('/projects?categoryNames=Games')
 
             await user.click(screen.getByRole('button', {name: 'Health'}))
 
-            expect(selectedCategories(lastQuery())).toEqual(['cat-1', 'cat-2'])
+            expect(search()).toBe('?categoryNames=Games,Health')
         })
 
         it('removes a category that is already selected and keeps the others in order', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery({categoryIds: 'cat-1,cat-2,cat-3'}))
+            renderFilters('/projects?categoryNames=Games,Health,Education')
 
             await user.click(screen.getByRole('button', {name: 'Health'}))
 
-            expect(selectedCategories(lastQuery())).toEqual(['cat-1', 'cat-3'])
+            expect(params().get('categoryNames')).toBe('Games,Education')
         })
 
-        it('can remove the only selected category', async () => {
+        it('removes the param when the only selected category is removed', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery({categoryIds: 'cat-1'}))
+            renderFilters('/projects?categoryNames=Games')
 
             await user.click(screen.getByRole('button', {name: 'Games'}))
 
-            expect(selectedCategories(lastQuery())).toEqual([])
+            expect(params().has('categoryNames')).toBe(false)
         })
 
-        it('keeps the rest of the search', async () => {
+        it('keeps the rest of the search and goes back to the first page', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery({searchTerm: 'maps', showcase: 'show-1'}))
+            renderFilters('/projects?q=maps&showcase=show-1&page=3')
 
             await user.click(screen.getByRole('button', {name: 'Games'}))
 
-            expect(lastQuery()).toEqual(
-                expect.objectContaining({searchTerm: 'maps', showcase: 'show-1', limit: 10}),
-            )
+            expect(search()).toBe('?q=maps&categoryNames=Games&showcase=show-1')
         })
     })
 
     describe('choosing a published status', () => {
         it('filters to published projects', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery())
+            renderFilters()
 
             await user.click(screen.getByRole('button', {name: 'Published'}))
 
-            expect(setSearchQuery).toHaveBeenCalledTimes(1)
-            expect(lastQuery().published).toBe('published')
+            expect(params().get('published')).toBe('published')
         })
 
         it('filters to unpublished projects', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery())
+            renderFilters()
 
             await user.click(screen.getByRole('button', {name: 'Unpublished'}))
 
-            expect(lastQuery().published).toBe('unpublished')
+            expect(params().get('published')).toBe('unpublished')
         })
 
         it('shows all projects again when All is chosen', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery({published: 'published'}))
+            renderFilters('/projects?published=published')
 
             await user.click(screen.getByRole('button', {name: 'All'}))
 
-            expect(setSearchQuery).toHaveBeenCalledTimes(1)
-            expect(lastQuery().published).toBeUndefined()
+            expect(params().has('published')).toBe(false)
         })
 
-        it('keeps the rest of the search', async () => {
+        it('keeps the rest of the search and goes back to the first page', async () => {
             const user = userEvent.setup()
-            renderFilters(makeQuery({searchTerm: 'maps', categoryIds: 'cat-1'}))
+            renderFilters('/projects?q=maps&categoryNames=Games&page=3')
 
             await user.click(screen.getByRole('button', {name: 'Published'}))
 
-            expect(lastQuery()).toEqual(
-                expect.objectContaining({searchTerm: 'maps', category: 'cat-1', limit: 10}),
-            )
+            expect(search()).toBe('?q=maps&categoryNames=Games&published=published')
         })
     })
 })

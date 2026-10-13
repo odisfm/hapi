@@ -3,7 +3,7 @@ import type {FormEvent} from "react";
 import {MdSearch} from "react-icons/md";
 import {useNavigate} from "react-router";
 
-const quickLinks = ["Health", "Education", "Workplace", "Games"];
+const quickLinkCategories = ["Health", "Education", "Workplace", "Games"];
 
 export default function SearchOverlay({onClose}: {onClose: () => void}) {
     const navigate = useNavigate();
@@ -15,8 +15,13 @@ export default function SearchOverlay({onClose}: {onClose: () => void}) {
         onClose();
     }
 
-    function searchQuickLink(term: string): void {
-        navigate(`/search?q=${encodeURIComponent(term)}`);
+    function searchQuickLink(term?: string, categoryName?: string): void {
+        if (!term && !categoryName) return
+        if (term) {
+            navigate(`/search?q=${encodeURIComponent(term)}`);
+        } else if (categoryName) {
+            navigate(`/search?categoryNames=${encodeURIComponent(categoryName)}`);
+        }
         onClose();
     }
     
@@ -46,11 +51,11 @@ export default function SearchOverlay({onClose}: {onClose: () => void}) {
                 <div className={`mx-auto mt-16 w-full max-w-[calc(64rem+2rem)] translate-x-[2%] sm:translate-x-[5%]`}>
                     <p className={`font-semibold`}>Quick Links</p>
                     <div className={`mt-1 flex flex-col items-start gap-1`}>
-                        {quickLinks.map((term) => (
+                        {quickLinkCategories.map((term) => (
                             <button
                                 key={term}
                                 type="button"
-                                onClick={() => searchQuickLink(term)}
+                                onClick={() => searchQuickLink(undefined, term)}
                                 className={`text-white hover:text-r-red cursor-pointer`}
                             >
                                 {term}

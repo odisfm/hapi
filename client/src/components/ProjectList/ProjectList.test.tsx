@@ -1,20 +1,26 @@
 import {render, screen, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {MemoryRouter} from 'react-router'
+import {MemoryRouter, useLocation} from 'react-router'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import type {ProjectPreviewType} from '@hapi/shared/types/project'
 import {ProjectList} from './ProjectList.tsx'
 
-vi.mock('./FilterSection.tsx', () => ({
-    FilterSection: ({searchQuery, setSearchQuery}: {
-        searchQuery: Record<string, unknown>
-        setSearchQuery: (query: Record<string, unknown>) => void
-    }) => (
-        <button type="button" onClick={() => setSearchQuery({...searchQuery, category: 'games'})}>
-            Pick games category
-        </button>
-    ),
-}))
+// FilterSection has its own tests (and its own lists, which would confuse the list assertions here);
+// stub it with something that picks a category through the URL the same way
+vi.mock('./FilterSection.tsx', async () => {
+    const {useProjectSearchParams} =
+        await vi.importActual<typeof import('./useProjectSearchParams.ts')>('./useProjectSearchParams.ts')
+    return {
+        FilterSection: ({filters}: {filters: string[]}) => {
+            const [, updateQuery] = useProjectSearchParams()
+            return (
+                <button type="button" data-filters={filters.join(',')} onClick={() => updateQuery({categoryNames: 'Games'})}>
+                    Pick games category
+                </button>
+            )
+        },
+    }
+})
 
 type MockApiOptions = {
     projects?: ProjectPreviewType[]
@@ -60,10 +66,20 @@ function lastSearchParams(fetchMock: ReturnType<typeof mockApi>) {
     return new URLSearchParams(urls[urls.length - 1].split('?')[1])
 }
 
-function renderList() {
+function LocationProbe() {
+    return <div data-testid="location">{useLocation().search}</div>
+}
+
+/** the address bar's query string, as shown */
+function search() {
+    return screen.getByTestId('location').textContent
+}
+
+function renderList(path = '/dashboard') {
     return render(
-        <MemoryRouter>
+        <MemoryRouter initialEntries={[path]}>
             <ProjectList/>
+            <LocationProbe/>
         </MemoryRouter>,
     )
 }
@@ -71,7 +87,6 @@ function renderList() {
 describe('ProjectList', () => {
     beforeEach(() => {
         vi.spyOn(console, 'error').mockImplementation(() => {})
-        vi.spyOn(console, 'log').mockImplementation(() => {})
     })
 
     afterEach(() => {
@@ -85,6 +100,15 @@ describe('ProjectList', () => {
 
         expect(screen.getByRole('link', {name: /new project/i})).toHaveAttribute('href', '/dashboard/project/new')
         await screen.findByText('1 project matching filters.')
+    })
+
+    it('offers the showcase, category and published filters', async () => {
+        mockApi({projects: makeProjects(1)})
+        renderList()
+        await screen.findByText('1 project matching filters.')
+
+        expect(screen.getByRole('button', {name: 'Pick games category'}))
+            .toHaveAttribute('data-filters', 'showcase,category,published')
     })
 
     describe('loading', () => {
@@ -106,6 +130,18 @@ describe('ProjectList', () => {
 
             expect(lastSearchParams(fetchMock).get('limit')).toBe('15')
             expect(lastSearchParams(fetchMock).get('page')).toBe('0')
+        })
+
+        it('starts from the search in the address', async () => {
+            const fetchMock = mockApi({projects: makeProjects(10), totalResults: 25})
+            renderList('/dashboard?q=maps&page=2&published=unpublished')
+
+            await screen.findByText('25 projects found, showing 16-25.')
+
+            expect(lastSearchParams(fetchMock).get('searchTerm')).toBe('maps')
+            expect(lastSearchParams(fetchMock).get('page')).toBe('1')
+            expect(lastSearchParams(fetchMock).get('published')).toBe('unpublished')
+            expect(screen.getByRole('textbox')).toHaveValue('maps')
         })
     })
 
@@ -167,7 +203,7 @@ describe('ProjectList', () => {
             expect(screen.queryByRole('button', {name: '2'})).not.toBeInTheDocument()
         })
 
-        it('loads and describes the next page when a page button is clicked', async () => {
+        it('loads and describes the next page when a page button is clicked, and puts it in the address', async () => {
             const user = userEvent.setup()
             const fetchMock = mockApi({projects: makeProjects(15), totalResults: 25})
             renderList()
@@ -177,11 +213,12 @@ describe('ProjectList', () => {
 
             expect(await screen.findByText('25 projects found, showing 16-25.')).toBeInTheDocument()
             expect(lastSearchParams(fetchMock).get('page')).toBe('1')
+            expect(search()).toBe('?page=2')
         })
     })
 
     describe('searching', () => {
-        it('searches for the typed term', async () => {
+        it('searches for the typed term and puts it in the address', async () => {
             const user = userEvent.setup()
             const fetchMock = mockApi({projects: makeProjects(3)})
             renderList()
@@ -191,6 +228,7 @@ describe('ProjectList', () => {
             await user.click(screen.getByRole('button', {name: 'Search'}))
 
             await waitFor(() => expect(lastSearchParams(fetchMock).get('searchTerm')).toBe('maps'))
+            expect(search()).toBe('?q=maps')
         })
 
         it('goes back to the first page when the search term changes', async () => {
@@ -206,6 +244,7 @@ describe('ProjectList', () => {
 
             await waitFor(() => expect(lastSearchParams(fetchMock).get('searchTerm')).toBe('maps'))
             expect(lastSearchParams(fetchMock).get('page')).toBe('0')
+            expect(search()).toBe('?q=maps')
         })
     })
 
@@ -220,8 +259,9 @@ describe('ProjectList', () => {
 
             await user.click(screen.getByRole('button', {name: 'Pick games category'}))
 
-            await waitFor(() => expect(lastSearchParams(fetchMock).get('category')).toBe('games'))
+            await waitFor(() => expect(lastSearchParams(fetchMock).get('categoryNames')).toBe('Games'))
             expect(lastSearchParams(fetchMock).get('page')).toBe('0')
+            expect(search()).toBe('?categoryNames=Games')
         })
     })
 })

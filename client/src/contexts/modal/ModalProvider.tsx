@@ -1,5 +1,5 @@
 import { ModalContext, type ModalInteraction, type ModalButton } from "./ModalContext.tsx";
-import {useState, useCallback, useEffect, isValidElement} from "react";
+import {useState, useCallback, useEffect, isValidElement, useMemo} from "react";
 import {createUuid} from "../../utils/misc.ts";
 import {Button} from "../../components/generic/Button.tsx";
 import {FaChevronCircleLeft, FaChevronCircleRight} from "react-icons/fa";
@@ -72,8 +72,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         setModals((prev) => prev.filter((m) => m.id !== modalId));
     };
 
+    const value = useMemo(() => (
+        {dispatchModal, dispatchImage}),
+        [dispatchModal, dispatchImage]);
+
     return (
-        <ModalContext value={{ dispatchModal, dispatchImage }}>
+        <ModalContext value={value}>
             {modals.map((m) => (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
                     <div className="relative max-w-[90vw] max-h-[90vh] rounded-lg bg-white p-6 shadow-xl">

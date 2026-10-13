@@ -62,7 +62,7 @@ describe('HomePage', () => {
         fetchMock.mockResolvedValue(featuredResponse(0))
         renderPage()
 
-        expect(screen.getByRole('link', {name: /view more/i})).toHaveAttribute('href', '/search')
+        await screen.getByRole('button', { name: /view more/i }).click()
         await screen.findByText('No projects found.')
     })
 

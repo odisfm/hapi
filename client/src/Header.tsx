@@ -54,7 +54,7 @@ export function Header() {
                         HAPI
                     </span>
                 </Link>
-                <nav className={`hidden items-center text-md font-thin sm:flex justify-end gap-4`}>
+                <nav className={`hidden items-center text-md font-normal sm:flex justify-end gap-4`}>
                     <div className={`flex items-center gap-0.5`}><Link
                         to="/search"
                         className={`${pillStyles} ${activeView === "applications" && activePillStyles}`}

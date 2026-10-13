@@ -6,7 +6,7 @@ import type {ProjectSearchQuery} from "@hapi/shared/types/apiRequests";
  * The parts of a project search that live in the URL.
  * Page size is a layout concern, so each page adds its own `limit` before fetching.
  */
-export type UrlSearchQuery = Pick<ProjectSearchQuery, "searchTerm" | "page" | "categoryNames" | "showcase" | "published">;
+export type UrlSearchQuery = Pick<ProjectSearchQuery, "searchTerm" | "page" | "categoryNames" | "showcase" | "published" | "orderBy">;
 
 /** URL param name for each field. Category names share one param, joined on "," like the API. */
 const PARAM = {
@@ -15,10 +15,11 @@ const PARAM = {
     categoryNames: "categoryNames",
     showcase: "showcase",
     published: "published",
+    orderBy: "orderBy"
 } as const;
 
 /** Changing any of these sends the user back to the first page. */
-const PAGE_RESET_KEYS = ["searchTerm", "categoryNames", "showcase", "published"] as const;
+const PAGE_RESET_KEYS = ["searchTerm", "categoryNames", "showcase", "published", "orderBy"] as const;
 
 /** Splits a ","-joined list, dropping blanks. */
 export function splitList(value: string | undefined): string[] {
@@ -44,6 +45,9 @@ export function parseSearchParams(params: URLSearchParams): UrlSearchQuery {
     const published = params.get(PARAM.published);
     if (published === "published" || published === "unpublished") query.published = published;
 
+    const orderBy = params.get(PARAM.orderBy);
+    if (orderBy) query.orderBy = orderBy as UrlSearchQuery["orderBy"];
+
     return query;
 }
 
@@ -58,6 +62,7 @@ export function writeSearchParams(base: URLSearchParams, query: UrlSearchQuery):
     if (query.showcase) params.set(PARAM.showcase, query.showcase);
     if (query.published) params.set(PARAM.published, query.published);
     if (query.page) params.set(PARAM.page, String(query.page + 1));
+    if (query.orderBy) params.set(PARAM.orderBy, query.orderBy);
 
     return params;
 }

@@ -1,5 +1,5 @@
-import type {ProjectSearchQuery} from "@hapi/shared/types/apiRequests";
-import {useEffect, useMemo, useRef, useState} from "react";
+import type {ProjectSearchQuery, ProjectSearchSortStrategy} from "@hapi/shared/types/apiRequests";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import type {ProjectPreviewType} from "@hapi/shared/types/project";
 import {API_URL} from "../consts.ts";
 import type {
@@ -20,6 +20,7 @@ import {
 } from "../components/ProjectList/useProjectSearchParams.ts";
 import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
 import {FaSearch} from "react-icons/fa";
+import {SearchOrderPicker} from "../components/SearchOrderPicker.tsx";
 
 /** Fewer results per page with the filter panel open, so the 2-column grid has no gap. */
 function pageLimit(filtersOpen: boolean): number {
@@ -44,6 +45,7 @@ export default function SearchResultsPage() {
     const [showcases, setShowcases] = useState<Showcase[]>([]);
     // start open when arriving with filters already in the URL, so they're visible
     const [filtersOpen, setFiltersOpen] = useState<boolean>(() => Boolean(urlQuery.categoryNames || urlQuery.showcase));
+    const [sortStrategy, setSortStrategy] = useState<ProjectSearchSortStrategy>("default")
     const anchorIndexRef = useRef<number>(0);
     // a page/limit pair that only exists for a render while a toggle's page change reaches the URL
     const skipQueryRef = useRef<{page: number, limit: number} | null>(null);
@@ -64,6 +66,13 @@ export default function SearchResultsPage() {
             updateQuery({page: nextPage}, {replace: true});
         }
     }
+
+    const _setSortStrategy = useCallback((strategy: ProjectSearchSortStrategy) => {
+        updateQuery({
+            orderBy: strategy
+        })
+        setSortStrategy(strategy);
+    }, [updateQuery])
 
     useEffect(() => {
         const skip = skipQueryRef.current;
@@ -182,20 +191,30 @@ export default function SearchResultsPage() {
 
             <SearchBar/>
 
-            <div className={`flex items-center justify-between`}>
-                <button
-                    type="button"
-                    aria-expanded={filtersOpen}
-                    onClick={toggleFilters}
-                    className={`flex items-center gap-2 text-sm font-bold text-black hover:text-r-red cursor-pointer`}
-                >
-                    <img src="/icons/filter.svg" alt="" className={`h-4 w-4`} />
-                    Filter
-                </button>
-            </div>
+            <div className={`flex items-center`}>
+                <div className={`flex items-center justify-between`}>
+                    <button
+                        type="button"
+                        aria-expanded={filtersOpen}
+                        onClick={toggleFilters}
+                        className={`flex items-center gap-2 text-sm font-bold text-black hover:text-r-red cursor-pointer`}
+                    >
+                        <img src="/icons/filter.svg" alt="" className={`h-4 w-4`}/>
+                        Filter
+                    </button>
+                </div>
 
-            <Paginator pageCount={pageCount} activePage={pageNumber} setPage={(page) => updateQuery({page})}/>
-            <span className={`sr-only`}>{resultNumbers[0]}-{resultNumbers[1]}</span>
+                <div className={`ml-auto`}>
+                    <SearchOrderPicker
+                        activeStrategy={sortStrategy}
+                        strategies={[
+                            "default", "popular",
+                            "nameAsc", "nameDesc", "dateDesc", "dateAsc"
+                        ]}
+                        fn={(s) => {_setSortStrategy(s)}}
+                    />
+                </div>
+            </div>
 
             <div className={`flex flex-col gap-6 md:flex-row`}>
 

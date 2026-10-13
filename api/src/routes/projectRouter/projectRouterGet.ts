@@ -3,7 +3,7 @@ import { db } from "@hapi/shared"
 import {filterProject, filterProjectPreview} from "../../utils/filters/filterProject";
 import {
     AlterProjectSlugRequestSchema,
-    type ProjectSearchQuery,
+    type ProjectSearchQuery, type ProjectSearchSortStrategy,
 } from "@hapi/shared/types/apiRequests";
 import type {SubmissionStatus} from "@hapi/shared/prisma/enums";
 import type {
@@ -102,7 +102,8 @@ projectRouterGet.get("/search", async (c) => {
         showcase: query?.showcase,
         approvalStatus: query.approvalStatus ? query.approvalStatus as SubmissionStatus : undefined,
         page: query.page !== undefined ? Number(query.page) : undefined,
-        published: (query.published === "published" || query.published === "unpublished") ? query.published : undefined
+        published: (query.published === "published" || query.published === "unpublished") ? query.published : undefined,
+        orderBy: query.orderBy ? query.orderBy as ProjectSearchSortStrategy : "default"
     }
     if (query.limit) {
         try {
@@ -236,6 +237,63 @@ projectRouterGet.get("/search", async (c) => {
             .map(r => r.item.record);
     }
 
+    switch (searchQuery.orderBy) {
+        case "nameAsc":
+            filteredRecords = filteredRecords.sort((a, b) => {
+                const vA = a.versions[0].name
+                const vB = b.versions[0].name
+                if (vA < vB) return -1
+                if (vA > vB) return 1
+                return 0
+            })
+            break
+        case "nameDesc":
+            filteredRecords = filteredRecords.sort((a, b) => {
+                const vA = a.versions[0].name
+                const vB = b.versions[0].name
+                if (vA < vB) return 1
+                if (vA > vB) return -1
+                return 0
+            })
+            break
+        case "default": // db query sorts by `order`
+        case "popular": // todo
+            break
+        case "dateAsc":
+            filteredRecords = filteredRecords.sort((a, b) => {
+                const sA = a.showcase.publishedDate
+                const sB = b.showcase.publishedDate
+                if (!sA && !sB) return 0
+                if (sA && !sB) return -1
+                if (!sA && sB) return 1
+                if (sA! < sB!) return -1
+                if (sA! > sB!) return 1
+                return 0
+            })
+            break
+        case "dateDesc":
+            filteredRecords = filteredRecords.sort((a, b) => {
+                const sA = a.showcase.publishedDate
+                const sB = b.showcase.publishedDate
+                if (!sA && !sB) return 0
+                if (sA && !sB) return -1
+                if (!sA && sB) return 1
+                if (sA! < sB!) return 1
+                if (sA! > sB!) return -1
+                return 0
+            })
+            break
+        case "random":
+            const numToGet = Math.min(searchQuery.limit, filteredRecords.length)
+            const randomRecords = []
+            while (randomRecords.length < numToGet) {
+                const random = Math.floor(Math.random() * filteredRecords.length)
+                randomRecords.push(filteredRecords.splice(random, 1)[0])
+            }
+            filteredRecords = randomRecords
+            break
+    }
+    
     let processedRecords = filteredRecords.map((r) => {
         return filterProjectPreview(r)
     })

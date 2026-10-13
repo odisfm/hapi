@@ -20,7 +20,21 @@ export type ProjectSearchQuery = {
     showcase?: string,
     /** admin only **/
     approvalStatus?: SubmissionStatus,
-    published?: "published" | "unpublished"
+    published?: "published" | "unpublished",
+    orderBy?: ProjectSearchSortStrategy
+}
+
+export type ProjectSearchSortStrategy =
+    "nameAsc" | "nameDesc" | "dateAsc" | "dateDesc" | "popular" | "default" | "random"
+
+export const ProjectSearchStrategyDisplayName: Record<ProjectSearchSortStrategy, string> = {
+    nameAsc: "A-Z",
+    nameDesc: "Z-A",
+    dateAsc: "Oldest",
+    dateDesc: "Newest",
+    popular: "Popular",
+    default: "Relevance",
+    random: "Random",
 }
 
 export const LoginRequestSchema = z.object({

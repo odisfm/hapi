@@ -2,10 +2,11 @@ import {useEffect, useMemo, useState} from "react";
 import type {ProjectSearchResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL} from "../consts.ts";
 import ProjectCard from "../components/ProjectCard.tsx";
-import {FaSpinner} from "react-icons/fa";
-import {Link} from "react-router";
+import {FaArrowAltCircleRight, FaSpinner} from "react-icons/fa";
+import {useNavigate} from "react-router";
 import {HeroProjectCard} from "../components/HeroProjectCard.tsx";
 import type {ProjectPreviewType} from "@hapi/shared/types/project";
+import {Button} from "../components/generic/Button.tsx";
 
 type HomePageState = {
     projects: ProjectSearchResponse["projects"];
@@ -21,6 +22,7 @@ export default function HomePage() {
         loading: true,
         heroProjectIds: [],
     });
+    const navigate = useNavigate();
 
     useEffect(() => {
         const projectRequestController = new AbortController();
@@ -96,7 +98,7 @@ export default function HomePage() {
 
             <section className="w-full pb-12 pt-12 text-black sm:pb-40 sm:pt-20">
                 <div className="mx-auto w-full max-w-5xl">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-start justify-between">
                         <div className={`flex gap-2 items-center`}>
                             <h2
                                 className="font-copy text-2xl font-bold leading-[1.3] tracking-normal"
@@ -107,17 +109,13 @@ export default function HomePage() {
                                 <FaSpinner className={`animate-spin text-2xl`} />
                             }
                         </div>
-                        <Link
-                            to={"/search"}
-                            type="button"
-                            className={`
-                            font-copy flex cursor-pointer items-center gap-1 p-0 text-[0.8rem] 
-                            font-bold uppercase leading-[1.3] tracking-normal text-black hover:text-r-red
-                            text-right
-                            `}
+                        <Button
+                            onClick={() => navigate("/search")}
+                            color={"mid-blue"}
                         >
-                            VIEW MORE <span aria-hidden="true">→</span>
-                        </Link>
+                            VIEW MORE
+                            <FaArrowAltCircleRight />
+                        </Button>
                     </div>
                     { state.error ? (
                         <p className="mt-6" role="alert">{state.error}</p>

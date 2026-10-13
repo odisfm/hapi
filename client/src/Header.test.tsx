@@ -46,7 +46,7 @@ describe('Header', () => {
         renderHeader()
 
         expect(screen.getByRole('link', { name: 'APPLICATIONS' })).toHaveAttribute('href', '/search')
-        expect(screen.getByRole('link', { name: 'CATEGORIES' })).toHaveAttribute('href', '/#categories')
+        expect(screen.getByRole('link', { name: 'CATEGORIES' })).toHaveAttribute('href', '/categories')
     })
 
     describe('when signed out', () => {

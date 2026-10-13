@@ -19,7 +19,6 @@ export function Header() {
         if (currentLocation.pathname.startsWith("/search")) {
             return "applications"
         }
-        return null
         if (currentLocation.pathname.startsWith("/categories")) {
             return "categories"
         }
@@ -63,7 +62,7 @@ export function Header() {
                         APPLICATIONS
                     </Link>
                         <Link
-                            to="/#categories"
+                            to="/categories"
                             className={`${pillStyles} ${activeView === "categories" && activePillStyles}`}
                         >
                             CATEGORIES

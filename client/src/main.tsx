@@ -26,6 +26,7 @@ import {ProjectQueue} from "./components/ProjectQueue/ProjectQueue.tsx";
 import {UserPage} from "./components/UserPage/UserPage.tsx";
 import {CreateUserPage} from "./components/UserPage/CreateUserPage.tsx";
 import {CategoryEditor} from "./components/CategoryEditor/CategoryEditor.tsx";
+import {CategoryPage} from "./pages/CategoryPage/CategoryPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
             {
                 path: "/search",
                 element: <SearchResultsPage />
+            },
+            {
+                path: "/categories",
+                element: <CategoryPage />
             },
             {
                 path: "/protected",

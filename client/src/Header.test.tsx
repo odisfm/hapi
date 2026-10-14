@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Header } from './Header.tsx'
 import { useAuth } from './contexts/auth/useAuth.ts'
+import {headerLinks} from "./consts.ts";
 
 vi.mock('./contexts/auth/useAuth.ts', () => ({
     useAuth: vi.fn(),
@@ -42,11 +43,15 @@ describe('Header', () => {
         expect(screen.getByRole('link', { name: /hapi/i })).toHaveAttribute('href', '/')
     })
 
-    it('shows the applications and categories navigation links', () => {
+    it('shows all header links', () => {
         renderHeader()
 
-        expect(screen.getByRole('link', { name: 'APPLICATIONS' })).toHaveAttribute('href', '/search')
-        expect(screen.getByRole('link', { name: 'CATEGORIES' })).toHaveAttribute('href', '/categories')
+        for (const headerLink of headerLinks) {
+            expect(
+                screen.getByRole("link", {name: headerLink.label}))
+                .toHaveAttribute('href', headerLink.path)
+        }
+
     })
 
     describe('when signed out', () => {

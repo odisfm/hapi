@@ -1,11 +1,12 @@
 import {useParams} from "react-router";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {API_URL} from "../consts.ts";
 import type {ShowcasePublicDetailsResponse} from "@hapi/shared/types/apiResponses";
 import type {ShowcaseType} from "@hapi/shared/types/showcase";
 import Markdown from "react-markdown";
 import {FaSpinner} from "react-icons/fa";
 import ProjectCard from "../components/ProjectCard.tsx";
+import {HeroProjectCard} from "../components/HeroProjectCard.tsx";
 import {Error404} from "./Error404.tsx";
 
 export function ShowcasePage() {
@@ -39,6 +40,20 @@ export function ShowcasePage() {
             getShowcase()
         })()
     }, [getShowcase])
+
+    const showcaseProjects = showcase?.projects;
+    const featuredProjects = useMemo(() => {
+        if (!showcaseProjects || showcaseProjects.length < 4) return [];
+
+        const projectsWithHeroArt = showcaseProjects.filter((project) => project.heroArtUrl !== undefined);
+        const candidates = projectsWithHeroArt.length >= 3 ? projectsWithHeroArt : showcaseProjects;
+
+        return [...candidates]
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 3);
+    }, [showcaseProjects]);
+    const featuredProjectIdSet = new Set(featuredProjects.map((project) => project.id));
+    const remainingProjects = showcaseProjects?.filter((project) => !featuredProjectIdSet.has(project.id)) ?? [];
 
     if (!loading && !showcase) {
         return <Error404 />
@@ -82,8 +97,16 @@ export function ShowcasePage() {
 
             <h3 className={`font-bold text-xl mt-6`}>PROJECTS</h3>
 
-            <div className={`mt-6 grid grid-cols-1 md:grid-cols-3 gap-6`}>
-                {showcase.projects.map((p) => {
+            {featuredProjects.length === 3 &&
+                <div className={`mt-6 hidden grid-cols-1 gap-6 lg:grid lg:grid-cols-3`} data-testid="showcase-featured-projects">
+                    {featuredProjects.map((project) => (
+                        <HeroProjectCard key={project.id} project={project}/>
+                    ))}
+                </div>
+            }
+
+            <div className={`mt-6 grid grid-cols-1 md:grid-cols-3 gap-6`} data-testid="showcase-project-grid">
+                {remainingProjects.map((p) => {
                     return <ProjectCard name={p.name} iconUrl={p.iconUrl} slug={p.slug} subtitle={p.subtitle} />
                 })}
             </div>

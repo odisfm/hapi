@@ -20,6 +20,7 @@ export function CategoryEditor() {
         try {
             const res = await fetch(`${API_URL}/category`, {
                 method: "GET",
+                credentials: "include"
             })
             if (!res.ok) {
                 console.error(res)

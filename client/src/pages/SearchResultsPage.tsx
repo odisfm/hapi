@@ -244,12 +244,8 @@ export default function SearchResultsPage() {
                     }
                 </div>
             </div>
-            {projects.length > 4 &&
-                <>
-                    <Paginator pageCount={pageCount} activePage={pageNumber} setPage={(page) => updateQuery({page})}/>
-                    <span className={`sr-only`}>{resultNumbers[0]}-{resultNumbers[1]}</span>
-                </>
-            }
+            <Paginator pageCount={pageCount} activePage={pageNumber} setPage={(page) => updateQuery({page})}/>
+            <span className={`sr-only`}>{resultNumbers[0]}-{resultNumbers[1]}</span>
         </div>
     )
 }

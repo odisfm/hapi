@@ -1,6 +1,6 @@
 import type {CategoryType} from "@hapi/shared/types/apiResponses";
 import {Button} from "../generic/Button.tsx";
-import { FaTrash } from "react-icons/fa";
+import {FaTrash} from "react-icons/fa";
 import {useEffect, useRef, useState} from "react";
 import {FaPencil} from "react-icons/fa6";
 import {MdCancel, MdCheckCircle} from "react-icons/md";
@@ -22,16 +22,16 @@ export function CategoryItem({data, deleteFn, renameFn}: {
     }, [renaming])
 
     return (
-        <li className={`flex p-4 rounded-md bg-neutral-200`}>
-            <div className={`flex flex-col`}>
+        <li className={`flex gap-2 p-4 rounded-md bg-neutral-200`}>
+            <div className={`flex flex-col flex-1 min-w-0`}>
                 {!renaming ?
-                    <span className={`font-bold`}>{data.name}</span>
+                    <span className={`font-bold truncate`}>{data.name}</span>
                     :
                     <form
                         className={`mb-2 flex items-center gap-1`}
                         onSubmit={(e) => {
                             e.preventDefault();
-                            const formData = new FormData(e.target);
+                            const formData = new FormData(e.currentTarget);
                             const newName = formData.get("name");
                             if (!newName) return
                             renameFn(data.id, String(newName));
@@ -40,7 +40,7 @@ export function CategoryItem({data, deleteFn, renameFn}: {
                     >
                         <input
                             name={"name"}
-                            className={`rounded-md p-1 bg-neutral-300`}
+                            className={`rounded-md p-1 bg-neutral-300 flex-1 min-w-0`}
                             defaultValue={data.name}
                             ref={renameInputRef}
                         />
@@ -48,6 +48,7 @@ export function CategoryItem({data, deleteFn, renameFn}: {
                             color={"mid-blue"}
                             buttonType={"submit"}
                             ariaLabel={"submit rename"}
+                            styles={`shrink-0`}
                         >
                             <MdCheckCircle/>
                         </Button>
@@ -55,7 +56,7 @@ export function CategoryItem({data, deleteFn, renameFn}: {
                 }
                 <span className={`text-sm`}>{data.projectCount} project{data.projectCount !== 1 ? "s" : ""}</span>
             </div>
-            <div className={`flex flex-col gap-1 ml-auto`}>
+            <div className={`flex flex-col gap-1 shrink-0`}>
                 <Button
                     color={renaming ? "yellow" : "blue"}
                     variant={"compact"}
@@ -65,7 +66,7 @@ export function CategoryItem({data, deleteFn, renameFn}: {
                         setRenaming(!renaming)
                     }}
                 >
-                    {renaming ? <MdCancel /> : <FaPencil/>}
+                    {renaming ? <MdCancel/> : <FaPencil/>}
                 </Button>
                 <Button
                     color={"danger"}
@@ -74,7 +75,7 @@ export function CategoryItem({data, deleteFn, renameFn}: {
                     ariaLabel={"delete category"}
                     onClick={() => deleteFn(data.id)}
                 >
-                    <FaTrash />
+                    <FaTrash/>
                 </Button>
             </div>
         </li>

@@ -50,9 +50,9 @@ export function FilterSection({
 
     const clearButton = hasFilter &&
         <Button
-            color={"yellow"}
+            color={"red"}
             variant={"compact"}
-            styles={showTitle ? "ml-auto" : "self-start"}
+            styles={"shrink-0 whitespace-nowrap hover:!bg-r-yellow-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-r-red"}
             onClick={clearAll}
         >
             clear all
@@ -63,7 +63,10 @@ export function FilterSection({
             case "showcase":
                 return (
                     <div key={filter} className={`flex flex-col gap-1`}>
-                        <span>Showcase</span>
+                        <div className={`flex justify-between items-center`}>
+                            <span>Showcase</span>
+                            {!showTitle && clearButton}
+                        </div>
                         <ul>
                             {showcases.map((s) => {
                                 const active = searchQuery.showcase === s.id
@@ -142,7 +145,7 @@ export function FilterSection({
                     <span className={`font-bold text-black/70`}>Filter</span>
                     {clearButton}
                 </div>
-                : clearButton
+                : !filters.includes("showcase") && clearButton
             }
             {filters.map(renderFilter)}
         </nav>

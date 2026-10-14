@@ -59,7 +59,7 @@ export function CategoryPage() {
             getCategories()
             getProjects()
         })()
-    }, [getCategories]);
+    }, [getCategories, getProjects]);
 
     useEffect(() => {
         if (!document.scrollingElement) return

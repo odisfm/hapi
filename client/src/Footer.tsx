@@ -33,6 +33,7 @@ export function Footer() {
                         .slice(0, 4),
                 );
             } catch {
+                // Ignore navigation error
             }
         };
 

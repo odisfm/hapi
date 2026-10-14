@@ -15,6 +15,10 @@ function makeProject(n: number) {
     }
 }
 
+function makeProjects(count: number) {
+    return Array.from({length: count}, (_, index) => makeProject(index + 1))
+}
+
 function makeShowcase(overrides: ShowcaseOverrides = {}) {
     return {
         id: 'showcase-1',
@@ -146,6 +150,23 @@ describe('ShowcasePage', () => {
 
             expect(screen.getByRole('heading', {level: 3, name: 'PROJECTS'})).toBeInTheDocument()
             expect(screen.queryByRole('link')).not.toBeInTheDocument()
+        })
+
+        it('shows three randomly selected projects as large cards and excludes them from the grid', async () => {
+            vi.spyOn(Math, 'random').mockReturnValue(0.5)
+            await renderLoaded({projects: makeProjects(4)})
+
+            const featuredProjects = await screen.findByTestId('showcase-featured-projects')
+            expect(featuredProjects).toBeInTheDocument()
+            expect(featuredProjects.querySelectorAll('button')).toHaveLength(3)
+            expect(screen.getByTestId('showcase-project-grid').querySelectorAll('a')).toHaveLength(1)
+        })
+
+        it('does not show a large-card row with fewer than four projects', async () => {
+            await renderLoaded({projects: makeProjects(3)})
+
+            expect(screen.queryByTestId('showcase-featured-projects')).not.toBeInTheDocument()
+            expect(screen.getByTestId('showcase-project-grid').querySelectorAll('a')).toHaveLength(3)
         })
     })
 })

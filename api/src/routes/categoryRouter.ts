@@ -14,6 +14,7 @@ async function categoryNameExists(newName: string) {
 }
 
 categoryRouter.get("/", async (c) => {
+    const user = c.get("user")
     const records = await db.category.findMany({
         orderBy: {
             name: "asc"
@@ -23,20 +24,22 @@ categoryRouter.get("/", async (c) => {
                 select: {
                     projects: {
                         where: {
-                            projectVersion: {
-                                submissionStatus: "APPROVED",
-                                project: {
-                                    published: true,
-                                    showcase: {
-                                        publishedDate: { lte: new Date() },
+                            ...((!user || user.role !== "ADMIN") && {
+                                projectVersion: {
+                                    submissionStatus: "APPROVED",
+                                    project: {
+                                        published: true,
+                                        showcase: {
+                                            publishedDate: {lte: new Date()},
+                                         },
                                     },
                                 },
-                            },
+                            }),
                         },
                     },
                 },
             },
-        },
+        }
     })
 
     const categories = records.map((r) => {

@@ -136,3 +136,17 @@ export const ShowcaseGetSlugsResponseSchema = z.object({
 })
 
 export type ShowcaseGetSlugsResponse = z.infer<typeof ShowcaseGetSlugsResponseSchema>
+
+export type AnalyticsShowcaseResponse = {
+    analytics: {
+       showcase: ShowcaseListResponseItem,
+       views: number
+    }[]
+}
+
+export type AnalyticsProjectResponse = {
+    analytics: {
+        project: ProjectPreviewType,
+        views: number
+    }[]
+}

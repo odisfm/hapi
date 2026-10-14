@@ -143,6 +143,18 @@ SUPERSEDED SUPERSEDED
     String code 
     }
   
+
+  "ProjectView" {
+    String id "🗝️"
+    DateTime viewDate 
+    }
+  
+
+  "ShowcaseView" {
+    String id "🗝️"
+    DateTime viewDate 
+    }
+  
     "User" |o--|| "UserRole" : "enum:role"
     "Session" }o--|| "User" : "user"
     "Project" }o--|| "Showcase" : "showcase"
@@ -162,4 +174,6 @@ SUPERSEDED SUPERSEDED
     "ProjectSlug" }o--|| "Project" : "project"
     "ShowcaseSlug" }o--|| "Showcase" : "showcase"
     "PasswordResetRequest" }o--|| "User" : "user"
+    "ProjectView" }o--|| "Project" : "project"
+    "ShowcaseView" }o--|| "Showcase" : "showcase"
 ```

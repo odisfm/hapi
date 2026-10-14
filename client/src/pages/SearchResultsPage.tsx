@@ -19,7 +19,7 @@ import {
     useProjectSearchParams
 } from "../components/ProjectList/useProjectSearchParams.ts";
 import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
-import {FaSearch} from "react-icons/fa";
+import {FaSearch, FaSpinner} from "react-icons/fa";
 import {SearchOrderPicker} from "../components/SearchOrderPicker.tsx";
 
 /** Fewer results per page with the filter panel open, so the 2-column grid has no gap. */
@@ -176,13 +176,17 @@ export default function SearchResultsPage() {
         : "No applications match your results";
 
     return (
-        <div className={`flex w-full max-w-5xl flex-col gap-6`}>
+        <div className={`flex w-full max-w-5xl flex-col gap-6 md:px-4`}>
+            <div className={`flex items-center gap-2`}>
+                <h1 className={`font-headline font-bold text-3xl`}>Applications</h1>
+                {loading && <FaSpinner className={`animate-spin text-xl`}/>}
+            </div>
             <div>
                 {searchQuery.searchTerm &&
-                    <h1 className={`max-w-xl font-headline text-3xl font-bold leading-tight text-r-blue`}>
+                    <h2 className={`max-w-xl font-headline text-3xl font-bold leading-tight text-r-blue`}>
                         Search Results for:<br/>
                         {searchQuery.searchTerm}
-                    </h1>
+                    </h2>
                 }
                 <p className={`mt-3 text-sm text-body-text-gray`}>
                     {loading ? "Loading..." : `${searchResultInfo?.totalResults ?? 0} results found`}

@@ -27,6 +27,7 @@ import {UserPage} from "./components/UserPage/UserPage.tsx";
 import {CreateUserPage} from "./components/UserPage/CreateUserPage.tsx";
 import {CategoryEditor} from "./components/CategoryEditor/CategoryEditor.tsx";
 import {CategoryPage} from "./pages/CategoryPage/CategoryPage.tsx";
+import {ShowcaseIndexPage} from "./pages/ShowcaseIndexPage/ShowcaseIndexPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
             {
                 path: "/categories",
                 element: <CategoryPage />
+            },
+            {
+                path: "/showcase",
+                element: <ShowcaseIndexPage />
             },
             {
                 path: "/protected",

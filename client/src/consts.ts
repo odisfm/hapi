@@ -12,6 +12,7 @@ export const deviceEnumFriendly = {
 export const headerLinks = [
     { label: "Applications", path: "/search" },
     { label: "Categories", path: "/categories" },
+    { label: "Showcases", path: "/showcase" },
 ] as const
 
 export type HeaderLinkType = (typeof headerLinks)[number]

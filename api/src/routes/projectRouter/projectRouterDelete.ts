@@ -33,11 +33,16 @@ projectRouterDelete.delete("/:projectId", needsAuth, async (c) => {
             }
         }
 
-        await s3.send(new DeleteObjectsCommand({
-            Bucket: process.env.BUCKET_MEDIA,
-            Delete: {
-                Objects: [...mediaUris].map((m) => {return {Key: m}})
-            }}))
+        if (mediaUris.size) {
+            await s3.send(new DeleteObjectsCommand({
+                Bucket: process.env.BUCKET_MEDIA,
+                Delete: {
+                    Objects: [...mediaUris].map((m) => {
+                        return {Key: m}
+                    })
+                }
+            }))
+        }
 
         const iconUris = new Set<String>
         for (const v of toDelete.versions) {
@@ -45,11 +50,16 @@ projectRouterDelete.delete("/:projectId", needsAuth, async (c) => {
             iconUris.add(v.iconUrl)
         }
 
-        await s3.send(new DeleteObjectsCommand({
-            Bucket: process.env.BUCKET_ICONS,
-            Delete: {
-                Objects: [...iconUris].map((m) => {return {Key: `${m}.webp`}})
-            }}))
+        if (iconUris.size) {
+            await s3.send(new DeleteObjectsCommand({
+                Bucket: process.env.BUCKET_ICONS,
+                Delete: {
+                    Objects: [...iconUris].map((m) => {
+                        return {Key: `${m}.webp`}
+                    })
+                }
+            }))
+        }
 
         return c.json({}, 200)
     } catch (e) {

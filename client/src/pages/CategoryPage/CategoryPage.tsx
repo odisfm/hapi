@@ -56,8 +56,10 @@ export function CategoryPage() {
 
     useEffect(() => {
         (async () => {
-            getCategories()
-            getProjects()
+            await Promise.all([
+                getCategories(),
+                getProjects()
+            ])
         })()
     }, [getCategories, getProjects]);
 

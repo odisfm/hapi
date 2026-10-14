@@ -3,10 +3,11 @@ import SearchOverlay from "./components/SearchOverlay.tsx";
 import {useAuth} from "./contexts/auth/useAuth.ts";
 import {Link, useLocation} from "react-router";
 import {useMemo, useState} from "react";
+import {headerLinks, type HeaderLinkType} from "./consts.ts";
 
-type View = "applications" | "categories" | null
+type View = HeaderLinkType["path"] | null
 
-const pillStyles = `px-4 py-1`
+const pillStyles = `px-4 py-1 uppercase`
 const activePillStyles = `bg-r-red text-white rounded-2xl`
 
 export function Header() {
@@ -16,14 +17,11 @@ export function Header() {
 
 
     const activeView: View = useMemo(() => {
-        if (currentLocation.pathname.startsWith("/search")) {
-            return "applications"
-        }
-        if (currentLocation.pathname.startsWith("/categories")) {
-            return "categories"
-        }
-        return null
-    }, [currentLocation])
+        const match = headerLinks.find(link =>
+            currentLocation.pathname.startsWith(link.path)
+        )
+        return match?.path ?? null
+    }, [currentLocation.pathname])
 
     return (
         <header
@@ -55,18 +53,16 @@ export function Header() {
                     </span>
                 </Link>
                 <nav className={`hidden items-center text-md font-normal sm:flex justify-end gap-4`}>
-                    <div className={`flex items-center gap-0.5`}><Link
-                        to="/search"
-                        className={`${pillStyles} ${activeView === "applications" && activePillStyles}`}
-                    >
-                        APPLICATIONS
-                    </Link>
+                    {headerLinks.map(link => (
                         <Link
-                            to="/categories"
-                            className={`${pillStyles} ${activeView === "categories" && activePillStyles}`}
+                            key={link.path}
+                            to={link.path}
+                            className={`${pillStyles} ${activeView === link.path ? activePillStyles : ""}`}
+                            role={"link"}
                         >
-                            CATEGORIES
-                        </Link></div>
+                            {link.label}
+                        </Link>
+                    ))}
                     <button
                         type="button"
                         aria-label="Search"

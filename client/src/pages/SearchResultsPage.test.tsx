@@ -127,7 +127,7 @@ describe('SearchResultsPage', () => {
             renderPage('/search')
             await screen.findByText('2 results found')
 
-            expect(screen.queryByRole('heading', {level: 1})).not.toBeInTheDocument()
+            expect(screen.queryByRole('heading', {level: 2})).not.toBeInTheDocument()
         })
 
         it('searches with the page and categories in the address', async () => {

@@ -8,3 +8,11 @@ export const deviceEnumFriendly = {
     "AR": "Apple Vision Pro",
     "TV": "Apple TV"
 }
+
+export const headerLinks = [
+    { label: "Applications", path: "/search" },
+    { label: "Categories", path: "/categories" },
+] as const
+
+export type HeaderLinkType = (typeof headerLinks)[number]
+

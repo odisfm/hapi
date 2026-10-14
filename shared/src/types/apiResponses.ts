@@ -15,7 +15,11 @@ export type ShowcaseFeaturedResponse = {
     showcases: ShowcaseType[]
 }
 
-export type ShowcaseListResponseItem = ShowcaseGetPayload<{include: {_count: {select: { projects: true }}}}>
+export type ShowcaseListResponseItem = ShowcaseGetPayload<{
+    include: {
+        _count: {select: { projects: true }},
+        slugs: true
+    }}>
 
 export type ShowcaseListResponse = {
     showcases: ShowcaseListResponseItem[]

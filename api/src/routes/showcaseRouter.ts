@@ -13,6 +13,8 @@ import {AlterProjectSlugRequestSchema, UpdateShowcaseRequestSchema} from "@hapi/
 import {Prisma} from "@hapi/shared/prisma/client";
 import {createUuid} from "@hapi/client/src/utils/misc";
 import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
+import type {ShowcaseGetPayload, ShowcaseInclude} from "@hapi/shared/prisma/models/Showcase";
+import type {ShowcaseSlugGetPayload} from "@hapi/shared/prisma/models/ShowcaseSlug";
 
 export const showcaseRouter = createHono()
 
@@ -32,6 +34,12 @@ showcaseRouter.get("all", async (c) => {
                 _count: {
                     select: { projects: true },
                 },
+                slugs: {
+                    take: 1,
+                    orderBy: {
+                        assignedDate: "desc"
+                    }
+                }
             },
         })
         return c.json({showcases: records} satisfies ShowcaseListResponse, 200)
@@ -41,52 +49,69 @@ showcaseRouter.get("all", async (c) => {
     }
 })
 
+const getShowcaseInclusion = {
+    projects: {
+        where: {
+            published: true
+        },
+        include: {
+            showcase: true,
+            slugs: {
+                take: 1,
+                orderBy: {
+                    assignedDate: "desc"
+                }
+            },
+            versions: {
+                take: 1,
+                where: {
+                    submissionStatus: "APPROVED"
+                },
+                include: {
+                    media: {include: {media: true}},
+                    categories: {include: {category: true}}
+                }
+            }
+        }
+    }
+} satisfies ShowcaseInclude<any>
+
 showcaseRouter.get(":showcaseSlug", async (c) => {
     const slug = c.req.param("showcaseSlug").toLowerCase()
-    const record = await db.showcaseSlug.findUnique({
+    let record = await db.showcaseSlug.findUnique({
         where: {
             slug: slug,
         },
         include: {
             showcase: {
-                include: {
-                    projects: {
-                        where: {
-                          published: true
-                        },
-                        include: {
-                            showcase: true,
-                            slugs: {
-                                take: 1,
-                                orderBy: {
-                                    assignedDate: "desc"
-                                }
-                            },
-                            versions: {
-                                take: 1,
-                                where: {
-                                    submissionStatus: "APPROVED"
-                                },
-                                include: {
-                                    media: {include: {media: true}},
-                                    categories: {include: {category: true}}
-                                }
-                            }
-                        }
-                    }
-                }
+                include: getShowcaseInclusion
             }
         }
     })
 
+    let showcaseRecord: ShowcaseGetPayload<{
+        include: typeof getShowcaseInclusion
+    }>
+
     if (!record) {
-        return c.json({}, 404)
+        const recordById = await db.showcase.findUnique({
+            where: {id: slug},
+            include: getShowcaseInclusion
+        })
+        if (!recordById) {
+            return c.json({}, 404)
+        }
+        showcaseRecord = recordById
+    } else {
+        showcaseRecord = record.showcase
     }
-    if (!record.showcase.publishedDate || record.showcase.publishedDate > new Date()) {
+
+
+    if (!showcaseRecord.publishedDate || showcaseRecord.publishedDate > new Date()) {
         return c.json({}, 404)
     }
 
-    const showcase = filterShowcase(record.showcase, null)
+    const showcase = filterShowcase(showcaseRecord, null)
 
     return c.json({
         showcase
@@ -264,6 +289,7 @@ showcaseRouter.patch("/", needsAuth, async (c) => {
     let update
     try {
         update = UpdateShowcaseRequestSchema.parse(await c.req.json())
+        console.log(update)
     } catch (e) {
         console.error(e)
         return c.json({error: "Malformed input"}, 400)

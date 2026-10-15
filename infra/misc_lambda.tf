@@ -1,10 +1,19 @@
 locals {
-  transcode_in_lambda_zip = "${path.module}/lambda/transcode_in/dist/lambda.zip"
+  transcode_in_lambda_zip  = "${path.module}/lambda/transcode_in/dist/lambda.zip"
+  transcode_out_lambda_zip = "${path.module}/lambda/transcode_out/dist/lambda.zip"
+  media_cleanup_lambda_zip = "${path.module}/lambda/media_cleanup/dist/lambda.zip"
+}
+
+resource "aws_s3_object" "transcode_in_code" {
+  bucket = aws_s3_bucket.lambda_artifacts.id
+  key    = "transcode_in/${filebase64sha256(local.transcode_in_lambda_zip)}.zip"
+  source = local.transcode_in_lambda_zip
 }
 
 resource "aws_lambda_function" "transcode_in" {
   function_name    = "transcode_in-${var.environment}"
-  filename         = local.transcode_in_lambda_zip
+  s3_bucket        = aws_s3_object.transcode_in_code.bucket
+  s3_key           = aws_s3_object.transcode_in_code.key
   source_code_hash = filebase64sha256(local.transcode_in_lambda_zip)
   handler          = "lambda.handler"
   runtime          = "nodejs24.x"
@@ -14,10 +23,10 @@ resource "aws_lambda_function" "transcode_in" {
 
   environment {
     variables = {
-      ENVIRONMENT  = var.environment
-      DATABASE_URL = var.lambda_db_url
+      ENVIRONMENT   = var.environment
+      DATABASE_URL  = var.lambda_db_url
       OUTPUT_BUCKET = aws_s3_bucket.screenshots_bucket.bucket
-      ROLE_ARN = var.transcode_role_arn
+      ROLE_ARN      = var.transcode_role_arn
     }
   }
 }
@@ -28,6 +37,31 @@ resource "aws_lambda_permission" "allow_transcode_in" {
   function_name = aws_lambda_function.transcode_in.function_name
   principal     = "s3.amazonaws.com"
   source_arn    = aws_s3_bucket.screenshots_bucket.arn
+}
+
+resource "aws_s3_object" "transcode_out_code" {
+  bucket = aws_s3_bucket.lambda_artifacts.id
+  key    = "transcode_out/${filebase64sha256(local.transcode_out_lambda_zip)}.zip"
+  source = local.transcode_out_lambda_zip
+}
+
+resource "aws_lambda_function" "transcode_out" {
+  function_name    = "transcode_out-${var.environment}"
+  s3_bucket        = aws_s3_object.transcode_out_code.bucket
+  s3_key           = aws_s3_object.transcode_out_code.key
+  source_code_hash = filebase64sha256(local.transcode_out_lambda_zip)
+  handler          = "lambda.handler"
+  runtime          = "nodejs24.x"
+  role             = data.aws_iam_role.lambda_exec_role.arn
+  timeout          = 30
+  memory_size      = 512
+
+  environment {
+    variables = {
+      ENVIRONMENT  = var.environment
+      DATABASE_URL = var.lambda_db_url
+    }
+  }
 }
 
 resource "aws_lambda_permission" "allow_transcode_out" {
@@ -53,38 +87,22 @@ resource "aws_s3_bucket_notification" "transcode" {
     filter_prefix       = "transcode_out/"
   }
 
-  depends_on = [aws_lambda_permission.allow_transcode_in, aws_lambda_permission.allow_transcode_out]
+  depends_on = [
+    aws_lambda_permission.allow_transcode_in,
+    aws_lambda_permission.allow_transcode_out,
+  ]
 }
 
-locals {
-  transcode_out_lambda_zip = "${path.module}/lambda/transcode_out/dist/lambda.zip"
-}
-
-resource "aws_lambda_function" "transcode_out" {
-  function_name = "transcode_out-${var.environment}"
-  filename      = local.transcode_out_lambda_zip
-  source_code_hash = filebase64sha256(local.transcode_out_lambda_zip)
-  handler       = "lambda.handler"
-  runtime       = "nodejs24.x"
-  role          = data.aws_iam_role.lambda_exec_role.arn
-  timeout       = 30
-  memory_size   = 512
-
-  environment {
-    variables = {
-      ENVIRONMENT  = var.environment
-      DATABASE_URL = var.lambda_db_url
-    }
-  }
-}
-
-locals {
-  media_cleanup_lambda_zip = "${path.module}/lambda/media_cleanup/dist/lambda.zip"
+resource "aws_s3_object" "media_cleanup_code" {
+  bucket = aws_s3_bucket.lambda_artifacts.id
+  key    = "media_cleanup/${filebase64sha256(local.media_cleanup_lambda_zip)}.zip"
+  source = local.media_cleanup_lambda_zip
 }
 
 resource "aws_lambda_function" "media_cleanup" {
   function_name    = "media_cleanup-${var.environment}"
-  filename         = local.media_cleanup_lambda_zip
+  s3_bucket        = aws_s3_object.media_cleanup_code.bucket
+  s3_key           = aws_s3_object.media_cleanup_code.key
   source_code_hash = filebase64sha256(local.media_cleanup_lambda_zip)
   handler          = "lambda.handler"
   runtime          = "nodejs24.x"

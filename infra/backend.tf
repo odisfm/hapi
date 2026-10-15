@@ -6,9 +6,39 @@ data "aws_iam_role" "lambda_exec_role" {
   name = "lambda_exec_role"
 }
 
+resource "aws_s3_bucket" "lambda_artifacts" {
+  bucket = "lambda-artifacts-${var.environment}-${data.aws_caller_identity.current.account_id}"
+}
+
+resource "aws_s3_object" "api_code" {
+  bucket = aws_s3_bucket.lambda_artifacts.id
+  key    = "api/${filebase64sha256(local.api_lambda_zip)}.zip"
+  source = local.api_lambda_zip
+}
+
+resource "aws_s3_bucket_public_access_block" "lambda_artifacts" {
+  bucket = aws_s3_bucket.lambda_artifacts.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "lambda_artifacts" {
+  bucket = aws_s3_bucket.lambda_artifacts.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
 resource "aws_lambda_function" "api" {
   function_name    = "api-${var.environment}"
-  filename         = local.api_lambda_zip
+  s3_bucket        = aws_s3_object.api_code.bucket
+  s3_key           = aws_s3_object.api_code.key
   source_code_hash = filebase64sha256(local.api_lambda_zip)
   handler          = "lambda.handler"
   runtime          = "nodejs24.x"

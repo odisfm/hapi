@@ -37,6 +37,7 @@ model Showcase {
 
   projects Project[]
   slugs    ShowcaseSlug[]
+  views    ShowcaseView[]
 
   @@unique([name, year, semester])
 }
@@ -79,6 +80,7 @@ model Project {
   versions   ProjectVersion[]
   ownerships ProjectOwner[]
   media      ProjectMedia[]
+  views      ProjectView[]
 }
 
 model ProjectVersion {
@@ -162,6 +164,20 @@ model PasswordResetRequest {
   user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiry DateTime?
   code   String
+}
+
+model ProjectView {
+  id        String   @id @default(uuid()) @db.Uuid
+  projectId String   @db.Uuid
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  viewDate  DateTime
+}
+
+model ShowcaseView {
+  id         String   @id @default(uuid()) @db.Uuid
+  showcaseId String   @db.Uuid
+  showcase   Showcase @relation(fields: [showcaseId], references: [id], onDelete: Cascade)
+  viewDate   DateTime
 }
 
 enum MediaType {

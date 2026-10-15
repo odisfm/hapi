@@ -12,7 +12,6 @@ import {ProjectEditor} from "./components/ProjectEditor/ProjectEditor.tsx";
 import {ProjectList} from "./components/ProjectList/ProjectList.tsx";
 import {ModalProvider} from "./contexts/modal/ModalProvider.tsx";
 import {FeaturedProjectsEditor} from "./components/FeaturedProjectsEditor/FeaturedProjectsEditor.tsx";
-import {UnderConstruction} from "./components/generic/UnderConstruction.tsx";
 import {ShowcaseList} from "./components/ShowcaseEditor/ShowcaseList.tsx";
 import {ShowcaseEditor} from "./components/ShowcaseEditor/ShowcaseEditor.tsx";
 import SearchResultsPage from "./pages/SearchResultsPage.tsx";
@@ -28,6 +27,18 @@ import {CreateUserPage} from "./components/UserPage/CreateUserPage.tsx";
 import {CategoryEditor} from "./components/CategoryEditor/CategoryEditor.tsx";
 import {CategoryPage} from "./pages/CategoryPage/CategoryPage.tsx";
 import {ShowcaseIndexPage} from "./pages/ShowcaseIndexPage/ShowcaseIndexPage.tsx";
+import {AnalyticsPage} from "./components/AnalyticsPage/AnalyticsPage.tsx";
+
+const umamiUrl = import.meta.env.VITE_UMAMI_SCRIPT_URL
+const umamiId = import.meta.env.VITE_UMAMI_WEBSITE_ID
+
+if (umamiUrl && umamiId) {
+  const s = document.createElement("script")
+  s.defer = true
+  s.src = umamiUrl
+  s.setAttribute("data-website-id", umamiId)
+  document.head.appendChild(s)
+}
 
 const router = createBrowserRouter([
     {
@@ -97,7 +108,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "/dashboard/analytics",
-                        element: <UnderConstruction />
+                        element: <AnalyticsPage />
                     }
                 ]
             },

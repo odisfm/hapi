@@ -13,6 +13,9 @@ vi.mock("@hapi/shared", () => ({
         },
         projectVersion: {
             findUnique: vi.fn(),
+        },
+        projectView: {
+            create: vi.fn(),
         }
     },
 }))

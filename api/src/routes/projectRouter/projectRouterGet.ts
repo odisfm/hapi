@@ -371,6 +371,12 @@ projectRouterGet.get("/:projectSlug", async (c) => {
         }, 404)
     }
     const project = filterProject(record, userRole)
+    await db.projectView.create({
+        data: {
+            projectId: record.id,
+            viewDate: new Date().toISOString(),
+        }
+    })
     return c.json({
         project
     } satisfies ProjectDetailsResponse)

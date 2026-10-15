@@ -128,3 +128,19 @@ export const CategoryUpdateRequestSchema = z.object({
 })
 
 export type CategoryUpdateRequestType = z.infer<typeof CategoryUpdateRequestSchema>
+
+export const AnalyticsShowcaseSchema = z.object({
+    startDate: z.coerce.date().optional(),
+    endDate: z.coerce.date().optional(),
+    limit: z.number().optional(),
+})
+
+export type AnalyticsShowcaseRequestType = z.infer<typeof AnalyticsShowcaseSchema>
+
+export const AnalyticsProjectRequestSchema = z.object({
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+    limit: z.number().optional(),
+})
+
+export type AnalyticsProjectRequestType = z.infer<typeof AnalyticsProjectRequestSchema>

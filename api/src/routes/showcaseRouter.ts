@@ -113,6 +113,13 @@ showcaseRouter.get(":showcaseSlug", async (c) => {
 
     const showcase = filterShowcase(showcaseRecord, null)
 
+    await db.showcaseView.create({
+        data: {
+            showcaseId: showcase.id,
+            viewDate: new Date()
+        }
+    })
+
     return c.json({
         showcase
     } satisfies ShowcasePublicDetailsResponse, 200)

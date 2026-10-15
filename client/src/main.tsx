@@ -12,7 +12,6 @@ import {ProjectEditor} from "./components/ProjectEditor/ProjectEditor.tsx";
 import {ProjectList} from "./components/ProjectList/ProjectList.tsx";
 import {ModalProvider} from "./contexts/modal/ModalProvider.tsx";
 import {FeaturedProjectsEditor} from "./components/FeaturedProjectsEditor/FeaturedProjectsEditor.tsx";
-import {UnderConstruction} from "./components/generic/UnderConstruction.tsx";
 import {ShowcaseList} from "./components/ShowcaseEditor/ShowcaseList.tsx";
 import {ShowcaseEditor} from "./components/ShowcaseEditor/ShowcaseEditor.tsx";
 import SearchResultsPage from "./pages/SearchResultsPage.tsx";

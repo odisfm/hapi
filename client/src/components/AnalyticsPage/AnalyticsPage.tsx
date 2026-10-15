@@ -16,7 +16,7 @@ export function AnalyticsPage() {
                     rel="noreferrer"
                     className="inline-block rounded bg-[#000054] px-4 py-2 font-bold text-white hover:opacity-80"
                 >
-                    Site Analytics Dashboard
+                    Analytics Dashboard
                 </a>
             </div>
             <TopProjects />

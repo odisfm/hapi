@@ -28,6 +28,18 @@ import {CreateUserPage} from "./components/UserPage/CreateUserPage.tsx";
 import {CategoryEditor} from "./components/CategoryEditor/CategoryEditor.tsx";
 import {CategoryPage} from "./pages/CategoryPage/CategoryPage.tsx";
 import {ShowcaseIndexPage} from "./pages/ShowcaseIndexPage/ShowcaseIndexPage.tsx";
+import {AnalyticsPage} from "./components/AnalyticsPage/AnalyticsPage.tsx";
+
+const umamiUrl = import.meta.env.VITE_UMAMI_SCRIPT_URL
+const umamiId = import.meta.env.VITE_UMAMI_WEBSITE_ID
+
+if (umamiUrl && umamiId) {
+  const s = document.createElement("script")
+  s.defer = true
+  s.src = umamiUrl
+  s.setAttribute("data-website-id", umamiId)
+  document.head.appendChild(s)
+}
 
 const router = createBrowserRouter([
     {
@@ -97,7 +109,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "/dashboard/analytics",
-                        element: <UnderConstruction />
+                        element: <AnalyticsPage />
                     }
                 ]
             },

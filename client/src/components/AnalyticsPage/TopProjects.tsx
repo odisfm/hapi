@@ -67,7 +67,9 @@ export function TopProjects() {
     }, [range, customStart, customEnd, modalContext])
 
     useEffect(() => {
-        void getAnalytics()
+        (async () => {
+           getAnalytics();
+        })()
     }, [getAnalytics]);
 
     const pageCount = Math.ceil(analytics.length / PAGE_SIZE);

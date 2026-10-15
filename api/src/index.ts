@@ -13,6 +13,7 @@ import {projectRouterPost} from "./routes/projectRouter/projectRouterPost";
 import {projectRouterDelete} from "./routes/projectRouter/projectRouterDelete";
 import {projectVersionRouter} from "./routes/projectRouter/projectVersionRouter";
 import { categoryRouter } from "./routes/categoryRouter";
+import {analyticsRouter} from "./routes/analyticsRouter";
 let serverDelay = [0, 0]
 if (process.env.SERVER_DELAY) {
     const delayNum = Number(process.env.SERVER_DELAY);
@@ -51,6 +52,7 @@ app
     .route("/project", projectRouterPost)
     .route("/project", projectRouterDelete)
 app.route("/media", mediaRouter)
+app.route("/analytics", analyticsRouter)
 
 app.route("/category", categoryRouter)
 

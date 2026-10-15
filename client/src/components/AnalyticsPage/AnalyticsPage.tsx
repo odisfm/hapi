@@ -1,3 +1,5 @@
+import {TopProjects} from "./TopProjects.tsx";
+
 export function AnalyticsPage() {
     const dashboardUrl = import.meta.env.VITE_UMAMI_DASHBOARD_URL
 
@@ -6,7 +8,7 @@ export function AnalyticsPage() {
     }
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
             <div>
                 <a
                     href={dashboardUrl}
@@ -17,6 +19,7 @@ export function AnalyticsPage() {
                     Site Analytics Dashboard
                 </a>
             </div>
+            <TopProjects />
         </div>
     )
 }

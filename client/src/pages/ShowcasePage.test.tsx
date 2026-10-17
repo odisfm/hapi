@@ -57,7 +57,6 @@ describe('ShowcasePage', () => {
     beforeEach(() => {
         fetchMock.mockReset()
         vi.stubGlobal('fetch', fetchMock)
-        // the page logs the showcase it loads; keep test output clean
         vi.spyOn(console, 'log').mockImplementation(() => {})
     })
 
@@ -152,14 +151,17 @@ describe('ShowcasePage', () => {
             expect(screen.queryByRole('link')).not.toBeInTheDocument()
         })
 
-        it('shows three randomly selected projects as large cards and excludes them from the grid', async () => {
+        it('shows three randomly selected projects as large cards, and as regular cards below the lg breakpoint', async () => {
             vi.spyOn(Math, 'random').mockReturnValue(0.5)
             await renderLoaded({projects: makeProjects(4)})
 
             const featuredProjects = await screen.findByTestId('showcase-featured-projects')
             expect(featuredProjects).toBeInTheDocument()
             expect(featuredProjects.querySelectorAll('button')).toHaveLength(3)
-            expect(screen.getByTestId('showcase-project-grid').querySelectorAll('a')).toHaveLength(1)
+
+            const gridLinks = Array.from(screen.getByTestId('showcase-project-grid').querySelectorAll('a'))
+            expect(gridLinks.filter((link) => !link.closest('.lg\\:hidden'))).toHaveLength(1)
+            expect(gridLinks.filter((link) => link.closest('.lg\\:hidden'))).toHaveLength(3)
         })
 
         it('does not show a large-card row with fewer than four projects', async () => {

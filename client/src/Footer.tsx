@@ -73,12 +73,12 @@ export function Footer() {
                                 Showcases
                             </Link>
                         </h2>
-                        <ul className="mt-2 flex max-w-[220px] flex-col gap-1 leading-5">
+                        <ul className="mt-2 flex max-w-[220px] flex-col leading-5">
                             {showcases.map((showcase) => (
                                 <li key={showcase.id}>
                                     <Link
                                         to={`/showcase/${showcase.slugs.at(0)?.slug || showcase.id}`}
-                                        className="text-xs text-white hover:text-r-red focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                                        className="inline-block py-1.5 text-xs text-white hover:text-r-red focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                                     >
                                         {getShowcaseName(showcase)}
                                     </Link>

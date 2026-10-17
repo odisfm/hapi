@@ -182,12 +182,14 @@ export default function SearchResultsPage() {
                 {loading && <FaSpinner className={`animate-spin text-xl`}/>}
             </div>
             <div>
-                {searchQuery.searchTerm &&
+                {searchQuery.searchTerm ? (
                     <h2 className={`max-w-xl font-headline text-3xl font-bold leading-tight text-r-blue`}>
                         Search Results for:<br/>
                         {searchQuery.searchTerm}
                     </h2>
-                }
+                ) : (
+                    <h2 className={`sr-only`}>Search results</h2>
+                )}
                 <p className={`mt-3 text-sm text-body-text-gray`}>
                     {loading ? "Loading..." : `${searchResultInfo?.totalResults ?? 0} results found`}
                 </p>

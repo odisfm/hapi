@@ -137,6 +137,17 @@ export function ShowcasePage() {
                 className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6"
                 data-testid="showcase-project-grid"
             >
+                {featuredProjects.length === 3 &&
+                    featuredProjects.map((project) => (
+                        <div key={project.id} className="lg:hidden">
+                            <ProjectCard
+                                name={project.name}
+                                iconUrl={project.iconUrl}
+                                slug={project.slug}
+                                subtitle={project.subtitle}
+                            />
+                        </div>
+                    ))}
                 {remainingProjects.map((project) => (
                     <ProjectCard
                         key={project.id}

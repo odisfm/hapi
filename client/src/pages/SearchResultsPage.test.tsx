@@ -122,12 +122,17 @@ describe('SearchResultsPage', () => {
             expect(screen.getByRole('textbox')).toHaveValue('cats')
         })
 
-        it('shows no heading when there is no search term', async () => {
+        it('shows only a visually hidden results heading when there is no search term', async () => {
             mockApi({projects: makeProjects(2)})
             renderPage('/search')
             await screen.findByText('2 results found')
 
-            expect(screen.queryByRole('heading', {level: 2})).not.toBeInTheDocument()
+            // the visible "Search Results for: ..." heading must not appear without a term
+            expect(screen.queryByRole('heading', {name: /search results for/i})).not.toBeInTheDocument()
+            // but an h2 is still needed between the page's h1 and the project cards' h3 so heading levels aren't skipped
+            const heading = screen.getByRole('heading', {level: 2})
+            expect(heading).toHaveTextContent('Search results')
+            expect(heading).toHaveClass('sr-only')
         })
 
         it('searches with the page and categories in the address', async () => {

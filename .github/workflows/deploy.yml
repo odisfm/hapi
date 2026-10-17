@@ -111,9 +111,9 @@ jobs:
           VITE_API_URL: /api
           VITE_S3_ICON_BUCKET: ${{ steps.deploy_aws.outputs.icon_bucket_url }}
           VITE_S3_MEDIA_BUCKET: ${{ steps.deploy_aws.outputs.media_bucket_url }}
-          VITE_UMAMI_SCRIPT_URL=: ${{ secrets.UMAMI_SCRIPT_URL }}
-          VITE_UMAMI_WEBSITE_ID=: ${{ secrets.UMAMI_WEBSITE_ID }}
-          VITE_UMAMI_DASHBOARD_URL=: ${{ secrets.UMAMI_DASHBOARD_URL }}
+          VITE_UMAMI_SCRIPT_URL: ${{ secrets.UMAMI_SCRIPT_URL }}
+          VITE_UMAMI_WEBSITE_ID: ${{ secrets.UMAMI_WEBSITE_ID }}
+          VITE_UMAMI_DASHBOARD_URL: ${{ secrets.UMAMI_DASHBOARD_URL }}
         run: |
           npx vite build
 

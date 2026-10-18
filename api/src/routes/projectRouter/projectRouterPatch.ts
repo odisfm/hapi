@@ -3,6 +3,7 @@ import {needsAuth} from "../../middleware/needsAuth";
 import {UpdateProjectRequestSchema} from "@hapi/shared/types/apiRequests";
 import {db} from "@hapi/shared";
 import {Prisma} from "@hapi/shared/prisma/client";
+import {canEditProject} from "../../utils/canEditProject";
 
 export const projectRouterPatch = createHono()
 
@@ -17,6 +18,32 @@ projectRouterPatch.patch("/", needsAuth, async (c) => {
     }
     if (body.project && user.role !== "ADMIN") {
         return c.json({error: `Unauthorised to edit base project details: ${JSON.stringify(body.project)}`}, 403)
+    }
+    if (body.projectVersion) {
+        const version = await db.projectVersion.findUnique({
+            where: {id: body.projectVersion.id},
+            select: {projectId: true, submissionStatus: true}
+        })
+        if (!version) {
+            return c.json({error: "Not found"}, 404)
+        }
+        if (user.role !== "ADMIN") {
+            if (!await canEditProject(user, version.projectId)) {
+                return c.json({error: "Unauthorised"}, 403)
+            }
+            if (version.submissionStatus !== "NOT_SUBMITTED") {
+                return c.json({error: "Only versions that haven't been submitted can be edited"}, 403)
+            }
+        }
+        if (body.projectVersion.media?.length) {
+            const mediaIds = new Set(body.projectVersion.media.map((m) => m.id))
+            const ownMediaCount = await db.projectMedia.count({
+                where: {id: {in: [...mediaIds]}, projectId: version.projectId}
+            })
+            if (ownMediaCount !== mediaIds.size) {
+                return c.json({error: "Media must belong to the version's project"}, 400)
+            }
+        }
     }
 
     const transaction = await db.$transaction(async () => {

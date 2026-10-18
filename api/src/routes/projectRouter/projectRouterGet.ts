@@ -58,8 +58,7 @@ projectRouterGet.get("/featured", async (c) => {
                             include: {media: true}
                         }
                     }
-                }
-            }
+                }}
         })
         records = filterNoVersion(records)
 
@@ -157,7 +156,8 @@ projectRouterGet.get("/search", async (c) => {
                     media: {include: {media: true}},
                     categories: {include: {category: true}}
                 }
-            }
+            },
+            views: true
 
         },
         orderBy: [
@@ -257,7 +257,11 @@ projectRouterGet.get("/search", async (c) => {
             })
             break
         case "default": // db query sorts by `order`
-        case "popular": // todo
+            break
+        case "popular":
+            filteredRecords = filteredRecords.sort((a, b) => {
+                return b.views.length - a.views.length
+            })
             break
         case "dateAsc":
             filteredRecords = filteredRecords.sort((a, b) => {

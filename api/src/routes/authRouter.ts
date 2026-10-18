@@ -241,7 +241,7 @@ authRouter.post("/create/batch", needsAuth, async (c) => {
                 const plainPassword = generatePassword()
                 return {
                     name: u.name,
-                    email: u.email,
+                    email: u.email.toLowerCase(),
                     role: u.role,
                     plainPassword,
                     password: await hashPassword(plainPassword),
@@ -250,7 +250,7 @@ authRouter.post("/create/batch", needsAuth, async (c) => {
         )
 
         const existingUsers = await db.user.findMany()
-        const existingEmails = new Set(existingUsers.map((u) => u.email))
+        const existingEmails = new Set(existingUsers.map((u) => u.email.toLowerCase()))
         const newUsers = userList.filter((u) => !existingEmails.has(u.email))
 
 
@@ -303,14 +303,14 @@ authRouter.get("/me", needsAuth, (c) => {
 authRouter.post("/forgot-password", async (c) => {
     const body = await c.req.json()
     const email = body.email
-    if (!email) {
+    if (!email || typeof email !== "string") {
         return c.json({error: "Malformed data"}, 400)
     }
     try {
         let code = generateResetCode()
         code = code.toUpperCase()
         const userRecord = await db.user.findUnique({
-            where: {email: email}
+            where: {email: email.toLowerCase()}
         })
         if (!userRecord) {
             return c.json({}, 200)
@@ -351,13 +351,13 @@ authRouter.post("/forgot-password/verify", async (c) => {
     const body = await c.req.json()
     const email = body.email
     const code = body.code
-    if (!email || !code) {
+    if (!email || !code || typeof email !== "string" || typeof code !== "string") {
         return c.json({error: "Malformed input"}, 400)
     }
 
     try {
         const record = await db.user.findUnique({
-            where: {email: email},
+            where: {email: email.toLowerCase()},
             include: {
                 passwordResetRequest: {
                     where: {
@@ -435,12 +435,12 @@ authRouter.delete("/user", needsAuth, async (c) => {
     }
 
     const body = await c.req.json()
-    if (!body.email) {
+    if (!body.email || typeof body.email !== "string") {
         return c.json({error: "Malformed input"}, 400)
     }
 
     const record = await db.user.findUnique({
-        where: {email: body.email}
+        where: {email: body.email.toLowerCase()}
     })
 
     if (!record) {

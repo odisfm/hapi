@@ -1,65 +1,8 @@
 import {describe, test, expect} from "vitest";
-import {type ProjectGetPayload} from "@hapi/shared/prisma/models"
 import {filterProjectPreview, filterProject} from "./filterProject.js";
+import {makeProject} from "../../test/fixtures.js";
 
-type ProjectPayload = ProjectGetPayload<{
-    include: {
-        versions: {
-            include: {
-                categories: {include: {category: true}},
-                media: {include: {media: true}}
-            }
-        },
-        showcase: true,
-        slugs: true
-    }
-}>
-
-const mockPayload: ProjectPayload = {
-    id: "",
-    order: "a",
-    showcaseId: "",
-    published: true,
-    featured: false,
-    showcase: {
-        name: "",
-        id: "",
-        description: null,
-        year: 0,
-        semester: 0,
-        publishedDate: null
-    },
-    slugs: [
-        {
-            assignedDate: new Date(),
-            slug: "test-project",
-            projectId: "",
-        }
-    ],
-    versions: [
-        {
-            id: "",
-            projectId: "",
-            name: "",
-            submissionStatus: "APPROVED",
-            categories: [],
-            description: "",
-            subtitle: "",
-            links: [],
-            developerNames: [],
-            iconUrl: "",
-            rejectionReason: null,
-            media: [],
-            submittedAt: null,
-            createdAt: new Date(),
-            reviewedAt: null,
-            reviewerId: null,
-            heroArtUrl: null,
-
-        }
-    ],
-    canBeHero: true
-}
+const mockPayload = makeProject()
 
 describe("Project details filtering by role and context", () => {
     test("should return minimal details for preview", () => {
@@ -70,7 +13,7 @@ describe("Project details filtering by role and context", () => {
 
     test("should omit privileged information for public users", () => {
         const project: any = filterProject(mockPayload, null)
-        expect(project?.approvalStatus).toBeUndefined()
+        expect(project?.submissionStatus).toBeUndefined()
         expect(project?.rejectionReason).toBeUndefined()
     })
 

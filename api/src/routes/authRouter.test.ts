@@ -1,53 +1,32 @@
 import { describe, test, expect, vi, beforeEach } from "vitest"
 import * as z from "zod"
 
-vi.mock("@hapi/shared", () => ({
-    db: {
-        session: {
-            findUnique: vi.fn(),
-            create: vi.fn(),
-        },
-        user: {
-            findUnique: vi.fn(),
-            create: vi.fn(),
-        }
-    },
-}))
+vi.mock("@hapi/shared", () => import("../test/mockDb"))
 
 vi.mock("../helpers/sendEmail", () => ({
     sendEmail: async () => {}
 }))
 
 import { db } from "@hapi/shared"
-import type {UserGetPayload} from "@hapi/shared/prisma/models/User";
 import {hashPassword} from "../helpers/password";
 import {authRouter} from "./authRouter";
-import {LoginSuccessResponseSchema, UserDetailsSchema} from "@hapi/shared/types/apiResponses";
-import type {SessionGetPayload} from "@hapi/shared/prisma/models/Session";
+import {LoginSuccessResponseSchema} from "@hapi/shared/types/apiResponses";
 import {app} from "../index";
-import type {UserRole} from "@hapi/shared/prisma/enums";
+import {makeSession, makeUser} from "../test/fixtures";
+import {resetDb} from "../test/mockDb";
+import {loginAs} from "../test/auth";
 
 beforeEach(() => {
-    vi.clearAllMocks()
+    resetDb()
 })
 
 describe("login", () => {
     test("accepts valid credentials", async () => {
         const inputPassword = "Password1!"
         const passwordHash = await hashPassword(inputPassword)
-        vi.mocked(db.user.findUnique).mockResolvedValue({
-            email: "test@example.com",
-            password: passwordHash,
-            name: "Test User",
-            role: "ADMIN",
-            id: "test-user",
-            needsPasswordReset: false,
-
-        } as unknown as UserGetPayload<any>)
-        vi.mocked(db.session.create).mockResolvedValue({
-            id: "test-session",
-            userId: "test-user",
-        } as unknown as SessionGetPayload<any>)
+        const user = makeUser({email: "test@example.com", password: passwordHash, role: "ADMIN"})
+        vi.mocked(db.user.findUnique).mockResolvedValue(user)
+        vi.mocked(db.session.create).mockResolvedValue(makeSession({user}))
         const res = await authRouter.request("/login", {
             method: "POST",
             body: JSON.stringify({
@@ -60,14 +39,11 @@ describe("login", () => {
     })
 
     test("rejects invalid password", async () => {
-        vi.mocked(db.user.findUnique).mockResolvedValue({
+        vi.mocked(db.user.findUnique).mockResolvedValue(makeUser({
             email: "test@example.com",
             password: await hashPassword("Password2@"),
-            name: "Test User",
             role: "ADMIN",
-            id: "test-user"
-
-        } as unknown as UserGetPayload<any>)
+        }))
         const res = await authRouter.request("/login", {
             method: "POST",
             body: JSON.stringify({
@@ -95,25 +71,8 @@ describe("login", () => {
 
 describe("create new user", () => {
     test("admin user can create new user", async () => {
-        vi.mocked(db.session.findUnique).mockResolvedValue({
-            id: "admin-session",
-            userId: "admin-id",
-            expires: new Date(Date.now() + 10000),
-            user: {
-                name: "Admin User",
-                email: "a@eexample.com",
-                role: "ADMIN",
-            }
-        } as unknown as SessionGetPayload<{include: {user: true}}>)
-        vi.mocked(db.user.create).mockResolvedValue({
-            id: "new-id",
-            name: "",
-            email: "",
-            role: "ADMIN",
-            password: "",
-            needsPasswordReset: false,
-            videoTranscodeCredits: 0
-        })
+        const headers = loginAs("ADMIN")
+        vi.mocked(db.user.create).mockResolvedValue(makeUser({role: "ADMIN"}))
         const res = await app.request("/auth/create", {
             method: "POST",
             body: JSON.stringify({
@@ -121,26 +80,16 @@ describe("create new user", () => {
                 email: "b@example.com",
                 role: "ADMIN"
             }),
-            headers: {"Cookie": "sessionId=admin-session"}
+            headers,
         })
         expect(res.status).toBe(200)
     })
 
     test("student user can't create new user", async () => {
-        vi.mocked(db.session.findUnique).mockResolvedValue({
-            id: "student-session",
-            userId: "student-id",
-            expires: new Date(Date.now() + 10000),
-            user: {
-                name: "Student User",
-                email: "a@eexample.com",
-                role: "STUDENT" as UserRole, // doesn't actually exist yet
-            }
-        } as unknown as SessionGetPayload<{include: {user: true}}>)
         const res = await app.request("/auth/create", {
             method: "POST",
             body: JSON.stringify({}),
-            headers: {"Cookie": "sessionId=student-session"}
+            headers: loginAs("STUDENT"),
         })
         expect(res.status).toBe(403)
     })
@@ -148,20 +97,9 @@ describe("create new user", () => {
 
 describe("/me", () => {
     test("works", async () => {
-        vi.mocked(db.session.findUnique).mockResolvedValue({
-            id: "admin-session",
-            userId: "admin-id",
-            expires: new Date(Date.now() + 10000),
-            user: {
-                name: "Admin User",
-                email: "a@eexample.com",
-                role: "ADMIN",
-                needsPasswordReset: false
-            }
-        } as unknown as SessionGetPayload<{include: {user: true}}>)
         const res = await app.request("/auth/me", {
             method: "GET",
-            headers: {"Cookie": "sessionId=admin-session"}
+            headers: loginAs("ADMIN"),
         })
         expect(res.status).toBe(200)
         const json = await res.json()

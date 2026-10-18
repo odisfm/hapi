@@ -1,6 +1,6 @@
 import {isRouteErrorResponse, Link, useRouteError} from "react-router";
 import App from "../App.tsx";
-import {Error404} from "../pages/Error404.tsx";
+import {Error404} from "../pages/public/Error404.tsx";
 
 export function RootErrorBoundary() {
     const error = useRouteError()

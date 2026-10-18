@@ -2,7 +2,7 @@ import type {ProjectPreviewType} from "@hapi/shared/types/project";
 import {AppIcon} from "./AppIcon.tsx";
 import {Button} from "./generic/Button.tsx";
 import {useNavigate} from "react-router";
-import {MEDIA_BUCKET_URL} from "./MediaCarousel.tsx";
+import {MEDIA_BUCKET_URL} from "../pages/public/ProjectPage/MediaCarousel.tsx";
 
 type Props = {
     project: ProjectPreviewType

@@ -1,7 +1,7 @@
 import {Outlet, useLocation} from "react-router";
 import {type ReactNode} from "react";
-import {Header} from "./Header.tsx";
-import {Footer} from "./Footer.tsx";
+import {Header} from "./components/Header.tsx";
+import {Footer} from "./components/Footer.tsx";
 
 export function App({children}: {children?: ReactNode}) {
     const currentLocation = useLocation();

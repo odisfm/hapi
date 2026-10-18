@@ -4,6 +4,7 @@ import {createUuid} from "../../utils/misc.ts";
 import {Button} from "../../components/generic/Button.tsx";
 import {FaChevronCircleLeft, FaChevronCircleRight} from "react-icons/fa";
 import {IoMdCloseCircle} from "react-icons/io";
+import {useSwipeable} from "react-swipeable";
 
 type QueuedModal = ModalInteraction & {
     id: string;
@@ -21,6 +22,14 @@ type QueuedImage = {
 export function ModalProvider({ children }: { children: React.ReactNode }) {
     const [modals, setModals] = useState<QueuedModal[]>([]);
     const [image, setImage] = useState<QueuedImage | null>(null);
+    const swipeHandlers = useSwipeable({
+        onSwipedLeft: () => {
+            image?.navigation?.next?.();
+        },
+        onSwipedRight: () => {
+            image?.navigation?.previous?.();
+        }
+    })
 
     const dispatchModal = useCallback((modal: ModalInteraction) => {
         if (!modal.buttons) {
@@ -121,7 +130,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
                         >
                             <IoMdCloseCircle size={20}/>
                         </Button>
-                        <div className={`flex gap-2 items-center`}>
+                        <div className={`flex gap-2 items-center`} {...swipeHandlers}>
                             {image.navigation &&
                                 <Button
                                     color={"subtle"}

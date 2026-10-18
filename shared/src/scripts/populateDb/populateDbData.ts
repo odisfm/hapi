@@ -7,9 +7,13 @@ import type {
     ProjectVersionMedia
 } from "../../generated/prisma/client.js";
 
+import {addWeeks} from "date-fns"
+
 type NewShowcaseType = Omit<Showcase, 'id'> & {
     slug: string
 }
+
+const now = new Date()
 
 export const showcaseData: NewShowcaseType[] = [
     {
@@ -17,7 +21,7 @@ export const showcaseData: NewShowcaseType[] = [
         year: 2026,
         semester: 1,
         description: null,
-        publishedDate: new Date("2026-11-01"),
+        publishedDate: addWeeks(now, 3),
         slug: "capstone-2026-1"
     },
     {
@@ -25,7 +29,7 @@ export const showcaseData: NewShowcaseType[] = [
         year: 2025,
         semester: 2,
         description: null,
-        publishedDate: new Date("2025-07-13"),
+        publishedDate: addWeeks(now, -12),
         slug: "afp-2025-2"
     },
     {
@@ -33,7 +37,7 @@ export const showcaseData: NewShowcaseType[] = [
         year: 2026,
         semester: 1,
         description: null,
-        publishedDate: new Date("2026-06-01"),
+        publishedDate: addWeeks(now, -1),
         slug: "afp-2026-1"
     },
     {
@@ -41,7 +45,7 @@ export const showcaseData: NewShowcaseType[] = [
         year: 2026,
         semester: 0,
         description: null,
-        publishedDate: new Date("2026-11-1"),
+        publishedDate: addWeeks(now, 1),
         slug: "rmit-hackathon-2026"
     }
 ]

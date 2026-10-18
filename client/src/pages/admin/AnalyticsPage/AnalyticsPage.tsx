@@ -5,6 +5,9 @@ export function AnalyticsPage() {
 
     return (
         <div className="flex flex-col gap-6">
+            <div className={`flex items-center gap-2`}>
+                <h3 className={`font-bold text-3xl uppercase`}>Analytics</h3>
+            </div>
             <div>
                 {
                     dashboardUrl ?

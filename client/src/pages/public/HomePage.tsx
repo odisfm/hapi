@@ -73,10 +73,16 @@ export default function HomePage() {
     }, [state.projects, state.heroProjectIds])
 
     return (
-        <div className="-mt-8 w-full px-4 md:px-6 ">
-            {/*carousel*/}
-            <section className="relative left-1/2 min-h-10 w-screen -translate-x-1/2 overflow-hidden bg-r-red">
-                <div className="absolute inset-0" aria-hidden="true" />
+        <div className="-mt-8 w-full px-4 md:px-6">
+            <section
+                className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden bg-r-red
+             max-h-[50dvh] h-60 lg:h-80"
+            >
+                <img
+                    src="/cover-image.webp"
+                    alt=""
+                    className="absolute inset-0 h-full w-full object-cover object-[0%_40%] my"
+                />
             </section>
 
             <section className="w-full py-12 text-black sm:py-16">

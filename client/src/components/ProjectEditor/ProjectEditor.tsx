@@ -792,7 +792,6 @@ export function ProjectEditor() {
                                     setHasChanged={setHasChanged}
                                     setMedia={updateScreenshots}
                                     project={project}
-                                    submitProject={() => submit(project as ProjectAdminType)}
                                 />
                             }
                             {
@@ -837,6 +836,8 @@ export function ProjectEditor() {
                                     filter(m => {return m.mediaType === "VIDEO"}
                                     )}
                                     project={project as ProjectAdminType}
+                                    setProject={setProject}
+                                    setHasChanged={setHasChanged}
                                 />
                             }
                         </div>

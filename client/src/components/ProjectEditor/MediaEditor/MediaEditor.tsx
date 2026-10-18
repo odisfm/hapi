@@ -17,7 +17,6 @@ type Props = {
     setMedia: (value: ProjectMediaType[]) => void
     setHasChanged: (value: boolean) => void
     project: ProjectType,
-    submitProject: () => Promise<void>
 }
 
 type DeviceMediaList = {
@@ -81,7 +80,7 @@ function buildDeviceMediaList(media: ProjectMediaType[]): {
     return {list, changed, flatWithOrders}
 }
 
-export function MediaEditor({media, setMedia, setHasChanged, project, submitProject}: Props) {
+export function MediaEditor({media, setMedia, setHasChanged, project}: Props) {
     const uploadRef = useRef<HTMLInputElement | null>(null)
     const {list: deviceMediaList, changed, flatWithOrders} = useMemo(
         () => buildDeviceMediaList(media),
@@ -195,44 +194,24 @@ export function MediaEditor({media, setMedia, setHasChanged, project, submitProj
         }
     }
 
-    async function deleteScreenshot() {
+    async function removeScreenshot() {
         if (!activeMedia) return
         const confirm = await modalContext.dispatchModal({
-            headline: "Delete screenshot?",
-            body: "Screenshot will be deleted immediately.\nThis is not reversible.",
+            headline: "Remove screenshot?",
+            body: "The screenshot will be removed from this version when you save.",
             buttons: [
                 {id: "cancel", text: "Cancel", variant: "default"},
-                {id: "confirm", text: "Confirm", variant: "danger"},
+                {id: "confirm", text: "Remove", variant: "danger"},
             ]
         })
         if (confirm !== "confirm") {
             return
         }
-
-        let res: Response
-        try {
-            res = await fetch(`${API_URL}/media/screenshot/${activeMedia.id}`, {
-                method: "DELETE",
-                credentials: "include",
-            })
-            if (!res.ok) {
-                console.error(res)
-                throw new Error("Failed to delete")
-            }
-
-            const deleteIdx = media.indexOf(activeMedia!)
-            setMedia([...media.toSpliced(deleteIdx, 1)])
-            setActiveMedia(null)
-            await submitProject()
-
-        } catch (e) {
-            console.error(e)
-            await modalContext.dispatchModal({
-                headline: "Error deleting screenshot",
-                body: String(e),
-                buttons: [{id: "ok", text: "Ok", variant: "default"}],
-            })
-        }
+        const removeIdx = media.indexOf(activeMedia)
+        if (removeIdx === -1) return
+        setMedia(media.toSpliced(removeIdx, 1))
+        setActiveMedia(null)
+        setHasChanged(true)
     }
 
     return (
@@ -282,9 +261,9 @@ export function MediaEditor({media, setMedia, setHasChanged, project, submitProj
                             </Button>
                             <Button
                                 color={"danger"}
-                                onClick={deleteScreenshot}
+                                onClick={removeScreenshot}
                             >
-                                Delete screenshot
+                                Remove screenshot
                                 <FaTrashAlt size={15}/>
                             </Button>
                         </>

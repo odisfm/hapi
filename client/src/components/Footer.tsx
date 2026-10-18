@@ -64,7 +64,7 @@ export function Footer() {
                     </p>
                 </div>
                 {showcases.length > 0 && (
-                    <div className="md:justify-self-center">
+                    <div className="hidden sm:block md:justify-self-center">
                         <h2 className="text-base font-bold leading-tight">
                             <Link
                                 to="/showcase"

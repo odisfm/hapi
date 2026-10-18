@@ -5,6 +5,7 @@ import {createVideoUploadUrl, s3} from "../services/s3";
 import {v4 as createUuid} from "uuid"
 import sharp from 'sharp'
 import {db} from "@hapi/shared";
+import {canEditProject} from "../utils/canEditProject";
 import {CreateProjectHeroArtRequestSchema, CreateProjectMediaRequestSchema} from "@hapi/shared/types/apiRequests";
 import type {
     CreateProjectHeroArtResponse,
@@ -81,6 +82,9 @@ mediaRouter.post("/screenshot", needsAuth, async (c) => {
     } catch (e) {
         return c.json({error: "Malformed 'data' field"}, 400)
     }
+    if (!await canEditProject(c.get("user")!, data.projectId)) {
+        return c.json({error: "Unauthorised"}, 403)
+    }
 
     const arrayBuffer = await file.arrayBuffer()
     const uploadBuffer = new Uint8Array(arrayBuffer);
@@ -148,6 +152,9 @@ mediaRouter.post("/hero", needsAuth, async (c) => {
     } catch (e) {
         return c.json({error: "Malformed 'data' field"}, 400)
     }
+    if (!await canEditProject(c.get("user")!, data.projectId)) {
+        return c.json({error: "Unauthorised"}, 403)
+    }
 
     const arrayBuffer = await file.arrayBuffer()
     const uploadBuffer = new Uint8Array(arrayBuffer);
@@ -194,6 +201,9 @@ mediaRouter.post("/video", needsAuth, async(c) => {
     const projectId = body?.projectId
     if (!projectId) {
         return c.json({error: "Malformed input"}, 400)
+    }
+    if (!await canEditProject(c.get("user")!, projectId)) {
+        return c.json({error: "Unauthorised"}, 403)
     }
     try {
         const uri = createUuid()

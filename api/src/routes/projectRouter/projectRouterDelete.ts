@@ -69,6 +69,9 @@ projectRouterDelete.delete("/:projectId", needsAuth, async (c) => {
 })
 
 projectRouterDelete.delete("/id/:projectId/slug", needsAuth, async (c) => {
+    if (c.get("user")!.role !== "ADMIN") {
+        return c.json({error: "Unauthorised"}, 403)
+    }
     const projectId = c.req.param("projectId")
     let body
     try {

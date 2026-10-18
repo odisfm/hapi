@@ -187,6 +187,9 @@ showcaseRouter.get("id/:showcaseId", async (c) => {
 })
 
 showcaseRouter.get("id/:showcaseId/slug", needsAuth, async (c) => {
+    if (c.get("user")!.role !== "ADMIN") {
+        return c.json({error: "Not authorised"}, 403)
+    }
     const showcaseId = c.req.param("showcaseId")
     try {
         const record = await db.showcaseSlug.findMany({
@@ -209,6 +212,9 @@ showcaseRouter.get("id/:showcaseId/slug", needsAuth, async (c) => {
 })
 
 showcaseRouter.post("id/:showcaseId/slug", needsAuth, async (c) => {
+    if (c.get("user")!.role !== "ADMIN") {
+        return c.json({error: "Not authorised"}, 403)
+    }
     const showcaseId = c.req.param("showcaseId")
     let body
     try {
@@ -242,6 +248,9 @@ showcaseRouter.post("id/:showcaseId/slug", needsAuth, async (c) => {
 })
 
 showcaseRouter.delete("id/:showcaseId/slug", needsAuth, async (c) => {
+    if (c.get("user")!.role !== "ADMIN") {
+        return c.json({error: "Not authorised"}, 403)
+    }
     const showcaseId = c.req.param("showcaseId")
     let body
     try {
@@ -251,7 +260,7 @@ showcaseRouter.delete("id/:showcaseId/slug", needsAuth, async (c) => {
     }
     try {
         await db.showcaseSlug.delete({
-            where: {slug: body.slug.toLowerCase()}
+            where: {slug: body.slug.toLowerCase(), showcaseId}
         })
         return c.json({}, 200)
     } catch (e) {

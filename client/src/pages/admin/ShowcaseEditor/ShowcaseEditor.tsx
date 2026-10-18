@@ -153,7 +153,7 @@ export function ShowcaseEditor() {
     }
 
     return (
-        <div className={`flex flex-col w-full md:w-4/10`}>
+        <div className={`flex flex-col`}>
             <div className={`flex items-center`}>
                 <div className={`flex flex-col gap-1`}>
                     <h2 className={`font-headline text-3xl`}>{showcase.name || "Untitled showcase"}</h2>
@@ -163,8 +163,8 @@ export function ShowcaseEditor() {
                     </span>
                 </div>
             
-                <SaveButton onClick={() => {updateShowcase()}} hasChanged={hasChanged} />
             </div>
+            <SaveButton onClick={() => {updateShowcase()}} hasChanged={hasChanged} styles={`self-start mt-4`}/>
 
             <form className={`mt-6 flex flex-col gap-4 showcase-editor-form`}>
                 <div>
@@ -271,6 +271,7 @@ export function ShowcaseEditor() {
             <Button
                 color={"danger"}
                 onClick={() => {deleteShowcase()}}
+                styles={`mt-12 self-start`}
             >
                 <FaTrash />
                 <span>Delete showcase</span>

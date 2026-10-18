@@ -5,15 +5,17 @@ import {API_URL} from "../../../consts.ts";
 import {UserList} from "./UserList.tsx";
 import {Button} from "../../../components/generic/Button.tsx";
 import {useNavigate} from "react-router";
-import {FaPlus} from "react-icons/fa";
+import {FaPlus, FaSpinner} from "react-icons/fa";
 
 export function UserPage() {
+    const [loading, setLoading] = useState(false);
     const [userList, setUserList] = useState<UserDetails[]>([]);
     const modalContext = useModal();
     const navigate = useNavigate();
 
     const getUsers = useCallback(async () => {
         try {
+            setLoading(true);
             const res = await fetch(`${API_URL}/auth/users`, {
                 credentials: "include"
             })
@@ -29,6 +31,8 @@ export function UserPage() {
                 headline: "Error",
                 body: String(e)
             })
+        } finally {
+            setLoading(false);
         }
     }, [modalContext])
 
@@ -85,7 +89,10 @@ export function UserPage() {
     return (
         <div className={`flex flex-col gap-4`}>
             <div className={`flex items-center`}>
-                <h3 className={`font-bold text-3xl uppercase`}>Users</h3>
+                <div className={`flex items-center gap-2`}>
+                    <h3 className={`font-bold text-3xl uppercase`}>Users</h3>
+                    {loading && <FaSpinner className={`animate-spin`} /> }
+                </div>
                 <Button
                     color={"red"}
                     styles={`ml-auto`}
@@ -95,8 +102,12 @@ export function UserPage() {
                     Create user
                 </Button>
             </div>
-            <UserList users={adminUsers} heading={"Admins"} deleteUser={deleteUser}/>
-            <UserList users={studentUsers} heading={"Students"} deleteUser={deleteUser}/>
+            {!loading &&
+                <>
+                    <UserList users={adminUsers} heading={"Admins"} deleteUser={deleteUser}/>
+                    <UserList users={studentUsers} heading={"Students"} deleteUser={deleteUser}/>
+                </>
+            }
         </div>
     )
 }

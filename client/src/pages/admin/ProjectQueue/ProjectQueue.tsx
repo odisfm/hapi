@@ -4,13 +4,16 @@ import {useModal} from "../../../contexts/modal/useModal.ts";
 import {API_URL} from "../../../consts.ts";
 import type {ProjectVersionsSearchResponse} from "@hapi/shared/types/apiResponses";
 import {ProjectListItem} from "./ProjectListItem.tsx";
+import {FaSpinner} from "react-icons/fa";
 
 export function ProjectQueue() {
     const modalContext = useModal();
+    const [loading, setLoading] = useState(false);
     const [projectQueue, setProjectQueue] = useState<ProjectVersionSummaryType[]>([])
 
     const getQueue = useCallback(async () => {
         try {
+            setLoading(true);
             const res = await fetch(`${API_URL}/project/versions`, {
                 credentials: "include"
             })
@@ -26,6 +29,8 @@ export function ProjectQueue() {
                 headline: "Failed to get queue",
                 body: String(e)
             })
+        } finally {
+            setLoading(false);
         }
     }, [modalContext])
 
@@ -36,12 +41,15 @@ export function ProjectQueue() {
     }, [getQueue])
 
     return (
-        <>
-            <h3 className={`font-bold text-3xl uppercase mb-6`}>Project queue</h3>
-            {projectQueue.length === 0 && (
+        <div className={`flex flex-col gap-2`}>
+            <div className={`flex items-center gap-2 w-full`}>
+                <h3 className={`font-bold text-3xl uppercase`}>Project queue</h3>
+                {loading && <FaSpinner className={`animate-spin`}/> }
+            </div>
+            {!loading && projectQueue.length === 0 && (
                 <span className={`font-bold`}>No projects awaiting review</span>
             )}
-            <ul className={`flex flex-col gap-2`}>
+            <ul className={`flex flex-col gap-2 mt-6`}>
                 {projectQueue.map((item) => {
                         return (
                             <ProjectListItem key={item.projectId} summary={item} />
@@ -49,6 +57,6 @@ export function ProjectQueue() {
                     }
                 )}
             </ul>
-        </>
+        </div>
     )
 }

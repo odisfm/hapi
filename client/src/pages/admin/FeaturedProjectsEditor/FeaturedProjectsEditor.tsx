@@ -147,16 +147,18 @@ export function FeaturedProjectsEditor() {
     return (
         <div className={`flex flex-col gap-2 items-start`}>
 
-            <div className={`flex items-center gap-2 w-full`}>
-                <h3
-                    className={`font-bold text-3xl`}
-                >
-                    FEATURED PROJECTS
-                </h3>
-                {loading && <FaSpinner className={`animate-spin`}/>}
+            <div className={`flex flex-col gap-2 items-start`}>
+                <div className={`flex items-center gap-2`}>
+                    <h3
+                        className={`font-bold text-3xl`}
+                    >
+                        FEATURED PROJECTS
+                    </h3>
+                    {loading && <FaSpinner className={`animate-spin`}/>}
+                </div>
                 <SaveButton
                     onClick={() => {batchUpdateProjects()}} hasChanged={alteredProjects.length > 0}
-                    styles={`ml-auto`}
+                    styles={``}
                 />
             </div>
             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 self-center isolate md:min-w-250">

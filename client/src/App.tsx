@@ -23,10 +23,16 @@ export function App({children}: {children?: ReactNode}) {
             <div>
                 <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} />
                 <main className={`
-                h-full w-full flex flex-col items-center px-4 pb-12 pt-8 bg-neutral-100
+                h-full w-full flex flex-col items-center 
+                bg-neutral-100
                 `}>
-                    <Outlet/>
-                    {children}
+                    <div className={`
+                        max-w-[1000px] w-full md:w-4/5
+                        px-4 pb-12 pt-8 
+                    `}>
+                        <Outlet/>
+                        {children}
+                    </div>
                 </main>
             </div>
             {!isAdminPage &&

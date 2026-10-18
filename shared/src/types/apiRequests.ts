@@ -132,7 +132,7 @@ export type CategoryUpdateRequestType = z.infer<typeof CategoryUpdateRequestSche
 export const AnalyticsShowcaseSchema = z.object({
     startDate: z.coerce.date().optional(),
     endDate: z.coerce.date().optional(),
-    limit: z.number().optional(),
+    limit: z.coerce.number().int().positive().optional(),
 })
 
 export type AnalyticsShowcaseRequestType = z.infer<typeof AnalyticsShowcaseSchema>
@@ -140,7 +140,7 @@ export type AnalyticsShowcaseRequestType = z.infer<typeof AnalyticsShowcaseSchem
 export const AnalyticsProjectRequestSchema = z.object({
     startDate: z.string().optional(),
     endDate: z.string().optional(),
-    limit: z.number().optional(),
+    limit: z.coerce.number().int().positive().optional(),
 })
 
 export type AnalyticsProjectRequestType = z.infer<typeof AnalyticsProjectRequestSchema>

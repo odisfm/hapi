@@ -75,7 +75,7 @@ export default function HomePage() {
     return (
         <div className="-mt-8 w-full px-4 md:px-6">
             <section
-                className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden bg-r-red
+                className="isolate relative left-1/2 w-[100dvw] -translate-x-1/2 overflow-hidden bg-r-red
              max-h-[50dvh] h-60 lg:h-80"
             >
                 <img
@@ -136,7 +136,7 @@ export default function HomePage() {
                                     <HeroProjectCard key={project.id} project={project}/>
                                 ))}
                             </div>
-                            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {projects.map((project) => (
                                     <ProjectCard
                                         key={project.id}

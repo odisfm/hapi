@@ -69,7 +69,7 @@ export function CategoryPage() {
     }, []);
 
     return (
-        <div className={`flex flex-col gap-4 items-start w-full max-w-5xl md:px-4`}>
+        <div className={`flex flex-col gap-4 items-start`}>
             <div className={`flex items-center gap-2`}>
                 <h1 className={`font-headline font-bold text-3xl`}>Categories</h1>
                 {loadingCategories && <FaSpinner className={`animate-spin text-xl`} />}

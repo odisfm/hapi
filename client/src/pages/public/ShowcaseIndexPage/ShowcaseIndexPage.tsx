@@ -48,7 +48,7 @@ export function ShowcaseIndexPage() {
     console.log({showcases})
     
     return (
-        <div className={`flex flex-col gap-4 w-full max-w-5xl md:px-4`}>
+        <div className={`flex flex-col gap-4`}>
             <div className={`flex items-center gap-2`}>
                 <h1 className={`text-3xl font-headline font-bold`}>Showcases</h1>
                 {loading && <FaSpinner className={`animate-spin text-xl`} />}

@@ -75,11 +75,13 @@ export function ShowcasePage() {
     }
 
     if (loading || !showcase) {
-        return <FaSpinner size={30} className="animate-spin"/>;
+        return <div className={`w-full flex justify-center`}>
+            <FaSpinner className={`text-[5rem] mt-20 animate-spin self-center`}/>
+        </div>;
     }
 
     return (
-        <div className="flex flex-col p-4 md:p-12 w-full lg:w-4/5">
+        <div className="flex flex-col">
             <div
                 className={`
                     ${showcase.description ? "grid" : ""}

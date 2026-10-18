@@ -176,7 +176,7 @@ export default function SearchResultsPage() {
         : "No applications match your results";
 
     return (
-        <div className={`flex w-full max-w-5xl flex-col gap-6 md:px-4`}>
+        <div className={`flex flex-col gap-6`}>
             <div className={`flex items-center gap-2`}>
                 <h1 className={`font-headline font-bold text-3xl`}>Applications</h1>
                 {loading && <FaSpinner className={`animate-spin text-xl`}/>}

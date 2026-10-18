@@ -269,7 +269,9 @@ export default function ProjectPage() {
     }, [state.project?.categories])
 
     if (state.loading) {
-        return <FaSpinner className={`text-[5rem] mt-20 animate-spin`}/>;
+        return <div className={`w-full flex justify-center`}>
+            <FaSpinner className={`text-[5rem] mt-20 animate-spin self-center`}/>
+        </div>;
     }
 
     if (state.error) {
@@ -331,7 +333,7 @@ export default function ProjectPage() {
     const developerLabel = project.developers.length === 1 ? "Developer" : "Developers";
 
     return (
-        <article className="w-full max-w-5xl font-copy">
+        <article className="font-copy">
             <section className="rounded-2xl bg-neutral-200 p-4 text-black sm:p-5">
                 <div className="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_auto] md:items-center md:gap-8 lg:gap-12">
                     <div className="flex min-w-0 items-center gap-4">

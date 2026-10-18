@@ -13,7 +13,6 @@ export function SaveButton({onClick, hasChanged, styles}: {
             disabled={!hasChanged}
             color={"yellow"}
             styles={`
-                ml-auto 
                 ${!hasChanged && `!bg-lime-600 text-white`} ${styles} `}
         >
             {hasChanged ? <FaFloppyDisk/> : <></>}

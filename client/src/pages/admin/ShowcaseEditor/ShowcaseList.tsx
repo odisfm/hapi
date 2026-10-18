@@ -41,10 +41,12 @@ export function ShowcaseList() {
     }, [getShowcases]);
 
     return (
-        <div className={`flex flex-col gap-2 w-full`}>
-            <div className={`w-full flex items-center gap-2`}>
-                <h2 className={`font-bold text-3xl`}>SHOWCASES</h2>
-                {loading && <FaSpinner className={`animate-spin`}/>}
+        <div className={`flex flex-col gap-2`}>
+            <div className={`w-full flex items-start gap-2`}>
+                <div className={`flex items-center gap-2`}>
+                    <h2 className={`font-bold text-3xl`}>SHOWCASES</h2>
+                    {loading && <FaSpinner className={`animate-spin`}/>}
+                </div>
                 <Link to={`/dashboard/showcase/new`} className={`
                 ml-auto rounded-lg bg-r-red hover:bg-r-yellow-500 text-white hover:text-black transition-colors px-4 py-2 cursor-pointer
                 font-bold flex items-center gap-2 mb-4

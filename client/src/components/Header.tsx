@@ -4,13 +4,18 @@ import {useAuth} from "../contexts/auth/useAuth.ts";
 import {Link, useLocation} from "react-router";
 import {useMemo, useState} from "react";
 import {headerLinks, type HeaderLinkType} from "../consts.ts";
+import {Button} from "./generic/Button.tsx";
+import {GiHamburgerMenu} from "react-icons/gi";
 
 type View = HeaderLinkType["path"] | null
 
 const pillStyles = `px-4 py-1 uppercase`
 const activePillStyles = `bg-r-red text-white rounded-2xl`
 
-export function Header() {
+export function Header({sidebarVisible, setSidebarVisible}: {
+    sidebarVisible: boolean,
+    setSidebarVisible: (visible: boolean) => void
+}) {
     const authenticationContext = useAuth()
     const [searchOpen, setSearchOpen] = useState(false);
     const currentLocation = useLocation();
@@ -72,6 +77,13 @@ export function Header() {
                         <MdSearch />
                     </button>
                 </nav>
+                <Button
+                    color={"subtle"}
+                    styles={`visible sm:hidden`}
+                    onClick={() => setSidebarVisible(!sidebarVisible)}
+                >
+                    <GiHamburgerMenu className={`${sidebarVisible && `rotate-90`} text-3xl`}/>
+                </Button>
             </div>
             {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
         </header>

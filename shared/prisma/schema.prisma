@@ -121,6 +121,7 @@ model ProjectMedia {
   mediaUrl          String                @unique
   mediaType         MediaType
   status            MediaStatus
+  createdAt         DateTime              @default(now()) /// unlinked media is kept for a grace period, as it may not be saved to a version yet
   versionInclusions ProjectVersionMedia[]
 }
 

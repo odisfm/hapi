@@ -11,12 +11,15 @@ const s3 = new S3Client();
 const IMAGE_EXTENSION = ".webp";
 const VIDEO_EXTENSION = ".webm";
 const DELETE_BATCH_SIZE = 1000; // S3 DeleteObjects max per request
+const GRACE_PERIOD_MS = 24 * 60 * 60 * 1000; // new uploads may not be saved to a version yet
+
+type StoredObject = {key: string, lastModified?: Date};
 
 const stripExtension = (key: string) =>
     key.replace(IMAGE_EXTENSION, "").replace(VIDEO_EXTENSION, "");
 
-const listAllKeys = async (bucket: string): Promise<string[]> => {
-    const keys: string[] = [];
+const listAllObjects = async (bucket: string): Promise<StoredObject[]> => {
+    const objects: StoredObject[] = [];
     let continuationToken: string | undefined;
 
     do {
@@ -28,13 +31,13 @@ const listAllKeys = async (bucket: string): Promise<string[]> => {
         const response = await s3.send(new ListObjectsV2Command(input));
 
         for (const object of response.Contents ?? []) {
-            if (object.Key) keys.push(object.Key);
+            if (object.Key) objects.push({key: object.Key, lastModified: object.LastModified});
         }
 
         continuationToken = response.IsTruncated ? response.NextContinuationToken : undefined;
     } while (continuationToken);
 
-    return keys;
+    return objects;
 };
 
 const deleteKeys = async (bucket: string, keys: string[]): Promise<void> => {
@@ -65,8 +68,13 @@ export const handler = async function() {
         throw new Error("BUCKET_MEDIA is not set");
     }
 
-    const iconBucketKeys = await listAllKeys(iconBucket);
-    const mediaBucketKeys = await listAllKeys(mediaBucket);
+    const cutoff = new Date(Date.now() - GRACE_PERIOD_MS);
+    const deletable = (objects: StoredObject[], inUse: Set<string>) => objects
+        .filter((o) => o.lastModified && o.lastModified < cutoff && !inUse.has(stripExtension(o.key)))
+        .map((o) => o.key);
+
+    const iconBucketObjects = await listAllObjects(iconBucket);
+    const mediaBucketObjects = await listAllObjects(mediaBucket);
 
     const versionRecords = await db.projectVersion.findMany({
         include: {
@@ -83,7 +91,7 @@ export const handler = async function() {
         throw new Error("No in-use icons found in DB; aborting to avoid deleting every object.");
     }
 
-    const iconKeys = iconBucketKeys.filter((key) => !inUseIcons.has(stripExtension(key)));
+    const iconKeys = deletable(iconBucketObjects, inUseIcons);
 
     await deleteKeys(iconBucket, iconKeys);
 
@@ -101,14 +109,19 @@ export const handler = async function() {
         throw new Error("No in-use media found in DB; aborting to avoid deleting every object.");
     }
 
-    const mediaKeys = mediaBucketKeys.filter((key) => !inUseMedia.has(stripExtension(key)));
+    const mediaKeys = deletable(mediaBucketObjects, inUseMedia);
 
     await deleteKeys(mediaBucket, mediaKeys)
 
+    const deletedMediaRecords = await db.projectMedia.deleteMany({
+        where: {versionInclusions: {none: {}}, createdAt: {lt: cutoff}}
+    })
+
     return {
         deletedIcons: iconKeys.length,
-        keptIcons: iconBucketKeys.length - iconKeys.length,
+        keptIcons: iconBucketObjects.length - iconKeys.length,
         deletedMedia: mediaKeys.length,
-        keptMedia: mediaBucketKeys.length - mediaKeys.length,
+        keptMedia: mediaBucketObjects.length - mediaKeys.length,
+        deletedMediaRecords: deletedMediaRecords.count,
     };
 }

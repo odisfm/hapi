@@ -189,17 +189,6 @@ mediaRouter.post("/hero", needsAuth, async (c) => {
     }
 })
 
-mediaRouter.delete("/screenshot/:mediaId", needsAuth, async (c) => {
-    const mediaId = c.req.param("mediaId")
-    try {
-        await db.projectMedia.delete({where: {id: mediaId}})
-        return c.json({}, 200)
-    } catch (e) {
-        console.error(e)
-        return c.json({error: "Internal server error"}, 500)
-    }
-})
-
 mediaRouter.post("/video", needsAuth, async(c) => {
     const body = await c.req.json()
     const projectId = body?.projectId
@@ -213,32 +202,17 @@ mediaRouter.post("/video", needsAuth, async(c) => {
                 mediaUrl: uri,
                 status: "PENDING",
                 projectId: projectId,
-                deviceType: "PHONE",
                 mediaType: "VIDEO",
-                order: ""
             }
         })
 
         const presignedUrl = await createVideoUploadUrl(uri)
 
         return c.json({
-            presignedUrl
+            presignedUrl,
+            projectMedia: record,
         } satisfies CreateProjectVideoResponse, 200)
 
-    } catch (e) {
-        console.error(e)
-        return c.json({error: "Internal server error"}, 500)
-    }
-})
-
-mediaRouter.delete("/video/:mediaId", needsAuth, async(c) => {
-    try {
-        const mediaId = c.req.param("mediaId")
-        await db.projectMedia.delete({
-            where: {mediaType: "VIDEO", id: mediaId}
-        })
-
-        return c.json({}, 200)
     } catch (e) {
         console.error(e)
         return c.json({error: "Internal server error"}, 500)

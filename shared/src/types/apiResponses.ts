@@ -103,6 +103,7 @@ export type CreateProjectMediaResponse = {
 
 export type CreateProjectVideoResponse = {
     presignedUrl: string
+    projectMedia: ProjectMediaModel
 }
 
 export type CreateProjectHeroArtResponse = {

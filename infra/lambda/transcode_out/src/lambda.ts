@@ -1,5 +1,5 @@
 import type { S3Event } from "aws-lambda";
-import {S3Client, CopyObjectCommand, DeleteObjectCommand, DeleteObjectsCommand} from "@aws-sdk/client-s3"
+import {S3Client, CopyObjectCommand, DeleteObjectCommand} from "@aws-sdk/client-s3"
 import {db} from "@hapi/shared/db"
 
 const s3 = new S3Client()
@@ -29,35 +29,7 @@ export const handler = async (event: S3Event) => {
     }));
     await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
 
-
-    const deleteRecords = await db.projectMedia.findMany({
-        where: {
-            mediaUrl: {
-                not: uri
-            },
-            projectId: record.projectId,
-            mediaType: "VIDEO"
-        }
-    })
-
-    await db.$transaction([
-        db.projectMedia.update({ where: { mediaUrl: uri }, data: { status: "AVAILABLE" } }),
-        db.projectMedia.deleteMany({
-            where: { projectId: record.projectId, mediaType: "VIDEO", mediaUrl: { not: uri } },
-        }),
-    ]);
-
-    if (deleteRecords.length > 0) {
-        await s3.send(new DeleteObjectsCommand({
-            Bucket: bucket,
-            Delete: {
-                Objects: deleteRecords.map((r) => {
-                    return {
-                        Key: r.mediaUrl
-                    }
-                })
-            }
-        }))
-    }
-
+    // Videos this replaces stay linked to other versions (e.g. the live one) until those change;
+    // once unlinked, media_cleanup deletes them
+    await db.projectMedia.update({ where: { mediaUrl: uri }, data: { status: "AVAILABLE" } });
 }

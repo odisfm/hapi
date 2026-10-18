@@ -11,9 +11,11 @@ import {Button} from "../generic/Button.tsx";
 type Props = {
     media: ProjectMediaType[]
     project: ProjectAdminType
+    setProject: (newProject: ProjectAdminType) => void
+    setHasChanged: (value: boolean) => void
 }
 
-export function VideoEditor({media, project}: Props) {
+export function VideoEditor({media, project, setProject, setHasChanged}: Props) {
     const [videoUploading, setVideoUploading] = useState(false);
     const modalContext = useModal()
     const videoPickerRef = useRef<HTMLInputElement>(null);
@@ -39,40 +41,27 @@ export function VideoEditor({media, project}: Props) {
         }
     }, [media])
 
-    const deleteVideo = useCallback(async (uri: string, confirm: boolean) => {
+    const removeVideo = useCallback(async (uri: string, confirm: boolean) => {
         if (confirm) {
             const confirmation = await modalContext.dispatchModal({
-                headline: "Delete video",
-                body: "Video will be deleted immediately and be unrecoverable",
-                buttons: [{id: "cancel", text: "Cancel", variant: "default"}, {id: "confirm", text: "Delete", variant: "danger"}],
+                headline: "Remove video?",
+                body: "The video will be removed from this version when you save.",
+                buttons: [{id: "cancel", text: "Cancel", variant: "default"}, {id: "confirm", text: "Remove", variant: "danger"}],
             })
             if (confirmation !== "confirm") return
         }
-        let res: Response
-        try {
-            res = await fetch(`${API_URL}/media/video/${uri}`, {
-                credentials: "include",
-                method: "DELETE"
-            })
-            if (!res.ok) {
-                throw new Error(res.statusText)
-            }
-            window.location.reload()
-        } catch (e) {
-            console.error(e)
-            await modalContext.dispatchModal({
-                headline: "Failed to delete video",
-                body: String(e),
-                buttons: [{id: "ok", text: "Ok", variant: "default"}]
-            })
-        }
-    }, [modalContext])
+        const removeIdx = project.media.findIndex((m) => m.uri === uri)
+        if (removeIdx === -1) return
+        setProject({...project, media: project.media.toSpliced(removeIdx, 1)})
+        setHasChanged(true)
+    }, [modalContext, project, setProject, setHasChanged])
 
     const uploadVideo = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return
         const file = e.target.files[0]
         let res1: Response
         let uploadUrl: string | null = null
+        let video: CreateProjectVideoResponse["projectMedia"]
         try {
             res1 = await fetch(`${API_URL}/media/video`, {
                 credentials: "include",
@@ -86,6 +75,7 @@ export function VideoEditor({media, project}: Props) {
             }
             const json: CreateProjectVideoResponse = await res1.json()
             uploadUrl = json.presignedUrl
+            video = json.projectMedia
         } catch (e) {
             console.error(e)
             return await modalContext.dispatchModal({
@@ -116,15 +106,23 @@ export function VideoEditor({media, project}: Props) {
             })
         } finally {
             setVideoUploading(false)
-            window.location.reload()
         }
 
-    }, [modalContext, project.id])
+        // A version has one video, so the new upload replaces any other in this version
+        setProject({
+            ...project,
+            media: [
+                ...project.media.filter((m) => m.mediaType !== "VIDEO"),
+                {id: video.id, uri: video.mediaUrl, mediaType: "VIDEO", deviceType: "PHONE", order: "", status: video.status},
+            ],
+        })
+        setHasChanged(true)
+    }, [modalContext, project, setProject, setHasChanged])
 
     return (
         <div className={`flex flex-col gap-4`}>
             {pendingUrls.length > 0 &&
-            <p className={`p-4 rounded-md bg-r-yellow-500 text-black`}>A video is processing. Refresh this page in a few minutes.</p>
+            <p className={`p-4 rounded-md bg-r-yellow-500 text-black`}>A video is processing. Save your changes, then refresh this page in a few minutes.</p>
             }
             {failedUrls.length > 0 &&
                 <ul>
@@ -133,7 +131,7 @@ export function VideoEditor({media, project}: Props) {
                             <span className={`bg-red-800 p-2 text-white rounded-md mb-2`}>Video upload failed! Check the video file is correct. id: {url}</span>
                             <button
                                 className={`ml-auto px-2 py-1 rounded-md cursor-pointer bg-neutral-500`}
-                                onClick={() => deleteVideo(url, false)}
+                                onClick={() => removeVideo(url, false)}
                             >
                                 Dismiss
                             </button>
@@ -166,10 +164,10 @@ export function VideoEditor({media, project}: Props) {
                     <Button
                         color={"danger"}
                         onClick={() => {
-                            deleteVideo(currentVideoUrl, true)
+                            removeVideo(currentVideoUrl, true)
                         }}
                     >
-                        <FaTrash/><span>Delete video</span>
+                        <FaTrash/><span>Remove video</span>
                     </Button>
                 }
             </div>

@@ -45,7 +45,7 @@ export default function SearchResultsPage() {
     const [showcases, setShowcases] = useState<Showcase[]>([]);
     // start open when arriving with filters already in the URL, so they're visible
     const [filtersOpen, setFiltersOpen] = useState<boolean>(() => Boolean(urlQuery.categoryNames || urlQuery.showcase));
-    const [sortStrategy, setSortStrategy] = useState<ProjectSearchSortStrategy>("default")
+    const [sortStrategy, setSortStrategy] = useState<ProjectSearchSortStrategy>(urlQuery.orderBy || "default")
     const anchorIndexRef = useRef<number>(0);
     // a page/limit pair that only exists for a render while a toggle's page change reaches the URL
     const skipQueryRef = useRef<{page: number, limit: number} | null>(null);

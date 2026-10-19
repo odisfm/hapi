@@ -42,8 +42,11 @@ describe("GET /project", async () => {
         vi.mocked(db.projectSlug.findUnique).mockResolvedValue(makeProjectSlug({
             project: makeProject({slug: "my-cool-app", versionName: "Cool game app"}),
         }))
-        vi.mocked(db.projectView.create).mockResolvedValue({id: "view", projectId: "", viewDate: new Date()})
-        const res = await projectRouterGet.request("/my-cool-app")
+        vi.mocked(db.projectView.findFirst).mockResolvedValue(null)
+        vi.mocked(db.projectView.create).mockResolvedValue({id: "view", projectId: "", viewDate: new Date(), ipAddress: "0.0.0.0"})
+        const res = await projectRouterGet.request("/my-cool-app" , {}, {
+            incoming: {socket: {remoteAddress: "0.0.0.0"}}
+        })
         const json = await res.json() as ProjectDetailsResponse
         expect(json.project).toBeDefined()
         expect(json.project.slug).toEqual("my-cool-app")
@@ -70,8 +73,11 @@ describe("GET /project", async () => {
         vi.mocked(db.projectSlug.findUnique).mockResolvedValue(makeProjectSlug({
             project: makeProject({showcase: makeShowcase({publishedDate: inFuture()})}),
         }))
-        vi.mocked(db.projectView.create).mockResolvedValue({id: "view", projectId: "", viewDate: new Date()})
-        const res = await app.request("/project/test-app", {headers: loginAs("ADMIN")})
+        vi.mocked(db.projectView.findFirst).mockResolvedValue(null)
+        vi.mocked(db.projectView.create).mockResolvedValue({id: "view", projectId: "", viewDate: new Date(), ipAddress: "0.0.0.0"})
+        const res = await app.request("/project/test-app", {headers: loginAs("ADMIN")}, {
+            incoming: {socket: {remoteAddress: "0.0.0.0"}}
+        })
         expect(res.status).toBe(200)
     })
 })
@@ -359,11 +365,14 @@ describe("GET /project/:projectSlug", () => {
     test("looks up the slug and records a view", async () => {
         const project = makeProject()
         vi.mocked(db.projectSlug.findUnique).mockResolvedValue(makeProjectSlug({project}))
-        vi.mocked(db.projectView.create).mockResolvedValue({id: "view", projectId: "", viewDate: new Date()})
-        const res = await app.request("/project/Test-App")
+        vi.mocked(db.projectView.findFirst).mockResolvedValue(null)
+        vi.mocked(db.projectView.create).mockResolvedValue({id: "view", projectId: project.id, viewDate: new Date(), ipAddress: "0.0.0.0"})
+        const res = await app.request("/project/Test-App", {}, {
+            incoming: {socket: {remoteAddress: "0.0.0.0"}}
+        })
         expect(res.status).toBe(200)
         expect(db.projectSlug.findUnique).toHaveBeenCalledWith(expect.objectContaining({where: {slug: "test-app"}}))
-        expect(db.projectView.create).toHaveBeenCalledWith({data: {projectId: project.id, viewDate: expect.any(String)}})
+        expect(db.projectView.create).toHaveBeenCalledWith({data: {projectId: project.id, viewDate: expect.any(String), ipAddress: "0.0.0.0"}})
     })
 })
 

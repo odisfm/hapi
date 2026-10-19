@@ -148,12 +148,14 @@ SUPERSEDED SUPERSEDED
   "ProjectView" {
     String id "🗝️"
     DateTime viewDate 
+    String ipAddress 
     }
   
 
   "ShowcaseView" {
     String id "🗝️"
     DateTime viewDate 
+    String ipAddress 
     }
   
     "User" |o--|| "UserRole" : "enum:role"

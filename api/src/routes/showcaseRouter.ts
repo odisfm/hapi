@@ -8,13 +8,14 @@ import {
 } from "@hapi/shared/types/apiResponses"
 import type {ShowcaseAdminType} from "@hapi/shared/types/showcase";
 import {needsAuth} from "../middleware/needsAuth";
-import {addYears} from "date-fns";
+import {addDays, addYears} from "date-fns";
 import {AlterProjectSlugRequestSchema, UpdateShowcaseRequestSchema} from "@hapi/shared/types/apiRequests";
 import {Prisma} from "@hapi/shared/prisma/client";
 import {createUuid} from "@hapi/client/src/utils/misc";
 import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
 import type {ShowcaseGetPayload, ShowcaseInclude} from "@hapi/shared/prisma/models/Showcase";
 import type {ShowcaseSlugGetPayload} from "@hapi/shared/prisma/models/ShowcaseSlug";
+import {getConnInfo} from "../helpers/getConnInfo";
 
 export const showcaseRouter = createHono()
 
@@ -113,12 +114,26 @@ showcaseRouter.get(":showcaseSlug", async (c) => {
 
     const showcase = filterShowcase(showcaseRecord, null)
 
-    await db.showcaseView.create({
-        data: {
+    const connInfo = getConnInfo(c)
+    const ipAddress = connInfo.remote.address
+    const viewed24HoursRecord = await db.showcaseView.findFirst({
+        where: {
             showcaseId: showcase.id,
-            viewDate: new Date()
+            viewDate: {
+                gt: addDays(new Date(), -1)
+            },
+            ipAddress
         }
     })
+    if (!viewed24HoursRecord) {
+        await db.showcaseView.create({
+            data: {
+                showcaseId: showcase.id,
+                viewDate: new Date().toISOString(),
+                ipAddress
+            }
+        })
+    }
 
     return c.json({
         showcase

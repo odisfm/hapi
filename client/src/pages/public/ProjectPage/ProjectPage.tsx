@@ -515,6 +515,7 @@ export default function ProjectPage() {
                                 onClick={() => {
                                     window.open(link.url, "_blank");
                                 }}
+                                key={link.url}
                             >
                                 {link.type}
                             </Button>

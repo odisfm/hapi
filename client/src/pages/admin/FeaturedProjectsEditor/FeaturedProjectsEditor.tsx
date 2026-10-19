@@ -168,7 +168,7 @@ export function FeaturedProjectsEditor() {
             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 self-center isolate md:min-w-250">
                 {featuredProjectList.map((p) => {
                     return (
-                        <ProjectCard name={p.name} iconUrl={p.iconUrl} slug={p.slug} subtitle={p.subtitle} />
+                        <ProjectCard name={p.name} iconUrl={p.iconUrl} slug={p.slug} subtitle={p.subtitle} key={p.id}/>
                     )
                 })}
             </div>

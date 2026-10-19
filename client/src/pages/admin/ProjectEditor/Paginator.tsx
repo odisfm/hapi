@@ -17,6 +17,7 @@ export function Paginator({pageCount, activePage, setPage}: Props) {
                         type="button"
                         onClick={() => setPage(i)}
                         className={`${styles} ${i === activePage ? `${activeStyles}` : `${inactiveStyles}`}`}
+                        key={i}
                     >
                         {i + 1}
                     </button>

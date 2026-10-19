@@ -155,7 +155,7 @@ export function PasswordReset() {
     }
 
     return (
-        <div className={`flex flex-col gap-4 mt-20`}>
+        <div className={`flex flex-col gap-4 mt-20 justify-self-center`}>
             <h2 className={`font-bold text-xl`}>Reset password</h2>
                 <form onSubmit={(e) => submitForm(e)}>
                     { stage === "request" &&

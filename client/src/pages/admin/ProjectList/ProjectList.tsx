@@ -1,5 +1,5 @@
-import type {ProjectSearchQuery} from "@hapi/shared/types/apiRequests";
-import {useEffect, useMemo, useState} from "react";
+import type {ProjectSearchQuery, ProjectSearchSortStrategy} from "@hapi/shared/types/apiRequests";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import type {ProjectPreviewType} from "@hapi/shared/types/project";
 import {API_URL} from "../../../consts.ts";
 import type {
@@ -16,6 +16,7 @@ import {FilterSection} from "./FilterSection.tsx";
 import {SearchBar} from "./SearchBar.tsx";
 import {toApiSearchParams, useProjectSearchParams} from "../../../hooks/useProjectSearchParams.ts";
 import {Link} from "react-router";
+import {SearchOrderPicker} from "../../public/SearchResultsPage/SearchOrderPicker.tsx";
 
 const PAGE_LIMIT = 15;
 
@@ -27,9 +28,17 @@ export function ProjectList() {
     const [initialLoading, setInitialLoading] = useState<boolean>(true);
     const [categories, setCategories] = useState<Category[]>([]);
     const [showcases, setShowcases] = useState<Showcase[]>([]);
+    const [sortStrategy, setSortStrategy] = useState<ProjectSearchSortStrategy>(urlQuery.orderBy || "default")
 
     const pageNumber = urlQuery.page ?? 0;
     const searchQuery: ProjectSearchQuery = useMemo(() => ({...urlQuery, limit: PAGE_LIMIT}), [urlQuery]);
+
+    const _setSortStrategy = useCallback((strategy: ProjectSearchSortStrategy) => {
+        updateQuery({
+            orderBy: strategy
+        })
+        setSortStrategy(strategy);
+    }, [updateQuery])
 
     useEffect(() => {
         let ignore = false;
@@ -150,6 +159,19 @@ export function ProjectList() {
 
             <SearchBar/>
             <Paginator pageCount={pageCount} activePage={pageNumber} setPage={setPageNumber}/>
+            <div className={`flex w-full`}>
+                <div className={`ml-auto`}>
+                    <SearchOrderPicker
+                        activeStrategy={sortStrategy}
+                        strategies={[
+                            "default", "popular",
+                            "nameAsc", "nameDesc", "dateDesc", "dateAsc"
+                        ]}
+                        fn={(s) => {
+                            _setSortStrategy(s)
+                        }}
+                    /></div>
+            </div>
             <div className={`flex flex-col md:flex-row gap-2`}>
                 <FilterSection
                     filters={["showcase", "category", "published"]}

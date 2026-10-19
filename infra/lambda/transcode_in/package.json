@@ -11,7 +11,8 @@
     "build:lambda": "node esbuild.config.ts"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.163"
+    "@types/aws-lambda": "^8.10.163",
+    "esbuild": "^0.28.2"
   },
   "dependencies": {
     "@aws-sdk/client-mediaconvert": "^3.1138.0"

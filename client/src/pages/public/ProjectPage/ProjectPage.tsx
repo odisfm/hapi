@@ -9,6 +9,7 @@ import {MediaCarousel} from "./MediaCarousel.tsx";
 import type {DeviceType} from "@hapi/shared/prisma/enums";
 import {Button} from "../../../components/generic/Button.tsx";
 import {Spinner} from "../../../components/generic/Spinner.tsx";
+import {APP_TITLE} from "../../../title.ts";
 
 type LinkType = "App Store" | "TestFlight" | "GitHub" | "Website"
 
@@ -269,6 +270,13 @@ export default function ProjectPage() {
         return remaining > 0 ? `${shown} +${remaining}` : shown
     }, [state.project?.categories])
 
+    const shortAppName = useMemo(() => {
+        if (!state.project) return ""
+        let split = state.project.name.split(":")[0]
+        split = split.split("—")[0]
+        return split
+    }, [state.project])
+
     if (state.loading) {
         return <div className={`w-full flex justify-center`}>
             <Spinner className={`text-[5rem] mt-20 self-center`}/>
@@ -335,6 +343,9 @@ export default function ProjectPage() {
 
     return (
         <article className="font-copy">
+            {shortAppName &&
+                <title>{`${shortAppName} | ${APP_TITLE}`}</title>
+            }
             <section className="rounded-2xl bg-neutral-200 p-4 text-black sm:p-5">
                 <div className="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_auto] md:items-center md:gap-8 lg:gap-12">
                     <div className="flex min-w-0 items-center gap-4">

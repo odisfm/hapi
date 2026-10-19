@@ -2,10 +2,17 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from 'vite-plugin-pwa'
+import {APP_TITLE} from "./src/title.ts";
 
 export default defineConfig({
   plugins: [
       react(),
+      {
+          name: "html-transform",
+          transformIndexHtml(html) {
+              return html.replace(/%APP_TITLE%/g, APP_TITLE);
+          },
+      },
       tailwindcss(),
       VitePWA({
           registerType: 'autoUpdate',

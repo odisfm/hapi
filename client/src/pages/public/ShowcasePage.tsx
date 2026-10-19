@@ -8,6 +8,8 @@ import ProjectCard from "../../components/ProjectCard.tsx";
 import {HeroProjectCard} from "../../components/HeroProjectCard.tsx";
 import {Error404} from "./Error404.tsx";
 import {Spinner} from "../../components/generic/Spinner.tsx";
+import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
+import {APP_TITLE} from "../../title.ts";
 
 export function ShowcasePage() {
     const [showcase, setShowcase] = useState<ShowcaseType | null>(null);
@@ -81,6 +83,7 @@ export function ShowcasePage() {
 
     return (
         <div className="flex flex-col">
+            <title>{`${getShowcaseName(showcase)} | ${APP_TITLE}`}</title>
             <div
                 className={`
                     ${showcase.description ? "grid" : ""}

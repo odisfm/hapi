@@ -31,6 +31,7 @@ import {HeroProjectCard} from "../../../components/HeroProjectCard.tsx";
 import {CategoryPicker} from "./CategoryPicker.tsx";
 import {useAuth} from "../../../contexts/auth/useAuth.ts";
 import {Spinner} from "../../../components/generic/Spinner.tsx";
+import {APP_TITLE} from "../../../title.ts";
 
 const legendStyles = `font-medium`
 const inputStyles = `p-1 rounded-md bg-neutral-200 px-2 py-1 font-light`
@@ -509,6 +510,13 @@ export function ProjectEditor() {
         }
     }, [modalContext, approvalStatus, project, navigate, rejectionReason])
 
+    const shortAppName = useMemo(() => {
+        if (!project) return ""
+        let split = project.name.split(":")[0]
+        split = split.split("—")[0]
+        return split
+    }, [project])
+
     if (loading) return (
         <>
             <Spinner />
@@ -517,6 +525,9 @@ export function ProjectEditor() {
 
     return (
         <>
+            {shortAppName &&
+                <title>{`${shortAppName} | ${APP_TITLE}`}</title>
+            }
             { project && categories.length &&
                 <div className={"flex flex-col self-center gap-2"}>
                     <div className={`flex gap-4 w-full`}>

@@ -320,7 +320,6 @@ showcaseRouter.patch("/", needsAuth, async (c) => {
     let update
     try {
         update = UpdateShowcaseRequestSchema.parse(await c.req.json())
-        console.log(update)
     } catch (e) {
         console.error(e)
         return c.json({error: "Malformed input"}, 400)

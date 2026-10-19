@@ -26,7 +26,6 @@ export function ShowcasePage() {
             }
 
             const json: ShowcasePublicDetailsResponse = await res.json();
-            console.log(json.showcase);
             setShowcase(json.showcase);
         } catch (e) {
             console.error(e);

@@ -40,7 +40,6 @@ export function StudentDashboard() {
                 }
                 return v
             }))
-            console.log(json.versions)
         } catch (e) {
             console.error(e)
             return await modalContext.dispatchModal({

@@ -1,7 +1,7 @@
 import type {ProjectPreviewType} from "@hapi/shared/types/project";
 import {AppIcon} from "./AppIcon.tsx";
 import {Button} from "./generic/Button.tsx";
-import {useNavigate} from "react-router";
+import {Link} from "react-router";
 import {MEDIA_BUCKET_URL} from "../pages/public/ProjectPage/MediaCarousel.tsx";
 
 type Props = {
@@ -12,13 +12,16 @@ export function HeroProjectCard(
     {
         project,
     }: Props) {
-    const navigate = useNavigate()
 
     const useHeroArt = project.heroArtUrl !== undefined
 
     return (
-        <div className="grid grid-rows-[minmax(0,1fr)_60px] rounded-xl overflow-hidden h-full max-h-[300px]">
-            <div className={`bg-neutral-300`}>
+        <Link
+            to={`/project/${project.slug}`}
+            className="hero-card group grid grid-rows-[minmax(0,1fr)_60px] rounded-xl overflow-hidden h-full max-h-[300px]"
+            data-testid="hero-card"
+        >
+            <div className={`bg-neutral-300 group-hover:bg-neutral-200`}>
                 { useHeroArt &&
                     <img
                         src={`${MEDIA_BUCKET_URL}${project.heroArtUrl}.webp`}
@@ -41,7 +44,7 @@ export function HeroProjectCard(
                 }
 
             </div>
-            <div className={`${useHeroArt ? `bg-neutral-300` : `bg-neutral-300`}`}>
+            <div className={`bg-neutral-300 group-hover:bg-neutral-200`}>
                 <div className={`flex gap-4 items-center px-4 h-full`}>
                     { useHeroArt &&
                         <>
@@ -61,12 +64,11 @@ export function HeroProjectCard(
                     <Button
                         variant={"hero"}
                         styles={`ml-auto text-xs !min-w-0 !px-4 !py-2`}
-                        onClick={() => {navigate(`/project/${project.slug}`)}}
                     >
                         VIEW
                     </Button>
                 </div>
             </div>
-        </div>
+        </Link>
     )
 }

@@ -1,5 +1,4 @@
 import {render, screen} from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import {MemoryRouter} from 'react-router'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import type {ProjectPreviewType} from '@hapi/shared/types/project'
@@ -75,11 +74,11 @@ describe('HeroProjectCard', () => {
         ['without hero artwork', {}],
         ['with hero artwork', {heroArtUrl: 'example-hero-art'}],
     ])('navigates to the project page when VIEW is clicked %s', async (_label, overrides) => {
-        const user = userEvent.setup()
         renderCard(overrides)
 
-        await user.click(screen.getByRole('button', {name: 'VIEW'}))
-
-        expect(navigate).toHaveBeenCalledWith('/project/example-project')
+        expect(screen.getByTestId("hero-card")).toHaveAttribute(
+            'href',
+            '/project/example-project',
+        )
     })
 })

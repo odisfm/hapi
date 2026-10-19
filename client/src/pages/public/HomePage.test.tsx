@@ -124,9 +124,9 @@ describe('HomePage', () => {
             fetchMock.mockResolvedValue(featuredResponse(3, ['id-1']))
             renderPage()
 
-            // hero cards have a VIEW button; regular cards are links
             expect(await screen.findAllByRole('button', {name: 'VIEW'})).toHaveLength(1)
-            expect(screen.queryByRole('link', {name: /Project 1/})).not.toBeInTheDocument()
+            expect(screen.queryByRole('link', {name: /Project 1/})).toBeInTheDocument()
+            expect(screen.queryByRole('link', {name: /Project 1/})!.classList).toContain("hero-card")
             expect(screen.getByRole('link', {name: /Project 2/})).toBeInTheDocument()
             expect(screen.getByRole('link', {name: /Project 3/})).toBeInTheDocument()
         })

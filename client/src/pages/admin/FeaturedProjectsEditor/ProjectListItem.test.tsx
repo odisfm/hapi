@@ -21,6 +21,7 @@ function renderItem(overrides: Partial<{featured: boolean; iconUrl: string}> = {
             <ProjectListItem
                 name="Example project"
                 projectId="project-123"
+                versionId="version-123"
                 slug="example-project"
                 iconUrl="example-icon"
                 featured={false}
@@ -50,7 +51,7 @@ describe('ProjectListItem (featured projects editor)', () => {
 
         const editLink = screen.getByRole('link')
 
-        expect(editLink).toHaveAttribute('href', '/dashboard/project/project-123')
+        expect(editLink).toHaveAttribute('href', '/dashboard/project/version-123')
         expect(editLink).toHaveAttribute('target', '_blank')
     })
 

@@ -182,6 +182,7 @@ export function FeaturedProjectsEditor() {
                         <ProjectListItem
                             name={p.name}
                             projectId={p.id}
+                            versionId={p.versionId}
                             slug={p.slug}
                             iconUrl={p.iconUrl}
                             featured={true}
@@ -201,6 +202,7 @@ export function FeaturedProjectsEditor() {
                         <ProjectListItem
                             name={p.name}
                             projectId={p.id}
+                            versionId={p.versionId}
                             slug={p.slug}
                             iconUrl={p.iconUrl}
                             featured={false}

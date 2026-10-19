@@ -15,6 +15,7 @@ import {FaChevronDown, FaChevronUp} from "react-icons/fa";
 type Props = {
     name: string,
     projectId: string,
+    versionId: string,
     slug: string,
     iconUrl: string,
     featured: boolean,
@@ -23,7 +24,7 @@ type Props = {
     reorderSelf: (sourceIndex: number, direction: "up" | "down") => void,
 }
 
-export function ProjectListItem({name, projectId, iconUrl, featured, toggleFeatured, index, reorderSelf}: Props) {
+export function ProjectListItem({name, projectId, versionId, iconUrl, featured, toggleFeatured, index, reorderSelf}: Props) {
     const ref = useRef<HTMLLIElement>(null);
     const [dragging, setDragging] = useState(false);
     const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
@@ -79,7 +80,7 @@ export function ProjectListItem({name, projectId, iconUrl, featured, toggleFeatu
                     <span>{name}</span>
                     <div className="flex items-center gap-4 ml-auto">
                         <a
-                            href={`/dashboard/project/${projectId}`}
+                            href={`/dashboard/project/${versionId}`}
                             target="_blank"
                             className="p-1 rounded-md hover:bg-neutral-300 hover:text-r-blue-700"
                         >

@@ -2,11 +2,12 @@ import {useEffect, useMemo, useState} from "react";
 import type {ProjectSearchResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL} from "../../consts.ts";
 import ProjectCard from "../../components/ProjectCard.tsx";
-import {FaArrowAltCircleRight, FaSpinner} from "react-icons/fa";
+import {FaArrowAltCircleRight} from "react-icons/fa";
 import {useNavigate} from "react-router";
 import {HeroProjectCard} from "../../components/HeroProjectCard.tsx";
 import type {ProjectPreviewType} from "@hapi/shared/types/project";
 import {Button} from "../../components/generic/Button.tsx";
+import {Spinner} from "../../components/generic/Spinner.tsx";
 
 type HomePageState = {
     projects: ProjectSearchResponse["projects"];
@@ -111,7 +112,7 @@ export default function HomePage() {
                                 FEATURED PROJECTS
                             </h2>
                             { state.loading &&
-                                <FaSpinner className={`animate-spin text-2xl`} />
+                                <Spinner className={`text-2xl`} />
                             }
                         </div>
                         <Button

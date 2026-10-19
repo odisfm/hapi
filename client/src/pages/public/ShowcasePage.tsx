@@ -4,10 +4,10 @@ import {API_URL} from "../../consts.ts";
 import type {ShowcasePublicDetailsResponse} from "@hapi/shared/types/apiResponses";
 import type {ShowcaseType} from "@hapi/shared/types/showcase";
 import Markdown from "react-markdown";
-import {FaSpinner} from "react-icons/fa";
 import ProjectCard from "../../components/ProjectCard.tsx";
 import {HeroProjectCard} from "../../components/HeroProjectCard.tsx";
 import {Error404} from "./Error404.tsx";
+import {Spinner} from "../../components/generic/Spinner.tsx";
 
 export function ShowcasePage() {
     const [showcase, setShowcase] = useState<ShowcaseType | null>(null);
@@ -75,7 +75,7 @@ export function ShowcasePage() {
 
     if (loading || !showcase) {
         return <div className={`w-full flex justify-center`}>
-            <FaSpinner className={`text-[5rem] mt-20 animate-spin self-center`}/>
+            <Spinner className={`text-[5rem] mt-20 self-center`}/>
         </div>;
     }
 

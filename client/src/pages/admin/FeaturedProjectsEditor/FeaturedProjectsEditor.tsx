@@ -9,7 +9,7 @@ import {ProjectListItem} from "./ProjectListItem.tsx";
 import {ProjectList} from "./ProjectList.tsx";
 import {LexoRank} from "@dalet-oss/lexorank";
 import {SaveButton} from "../../../components/generic/SaveButton.tsx";
-import {FaSpinner} from "react-icons/fa";
+import {Spinner} from "../../../components/generic/Spinner.tsx";
 
 const h3Styles = "font-copy text-2xl font-bold leading-[1.3] tracking-normal"
 
@@ -158,7 +158,7 @@ export function FeaturedProjectsEditor() {
                     >
                         FEATURED PROJECTS
                     </h3>
-                    {loading && <FaSpinner className={`animate-spin`}/>}
+                    {loading && <Spinner />}
                 </div>
                 <SaveButton
                     onClick={() => {batchUpdateProjects()}} hasChanged={alteredProjects.length > 0}

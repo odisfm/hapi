@@ -12,7 +12,7 @@ import type {
 import type {Category, Showcase} from "@hapi/shared/prisma/client";
 import {TextItemEditor} from "./TextItemEditor.tsx";
 import {formatDate, formatDistance} from "date-fns";
-import {FaSpinner, FaTrash, FaUpload} from "react-icons/fa";
+import {FaTrash, FaUpload} from "react-icons/fa";
 import {
     type CreateProjectHeroArtRequestType,
     UpdateProjectRequestSchema,
@@ -30,6 +30,7 @@ import {Button} from "../../../components/generic/Button.tsx";
 import {HeroProjectCard} from "../../../components/HeroProjectCard.tsx";
 import {CategoryPicker} from "./CategoryPicker.tsx";
 import {useAuth} from "../../../contexts/auth/useAuth.ts";
+import {Spinner} from "../../../components/generic/Spinner.tsx";
 
 const legendStyles = `font-medium`
 const inputStyles = `p-1 rounded-md bg-neutral-200 px-2 py-1 font-light`
@@ -509,7 +510,7 @@ export function ProjectEditor() {
 
     if (loading) return (
         <>
-            <FaSpinner className={`animate-spin`}/>
+            <Spinner />
         </>
     )
 

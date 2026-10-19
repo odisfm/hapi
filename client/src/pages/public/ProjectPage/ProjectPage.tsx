@@ -4,10 +4,11 @@ import type {ProjectDetailsResponse} from "@hapi/shared/types/apiResponses";
 import {API_URL, deviceEnumFriendly} from "../../../consts.ts";
 import {AppIcon} from "../../../components/AppIcon.tsx";
 import Markdown from "react-markdown";
-import {FaApple, FaSpinner } from "react-icons/fa";
+import {FaApple } from "react-icons/fa";
 import {MediaCarousel} from "./MediaCarousel.tsx";
 import type {DeviceType} from "@hapi/shared/prisma/enums";
 import {Button} from "../../../components/generic/Button.tsx";
+import {Spinner} from "../../../components/generic/Spinner.tsx";
 
 type LinkType = "App Store" | "TestFlight" | "GitHub" | "Website"
 
@@ -270,7 +271,7 @@ export default function ProjectPage() {
 
     if (state.loading) {
         return <div className={`w-full flex justify-center`}>
-            <FaSpinner className={`text-[5rem] mt-20 animate-spin self-center`}/>
+            <Spinner className={`text-[5rem] mt-20 self-center`}/>
         </div>;
     }
 

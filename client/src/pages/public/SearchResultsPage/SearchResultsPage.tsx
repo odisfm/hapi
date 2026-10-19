@@ -19,8 +19,9 @@ import {
     useProjectSearchParams
 } from "../../../hooks/useProjectSearchParams.ts";
 import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
-import {FaSearch, FaSpinner} from "react-icons/fa";
 import {SearchOrderPicker} from "./SearchOrderPicker.tsx";
+import {Spinner} from "../../../components/generic/Spinner.tsx";
+import { FaSearch } from "react-icons/fa";
 
 /** Fewer results per page with the filter panel open, so the 2-column grid has no gap. */
 function pageLimit(filtersOpen: boolean): number {
@@ -179,7 +180,7 @@ export default function SearchResultsPage() {
         <div className={`flex flex-col gap-6`}>
             <div className={`flex items-center gap-2`}>
                 <h1 className={`font-headline font-bold text-3xl`}>Applications</h1>
-                {loading && <FaSpinner className={`animate-spin text-xl`}/>}
+                {loading && <Spinner />}
             </div>
             <div>
                 {searchQuery.searchTerm ? (

@@ -4,9 +4,9 @@ import {API_URL} from "../../../consts.ts";
 import { throwErrorFromResponse } from "../../../utils/misc.ts";
 import type {CategoryResponse, CategoryType, ProjectSearchResponse} from "@hapi/shared/types/apiResponses";
 import type {ProjectPreviewType} from "@hapi/shared/types/project";
-import {FaSpinner} from "react-icons/fa";
 import {CategoryListItem} from "./CategoryListItem.tsx";
 import {HeroProjectCard} from "../../../components/HeroProjectCard.tsx";
+import {Spinner} from "../../../components/generic/Spinner.tsx";
 
 const NUM_RANDOM_PROJECTS = 4
 
@@ -74,7 +74,7 @@ export function CategoryPage() {
         <div className={`flex flex-col gap-4 items-start`}>
             <div className={`flex items-center gap-2`}>
                 <h1 className={`font-headline font-bold text-3xl`}>Categories</h1>
-                {loadingCategories && <FaSpinner className={`animate-spin text-xl`} />}
+                {loadingCategories && <Spinner />}
             </div>
             <ul className={`flex flex-wrap gap-2`}>
                 {

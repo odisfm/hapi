@@ -25,7 +25,7 @@ import {ProjectQueue} from "./pages/admin/ProjectQueue/ProjectQueue.tsx";
 import {UserPage} from "./pages/admin/UserPage/UserPage.tsx";
 import {CreateUserPage} from "./pages/admin/UserPage/CreateUserPage.tsx";
 import {CategoryEditor} from "./pages/admin/CategoryEditor/CategoryEditor.tsx";
-import {CategoryPage} from "./pages/admin/CategoryPage/CategoryPage.tsx";
+import {CategoryPage} from "./pages/public/CategoryPage/CategoryPage.tsx";
 import {ShowcaseIndexPage} from "./pages/public/ShowcaseIndexPage/ShowcaseIndexPage.tsx";
 import {AnalyticsPage} from "./pages/admin/AnalyticsPage/AnalyticsPage.tsx";
 

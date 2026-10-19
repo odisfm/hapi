@@ -80,7 +80,7 @@ export function CategoryPage() {
                 {
                     categories && categories.map((category: CategoryType) => {
                         return (
-                            <CategoryListItem data={category} />
+                            <CategoryListItem data={category} key={category.id}/>
                         )
                     })
                 }

@@ -1,5 +1,6 @@
 import type {ConsolidatedShowcaseType} from "./types.ts";
 import {Link} from "react-router";
+import {Fragment} from "react";
 
 export function ShowcaseItem({data}: {data: ConsolidatedShowcaseType}) {
     return (
@@ -15,12 +16,13 @@ export function ShowcaseItem({data}: {data: ConsolidatedShowcaseType}) {
             }
             {data.yearShowcases && data.yearShowcases.map((ys) => {
                 return (
-                    <>
+                    <Fragment key={ys.year}>
                         {
                             ys.showcase ?
                                 <Link
                                     to={`/showcase/${ys.showcase.slugs.at(0)?.slug || ys.showcase.id}`}
                                     className={`text-lg font-bold hover:underline`}
+                                    key={ys.showcase.id}
                                 >
                                     {ys.year}
                                 </Link>
@@ -30,7 +32,7 @@ export function ShowcaseItem({data}: {data: ConsolidatedShowcaseType}) {
                                     <ul className={``}>
                                         {ys.semesters && ys.semesters.map((ss) => {
                                         return (
-                                            <li>
+                                            <li key={ss.showcase.id}>
                                                 <Link
                                                     to={`/showcase/${ss.showcase.slugs.at(0)?.slug || ss.showcase.id}`}
                                                     className={`hover:underline`}
@@ -42,7 +44,7 @@ export function ShowcaseItem({data}: {data: ConsolidatedShowcaseType}) {
                                     </ul>
                                 </>
                         }
-                    </>
+                    </Fragment>
                 )
             })
             }

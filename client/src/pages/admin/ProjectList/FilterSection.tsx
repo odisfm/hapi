@@ -52,7 +52,7 @@ export function FilterSection({
         <Button
             color={"red"}
             variant={"compact"}
-            styles={"shrink-0 whitespace-nowrap hover:!bg-r-yellow-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-r-red"}
+            styles={"shrink-0 whitespace-nowrap hover:!bg-r-yellow-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-r-red ml-auto"}
             onClick={clearAll}
         >
             clear all

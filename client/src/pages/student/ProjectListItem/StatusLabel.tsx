@@ -13,7 +13,6 @@ export function StatusLabel({status}: {status: SubmissionStatus}) {
             statusStyles = "bg-r-blue text-white"
             break
         case "NOT_SUBMITTED":
-        case "WITHDRAWN":
         case "SUPERSEDED":
         default:
             statusStyles = "bg-neutral-600 text-white"

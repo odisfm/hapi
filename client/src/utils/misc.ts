@@ -10,16 +10,22 @@ export function resolveStorageUrl(bucketUrl: string, storageKey: string, extensi
     return `${bucketUrl}${storageKey}${extension}`;
 }
 
-export async function throwErrorFromResponse(response: Response) {
-    let json
+export async function throwErrorFromResponse(response: Response): Promise<never> {
+    let json: unknown
     try {
-        json = await response.json();
+        json = await response.json()
     } catch {
         throw new Error(response.statusText)
     }
-    if (json.error) {
+
+    if (
+        typeof json === 'object' &&
+        json !== null &&
+        'error' in json &&
+        typeof json.error === 'string'
+    ) {
         throw new Error(json.error)
-    } else {
-        throw new Error(response.statusText)
     }
+
+    throw new Error(response.statusText)
 }

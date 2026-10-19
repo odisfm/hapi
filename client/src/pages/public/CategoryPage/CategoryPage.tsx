@@ -38,7 +38,9 @@ export function CategoryPage() {
 
     const getProjects = useCallback(async () => {
         try {
-            const res = await fetch(`${API_URL}/project/search?orderBy=random&limit=${NUM_RANDOM_PROJECTS}`)
+            const res = await fetch(`${API_URL}/project/search?orderBy=random&limit=${NUM_RANDOM_PROJECTS}`, {
+                credentials: "omit"
+            })
             if (!res.ok) {
                 console.error(res)
                 await throwErrorFromResponse(res)

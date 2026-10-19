@@ -7,6 +7,7 @@ import {useModal} from "../../../contexts/modal/useModal.ts";
 import type {LoginSuccessResponse} from "@hapi/shared/types/apiResponses";
 import {useAuth} from "../../../contexts/auth/useAuth.ts";
 import {Button} from "../../../components/generic/Button.tsx";
+import {throwErrorFromResponse} from "../../../utils/misc.ts";
 
 const fieldsetStyles = `flex flex-col gap-2 mt-6`
 
@@ -65,7 +66,8 @@ export function PasswordReset() {
                     })
                 })
                 if (!res.ok) {
-                    throw new Error(res.statusText)
+                    console.error(res)
+                    await throwErrorFromResponse(res)
                 }
                 navigate("/reset-password/verify")
 
@@ -95,11 +97,8 @@ export function PasswordReset() {
                     })
                 })
                 if (!res.ok) {
-                    const json = await res.json()
-                    if (json) {
-                        throw new Error(json.error)
-                    }
-                    throw new Error(res.statusText)
+                    console.error(res)
+                    await throwErrorFromResponse(res)
                 }
                 const json: LoginSuccessResponse = await res.json()
                 authContext.setUserDetails(json.user)
@@ -136,7 +135,8 @@ export function PasswordReset() {
                     })
                 })
                 if (!res.ok) {
-                    throw new Error(res.statusText)
+                    console.error(res)
+                    await throwErrorFromResponse(res)
                 }
                 authContext.setUserDetails({
                     ...authContext.user!,

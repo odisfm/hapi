@@ -9,6 +9,7 @@ import type {CreateProjectResponse} from "@hapi/shared/types/apiResponses";
 import {FeedbackHistory} from "./FeedbackHistory.tsx";
 import {FaClock} from "react-icons/fa";
 import { formatDistance } from "date-fns";
+import {throwErrorFromResponse} from "../../../utils/misc.ts";
 
 export type Action = "edit" | "withdraw" | "delete" | "revise"
 
@@ -66,7 +67,7 @@ export function ProjectListItem({summary, refresh}: {summary: ProjectVersionSumm
             })
             if (!res.ok) {
                 console.error(res)
-                throw new Error(res.statusText)
+                await throwErrorFromResponse(res)
             }
             refresh()
         } catch (e) {
@@ -93,7 +94,7 @@ export function ProjectListItem({summary, refresh}: {summary: ProjectVersionSumm
             })
             if (!res.ok) {
                 console.error(res)
-                throw new Error(res.statusText)
+                await throwErrorFromResponse(res)
             }
             const json: CreateProjectResponse = await res.json()
             navigate(`/student/project/${json.versionId}`)
@@ -124,7 +125,7 @@ export function ProjectListItem({summary, refresh}: {summary: ProjectVersionSumm
             })
             if (!res.ok) {
                 console.error(res)
-                throw new Error(res.statusText)
+                await throwErrorFromResponse(res)
             }
             refresh()
         } catch (e) {

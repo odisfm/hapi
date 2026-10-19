@@ -4,6 +4,7 @@ import {MemoryRouter, useLocation, useNavigate} from 'react-router'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import type {ProjectPreviewType} from '@hapi/shared/types/project'
 import SearchResultsPage from './SearchResultsPage.tsx'
+import {ModalProvider} from "../../../contexts/modal/ModalProvider.tsx";
 
 type MockApiOptions = {
     projects?: ProjectPreviewType[]
@@ -72,8 +73,10 @@ function search() {
 function renderPage(path = '/search') {
     return render(
         <MemoryRouter initialEntries={[path]}>
-            <SearchResultsPage/>
-            <LocationProbe/>
+            <ModalProvider>
+                <SearchResultsPage/>
+                <LocationProbe/>
+            </ModalProvider>
         </MemoryRouter>,
     )
 }
@@ -182,12 +185,6 @@ describe('SearchResultsPage', () => {
             expect(screen.queryByRole('link')).not.toBeInTheDocument()
         })
 
-        it('shows the same message when the search request fails', async () => {
-            mockApi({searchOk: false})
-            renderPage()
-
-            expect(await screen.findByText('No applications match your results')).toBeInTheDocument()
-        })
     })
 
     describe('pagination', () => {

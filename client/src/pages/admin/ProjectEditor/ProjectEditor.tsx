@@ -251,6 +251,7 @@ export function ProjectEditor() {
                         id: submitProject.id,
                         showcaseId: selectedShowcase!.id,
                         published: (submitProject as ProjectAdminType).published,
+                        canBeHero: (submitProject as ProjectAdminType).canBeHero
 
                 }}),
                 projectVersion: {
@@ -744,6 +745,22 @@ export function ProjectEditor() {
                                 <div>
                                     <label className={legendStyles} id={"slugsLabel"} htmlFor={"slugsEditor"}>Slugs</label>
                                     <SlugEditor projectId={project.id}/>
+                                </div>
+
+                                <div className={`flex items-center gap-2 mt-4`}>
+                                    <input
+                                        id={"canBeHeroInput"}
+                                        type={"checkbox"}
+                                        checked={(project as ProjectAdminType).canBeHero}
+                                        onChange={(e) => {
+                                            setProject({
+                                                ...project,
+                                                canBeHero: e.target.checked
+                                            })
+                                            setHasChanged(true)
+                                        }}
+                                    />
+                                    <label className={legendStyles} htmlFor={"canBeHeroInput"}>Project can appear as hero card</label>
                                 </div>
                             </div>
                         }

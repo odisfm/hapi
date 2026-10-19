@@ -16,6 +16,8 @@ import {needsAuth} from "../../middleware/needsAuth";
 import type {ProjectAdminType} from "@hapi/shared/types/project";
 import {NUM_HERO_PROJECTS_FRONT_PAGE} from "@hapi/shared/consts";
 import type {ProjectGetPayload} from "@hapi/shared/prisma/models/Project";
+import {getConnInfo} from "../../helpers/getConnInfo";
+import {addDays} from "date-fns";
 
 const SEARCH_SCORE_CUTOFF = 0.6 // 0 - exact match, 1 - no match
 
@@ -375,12 +377,26 @@ projectRouterGet.get("/:projectSlug", async (c) => {
         }, 404)
     }
     const project = filterProject(record, userRole)
-    await db.projectView.create({
-        data: {
+    const connInfo = getConnInfo(c)
+    const ipAddress = connInfo.remote.address
+    const viewed24HoursRecord = await db.projectView.findFirst({
+        where: {
             projectId: record.id,
-            viewDate: new Date().toISOString(),
+            viewDate: {
+                gt: addDays(new Date(), -1)
+            },
+            ipAddress
         }
     })
+    if (!viewed24HoursRecord) {
+        await db.projectView.create({
+            data: {
+                projectId: record.id,
+                viewDate: new Date().toISOString(),
+                ipAddress
+            }
+        })
+    }
     return c.json({
         project
     } satisfies ProjectDetailsResponse)

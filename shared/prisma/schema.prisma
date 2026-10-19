@@ -172,6 +172,7 @@ model ProjectView {
   projectId String   @db.Uuid
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   viewDate  DateTime
+  ipAddress String   @default("0.0.0.0")
 }
 
 model ShowcaseView {
@@ -179,6 +180,7 @@ model ShowcaseView {
   showcaseId String   @db.Uuid
   showcase   Showcase @relation(fields: [showcaseId], references: [id], onDelete: Cascade)
   viewDate   DateTime
+  ipAddress  String   @default("0.0.0.0")
 }
 
 enum MediaType {

@@ -27,7 +27,7 @@ function mockAuth(user: { name: string } | null) {
 function renderHeader(initialPath = '/') {
     return render(
         <MemoryRouter initialEntries={[initialPath]}>
-            <Header />
+            <Header sidebarVisible={false} setSidebarVisible={() => {}}/>
         </MemoryRouter>,
     )
 }

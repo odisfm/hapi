@@ -21,6 +21,7 @@ const project: ProjectPreviewType = {
     slug: 'example-project',
     developers: ['Example developer'],
     featured: true,
+    versionId: "v-123e4567-e89b-42d3-a456-426614174000"
 }
 
 function renderCard(projectOverrides: Partial<ProjectPreviewType> = {}) {

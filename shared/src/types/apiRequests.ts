@@ -1,7 +1,5 @@
 import * as z from "zod"
 import {DeviceType, SubmissionStatus, UserRole} from "../generated/prisma/enums.js";
-import {PasswordSchema} from "./password";
-import {ProjectAdminSchema} from "./project";
 import {ProjectMediaSchema} from "./projectMedia";
 import {ShowcaseAdminSchema} from "./showcase";
 

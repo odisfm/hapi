@@ -43,7 +43,6 @@ analyticsRouter.get("/showcase", needsAuth, async (c) => {
                         }
                     },
                     projects: true,
-                    media: {include: {media: true}}
                 }
             },
             slugs: {

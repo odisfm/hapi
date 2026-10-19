@@ -68,7 +68,6 @@ export default function HomePage() {
                 projects.push(p);
             }
         }
-        console.log({heroProjects, projects})
         return {projects, heroProjects}
     }, [state.projects, state.heroProjectIds])
 

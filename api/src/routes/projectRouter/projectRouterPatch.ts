@@ -86,7 +86,6 @@ projectRouterPatch.patch("/", needsAuth, async (c) => {
 
                 await db.projectVersionMedia.createMany({
                     data: media.map((_m) => {
-                        console.log(_m)
                         const {id: mediaId, uri, mediaType, status, ...m} = _m
                         return {
                             ...m,
@@ -114,8 +113,6 @@ projectRouterPatch.patch("/batch", needsAuth, async (c) => {
         if (user.role !== "ADMIN") return c.json({error: "Unauthorised"}, 403)
         const body = await c.req.json()
         const updates = body.projects
-
-        console.log(updates)
 
         await db.$transaction(
             updates.map(({ id, ...data }: { id: string } & Prisma.ProjectUpdateInput) =>

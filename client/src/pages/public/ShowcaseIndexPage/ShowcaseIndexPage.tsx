@@ -24,7 +24,6 @@ export function ShowcaseIndexPage() {
                 await throwErrorFromResponse(res)
             }
             const json: ShowcaseListResponse = await res.json();
-            console.log(json);
             setShowcases(buildConsolidatedShowcases(json.showcases.filter((s) => {
                 return s._count.projects
             })))
@@ -45,8 +44,6 @@ export function ShowcaseIndexPage() {
         })()
     }, [getShowcases])
 
-    console.log({showcases})
-    
     return (
         <div className={`flex flex-col gap-4`}>
             <div className={`flex items-center gap-2`}>

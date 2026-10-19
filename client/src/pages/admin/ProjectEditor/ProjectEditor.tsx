@@ -243,7 +243,6 @@ export function ProjectEditor() {
         let update
         if (!project && !newProject) return
         const submitProject = newProject || project!
-        console.log({submitProject})
         try {
             update = {
                 ...( authContext.user!.role === "ADMIN" && {
@@ -443,7 +442,6 @@ export function ProjectEditor() {
             media: [...videos, ...newScreenshots]
 
         }
-        console.log({newProject})
         setProject(newProject)
     }, [project])
 
@@ -552,7 +550,9 @@ export function ProjectEditor() {
                                             <RiImageUploadFill />
                                         </button>
                                         <SaveButton
-                                            onClick={async () => { console.log("editor onClick"); await submit() }}
+                                            onClick={async () => {
+                                                await submit()
+                                            }}
                                             hasChanged={hasChanged}
                                             styles={`ml-auto`}
                                         />

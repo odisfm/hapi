@@ -9,6 +9,8 @@ import {
     type Edge,
 } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
 import {FaPencil} from "react-icons/fa6";
+import {Button} from "../../../components/generic/Button.tsx";
+import {FaChevronDown, FaChevronUp} from "react-icons/fa";
 
 type Props = {
     name: string,
@@ -18,12 +20,15 @@ type Props = {
     featured: boolean,
     toggleFeatured: (id: string) => void,
     index: number,
+    reorderSelf: (sourceIndex: number, direction: "up" | "down") => void,
 }
 
-export function ProjectListItem({name, projectId, iconUrl, featured, toggleFeatured, index}: Props) {
+export function ProjectListItem({name, projectId, iconUrl, featured, toggleFeatured, index, reorderSelf}: Props) {
     const ref = useRef<HTMLLIElement>(null);
     const [dragging, setDragging] = useState(false);
     const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
+    const upButtonRef = useRef<HTMLButtonElement>(null);
+    const downButtonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         if (!featured) return;
@@ -67,19 +72,51 @@ export function ProjectListItem({name, projectId, iconUrl, featured, toggleFeatu
                     }`}
                 />
             )}
-            <div className={`flex items-center gap-2 py-1 px-2 rounded-md bg-neutral-200 ${featured ? "cursor-grab" : ""}`}>
-                <AppIcon uri={iconUrl} width={30} />
-                <span>{name}</span>
-                <div className="flex items-center gap-4 ml-auto">
-                    <a
-                        href={`/dashboard/project/${projectId}`}
-                        target="_blank"
-                        className="p-1 rounded-md hover:bg-neutral-300 hover:text-r-blue-700"
-                    >
-                        <FaPencil />
-                    </a>
-                    <HeartButton active={featured} toggle={() => toggleFeatured(projectId)} />
+            <div className={`flex gap-2 items-center`}>
+                <div
+                    className={`flex flex-1 items-center gap-2 py-1 px-2 rounded-md bg-neutral-200 ${featured ? "cursor-grab" : ""}`}>
+                    <AppIcon uri={iconUrl} width={30}/>
+                    <span>{name}</span>
+                    <div className="flex items-center gap-4 ml-auto">
+                        <a
+                            href={`/dashboard/project/${projectId}`}
+                            target="_blank"
+                            className="p-1 rounded-md hover:bg-neutral-300 hover:text-r-blue-700"
+                        >
+                            <FaPencil/>
+                        </a>
+                        <HeartButton active={featured} toggle={() => toggleFeatured(projectId)}/>
+                    </div>
                 </div>
+
+                {featured &&
+                    <div className={`flex flex-col gap-1 ${dragging && `hidden`}`}>
+                        <Button
+                            variant={"compact"}
+                            color={"subtle"}
+                            ariaLabel={"Move project up"}
+                            ref={upButtonRef}
+                            onClick={() => {
+                                reorderSelf(index, "up")
+                                upButtonRef.current!.focus()
+                            }}
+                        >
+                            <FaChevronUp/>
+                        </Button>
+                        <Button
+                            variant={"compact"}
+                            color={"subtle"}
+                            ariaLabel={"Move project down"}
+                            ref={downButtonRef}
+                            onClick={() => {
+                                reorderSelf(index, "down")
+                                downButtonRef.current!.focus()
+                            }}
+                        >
+                            <FaChevronDown/>
+                        </Button>
+                    </div>
+                }
             </div>
         </li>
     );

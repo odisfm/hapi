@@ -18,6 +18,7 @@ type ButtonProps = {
     inactiveStyles?: string;
     disabledStyles?: string;
     ariaLabel?: string;
+    ref?: React.Ref<HTMLButtonElement>;
 }
 
 export function Button(
@@ -34,7 +35,8 @@ export function Button(
         activeStyles = "",
         inactiveStyles = "",
         disabledStyles = "",
-        ariaLabel
+        ariaLabel,
+        ref
     }
     : ButtonProps): ReactNode {
 
@@ -97,6 +99,7 @@ export function Button(
             ${styles} ${active ? activeStyles : inactiveStyles} ${buttonStyles} ${colorStyles} 
             ${disabled && disabledStyles} 
             `}
+            ref={ref}
         >
             {children}
             {loading && <FaSpinner className={`animate-spin`}/>}

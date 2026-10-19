@@ -535,20 +535,29 @@ export function ProjectEditor() {
                                     onChange={(e) => uploadIcon(e)}
                                     type={"file"}
                                     accept={".png,.jpg,.jpeg,.tiff,.svg,.webp,.heif"}
+                                    id={"iconInput"}
                                     name={"iconInput"}
                                     className={'hidden'}
                                 />
                                     <div className={`flex gap-2 w-full`}>
-                                        <button aria-label="Upload project icon" className={`
+                                        <div className={`flex items-center gap-2`}>
+                                            <button aria-label="Upload project icon" className={`
                                             bg-r-yellow-500 hover:bg-r-yellow-400 cursor-pointer
                                             flex items-center gap-2 p-3 rounded-full
                                             `}
-                                            onClick={() => {
-                                                iconUploadRef.current!.click()
-                                            }}
-                                        >
-                                            <RiImageUploadFill />
-                                        </button>
+                                                    onClick={() => {
+                                                        iconUploadRef.current!.click()
+                                                    }}
+                                            >
+                                                <RiImageUploadFill/>
+                                            </button>
+                                            <label
+                                                htmlFor={"iconInput"}
+                                                className={`lowercase text-sm text-black/70`}
+                                            >
+                                                {project.iconUrl ? "Replace icon" : "Upload icon"}
+                                            </label>
+                                        </div>
                                         <SaveButton
                                             onClick={async () => {
                                                 await submit()

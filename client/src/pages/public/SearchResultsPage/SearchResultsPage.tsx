@@ -22,6 +22,8 @@ import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
 import {SearchOrderPicker} from "./SearchOrderPicker.tsx";
 import {Spinner} from "../../../components/generic/Spinner.tsx";
 import { FaSearch } from "react-icons/fa";
+import {throwErrorFromResponse} from "../../../utils/misc.ts";
+import {useModal} from "../../../contexts/modal/useModal.ts";
 
 /** Fewer results per page with the filter panel open, so the 2-column grid has no gap. */
 function pageLimit(filtersOpen: boolean): number {
@@ -54,6 +56,7 @@ export default function SearchResultsPage() {
     const limit = pageLimit(filtersOpen);
     const pageNumber = urlQuery.page ?? 0;
     const searchQuery: ProjectSearchQuery = useMemo(() => ({...urlQuery, limit}), [urlQuery, limit]);
+    const modalContext = useModal()
 
     function toggleFilters(): void {
         const nextFiltersOpen = !filtersOpen;
@@ -90,7 +93,7 @@ export default function SearchResultsPage() {
                     })
                     if (!res.ok) {
                         console.error(res)
-                        throw new Error("Failed to get projects")
+                        await throwErrorFromResponse(res)
                     }
                     const json: ProjectSearchResponse = await res.json()
                     if (ignore) return
@@ -98,6 +101,10 @@ export default function SearchResultsPage() {
                     setSearchResultInfo(json.info)
                 } catch (e) {
                     console.error(e)
+                    await modalContext.dispatchModal({
+                        headline: "Error",
+                        body: String(e)
+                    })
                 }
                 if (ignore) return
                 setLoading(false)
@@ -118,12 +125,16 @@ export default function SearchResultsPage() {
                 })
                 if (!res.ok) {
                     console.error(res)
-                    throw new Error("Failed to get category")
+                    await throwErrorFromResponse(res)
                 }
                 const json: CategoryResponse = await res.json()
                 setCategories(json.categories)
             } catch (e) {
                 console.error(e)
+                await modalContext.dispatchModal({
+                    headline: "Error",
+                    body: String(e)
+                })
             }
         })()
     }, []);
@@ -135,12 +146,16 @@ export default function SearchResultsPage() {
                 res = await fetch(`${API_URL}/showcase/all`)
                 if (!res.ok) {
                     console.error(res)
-                    throw new Error("Failed to get showcases")
+                    await throwErrorFromResponse(res)
                 }
                 const json: ShowcaseListResponse = await res.json()
                 setShowcases(json.showcases)
             } catch (e) {
                 console.error(e)
+                await modalContext.dispatchModal({
+                    headline: "Error",
+                    body: String(e)
+                })
             }
         })()
     }, []);

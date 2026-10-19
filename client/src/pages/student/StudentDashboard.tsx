@@ -8,6 +8,7 @@ import type {ProjectVersionSummaryType} from "@hapi/shared/types/project";
 import {API_URL} from "../../consts.ts";
 import type {ProjectVersionsSearchResponse} from "@hapi/shared/types/apiResponses";
 import {ProjectListItem} from "./ProjectListItem/ProjectListItem.tsx";
+import {throwErrorFromResponse} from "../../utils/misc.ts";
 
 export function StudentDashboard() {
     const authContext = useAuth()
@@ -31,7 +32,7 @@ export function StudentDashboard() {
             })
             if (!res.ok) {
                 console.error(res)
-                throw new Error(res.statusText)
+                await throwErrorFromResponse(res)
             }
             const json: ProjectVersionsSearchResponse = await res.json()
             setProjects(json.versions.map((v) => {

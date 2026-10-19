@@ -5,6 +5,7 @@ import {useNavigate} from "react-router";
 import type {CreateProjectResponse, ShowcaseListResponse} from "@hapi/shared/types/apiResponses";
 import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
 import {Button} from "../../components/generic/Button.tsx";
+import {throwErrorFromResponse} from "../../utils/misc.ts";
 const fieldsetStyles = `flex flex-col gap-2 items-start`
 
 export function StudentNewProject() {
@@ -19,7 +20,7 @@ export function StudentNewProject() {
             })
             if (!res.ok) {
                 console.error(res)
-                throw new Error(res.statusText)
+                await throwErrorFromResponse(res)
             }
             const json: ShowcaseListResponse = await res.json();
             setShowcases(json.showcases)
@@ -53,7 +54,7 @@ export function StudentNewProject() {
             })
             if (!res.ok) {
                 console.error(res)
-                throw new Error(res.statusText)
+                await throwErrorFromResponse(res)
             }
 
             const json: CreateProjectResponse = await res.json();

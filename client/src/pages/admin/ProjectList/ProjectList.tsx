@@ -10,13 +10,14 @@ import type {
 } from "@hapi/shared/types/apiResponses";
 import {ProjectListItem} from "./ProjectListItem.tsx";
 import {Paginator} from "../ProjectEditor/Paginator.tsx";
-import {FaPlus, FaSearch, FaSpinner} from "react-icons/fa";
+import {FaPlus, FaSearch} from "react-icons/fa";
 import type {Category, Showcase} from "@hapi/shared/prisma/client";
 import {FilterSection} from "./FilterSection.tsx";
 import {SearchBar} from "./SearchBar.tsx";
 import {toApiSearchParams, useProjectSearchParams} from "../../../hooks/useProjectSearchParams.ts";
 import {Link} from "react-router";
 import {SearchOrderPicker} from "../../public/SearchResultsPage/SearchOrderPicker.tsx";
+import {Spinner} from "../../../components/generic/Spinner.tsx";
 
 const PAGE_LIMIT = 15;
 
@@ -145,7 +146,7 @@ export function ProjectList() {
             <div className={`flex items-center`}>
                 <div className={`flex gap-2 items-center`}>
                     <h2 className={`font-bold text-3xl`}>PROJECTS</h2>
-                    {loading && <FaSpinner className={`animate-spin`}/>}
+                    {loading && <Spinner />}
                 </div>
 
                 <Link to={`/dashboard/project/new`} className={`

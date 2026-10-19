@@ -3,10 +3,11 @@ import {useCallback, useMemo, useRef, useState} from "react";
 import {useModal} from "../../../contexts/modal/useModal.ts";
 import {API_URL} from "../../../consts.ts";
 import {LuReplace} from "react-icons/lu";
-import {FaCloudUploadAlt, FaSpinner, FaTrash} from "react-icons/fa";
+import {FaCloudUploadAlt, FaTrash} from "react-icons/fa";
 import type {ProjectAdminType} from "@hapi/shared/types/project";
 import type {CreateProjectVideoResponse} from "@hapi/shared/types/apiResponses";
 import {Button} from "../../../components/generic/Button.tsx";
+import {Spinner} from "../../../components/generic/Spinner.tsx";
 
 type Props = {
     media: ProjectMediaType[]
@@ -173,7 +174,7 @@ export function VideoEditor({media, project, setProject, setHasChanged}: Props) 
             </div>
                 :
                 <div className={`flex gap-2 items-center`}>
-                    <FaSpinner className={`animate-spin`} />
+                    <Spinner />
                     <span>Video upload in progress, don't leave this page!</span>
                 </div>
             }

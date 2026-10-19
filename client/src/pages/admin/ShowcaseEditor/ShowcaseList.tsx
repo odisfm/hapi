@@ -4,7 +4,8 @@ import type {ShowcaseListResponse, ShowcaseListResponseItem} from "@hapi/shared/
 import {ShowcaseCard} from "./ShowcaseCard.tsx";
 import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
 import {Link} from "react-router";
-import {FaPlus, FaSpinner} from "react-icons/fa";
+import {FaPlus} from "react-icons/fa";
+import {Spinner} from "../../../components/generic/Spinner.tsx";
 
 export function ShowcaseList() {
     const [showcases, setShowcases] = useState<ShowcaseListResponseItem[]>([]);
@@ -45,7 +46,7 @@ export function ShowcaseList() {
             <div className={`w-full flex items-start gap-2`}>
                 <div className={`flex items-center gap-2`}>
                     <h2 className={`font-bold text-3xl`}>SHOWCASES</h2>
-                    {loading && <FaSpinner className={`animate-spin`}/>}
+                    {loading && <Spinner />}
                 </div>
                 <Link to={`/dashboard/showcase/new`} className={`
                 ml-auto rounded-lg bg-r-red hover:bg-r-yellow-500 text-white hover:text-black transition-colors px-4 py-2 cursor-pointer

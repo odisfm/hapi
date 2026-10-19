@@ -5,7 +5,8 @@ import {API_URL} from "../../../consts.ts";
 import {UserList} from "./UserList.tsx";
 import {Button} from "../../../components/generic/Button.tsx";
 import {useNavigate} from "react-router";
-import {FaPlus, FaSpinner} from "react-icons/fa";
+import {FaPlus} from "react-icons/fa";
+import {Spinner} from "../../../components/generic/Spinner.tsx";
 
 export function UserPage() {
     const [loading, setLoading] = useState(false);
@@ -91,7 +92,7 @@ export function UserPage() {
             <div className={`flex items-center`}>
                 <div className={`flex items-center gap-2`}>
                     <h3 className={`font-bold text-3xl uppercase`}>Users</h3>
-                    {loading && <FaSpinner className={`animate-spin`} /> }
+                    {loading && <Spinner /> }
                 </div>
                 <Button
                     color={"red"}

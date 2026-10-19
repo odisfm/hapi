@@ -4,7 +4,7 @@ import {useModal} from "../../../contexts/modal/useModal.ts";
 import {API_URL} from "../../../consts.ts";
 import type {ProjectVersionsSearchResponse} from "@hapi/shared/types/apiResponses";
 import {ProjectListItem} from "./ProjectListItem.tsx";
-import {FaSpinner} from "react-icons/fa";
+import {Spinner} from "../../../components/generic/Spinner.tsx";
 
 export function ProjectQueue() {
     const modalContext = useModal();
@@ -44,7 +44,7 @@ export function ProjectQueue() {
         <div className={`flex flex-col gap-2`}>
             <div className={`flex items-center gap-2 w-full`}>
                 <h3 className={`font-bold text-3xl uppercase`}>Project queue</h3>
-                {loading && <FaSpinner className={`animate-spin`}/> }
+                {loading && <Spinner /> }
             </div>
             {!loading && projectQueue.length === 0 && (
                 <span className={`font-bold`}>No projects awaiting review</span>

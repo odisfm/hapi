@@ -4,7 +4,7 @@ import type {ShowcaseAdminType} from "@hapi/shared/types/showcase";
 import {API_URL} from "../../../consts.ts";
 import {useModal} from "../../../contexts/modal/useModal.ts";
 import type {ShowcaseAdminDetailsResponse} from "@hapi/shared/types/apiResponses";
-import {FaSpinner, FaTrash} from "react-icons/fa";
+import {FaTrash} from "react-icons/fa";
 import {SaveButton} from "../../../components/generic/SaveButton.tsx";
 import {MarkdownEditor} from "../../../components/generic/MarkdownEditor.tsx";
 import ProjectCard from "../../../components/ProjectCard.tsx";
@@ -12,6 +12,7 @@ import {format, formatDistance} from "date-fns";
 import type {UpdateShowcaseRequestType} from "@hapi/shared/types/apiRequests";
 import {Button} from "../../../components/generic/Button.tsx";
 import {SlugEditor} from "./SlugEditor.tsx";
+import {Spinner} from "../../../components/generic/Spinner.tsx";
 
 const legendStyles = `font-medium`
 const inputStyles = `p-1 rounded-md bg-neutral-200 px-2 py-1 font-light`
@@ -149,7 +150,7 @@ export function ShowcaseEditor() {
     }, [showcase, modalContext, navigate])
 
     if (!showcase) {
-        return <FaSpinner className={`animate-spin`}/>
+        return <Spinner />
     }
 
     return (

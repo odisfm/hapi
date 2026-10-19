@@ -1,11 +1,11 @@
 import {useCallback, useEffect, useState} from "react";
-import {FaSpinner} from "react-icons/fa";
 import {API_URL} from "../../../consts.ts";
 import {throwErrorFromResponse} from "../../../utils/misc.ts";
 import {buildConsolidatedShowcases, type ConsolidatedShowcaseType} from "./types.ts";
 import type {ShowcaseListResponse} from "@hapi/shared/types/apiResponses";
 import {useModal} from "../../../contexts/modal/useModal.ts";
 import {ShowcaseItem} from "./ShowcaseItem.tsx";
+import {Spinner} from "../../../components/generic/Spinner.tsx";
 
 export function ShowcaseIndexPage() {
     const modalContext = useModal();
@@ -48,7 +48,7 @@ export function ShowcaseIndexPage() {
         <div className={`flex flex-col gap-4`}>
             <div className={`flex items-center gap-2`}>
                 <h1 className={`text-3xl font-headline font-bold`}>Showcases</h1>
-                {loading && <FaSpinner className={`animate-spin text-xl`} />}
+                {loading && <Spinner />}
             </div>
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, architecto, blanditiis consequuntur debitis distinctio doloremque doloribus ea error ex exercitationem iste laudantium molestias nisi odit omnis optio, perspiciatis placeat provident qui repellat sapiente sed sequi sint sit sunt tenetur totam.</p>
 

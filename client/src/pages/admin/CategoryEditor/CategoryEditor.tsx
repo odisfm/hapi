@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 import type {CategoryResponse, CategoryType} from "@hapi/shared/types/apiResponses";
-import {FaSpinner} from "react-icons/fa";
 import {useModal} from "../../../contexts/modal/useModal.ts";
 import {API_URL} from "../../../consts.ts";
 import {CategoryItem} from "./CategoryItem.tsx";
@@ -8,6 +7,7 @@ import type {CategoryCreateRequestType, CategoryUpdateRequestType} from "@hapi/s
 import {IoMdAddCircle} from "react-icons/io";
 import {Button} from "../../../components/generic/Button.tsx";
 import {throwErrorFromResponse} from "../../../utils/misc.ts";
+import {Spinner} from "../../../components/generic/Spinner.tsx";
 
 export function CategoryEditor() {
     const modalContext = useModal();
@@ -143,7 +143,7 @@ export function CategoryEditor() {
         <>
             <div className={`flex items-center gap-2`}>
                 <h3 className={`font-bold text-3xl uppercase`}>Categories</h3>
-                {loading && <FaSpinner className={`animate-spin text-xl`}/> }
+                {loading && <Spinner/>}
             </div>
             <ul className={`grid grid-cols-1 md:grid-cols-3 gap-2 pt-4`}>
                 {categories.map((c) => {

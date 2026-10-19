@@ -144,6 +144,10 @@ export function FeaturedProjectsEditor() {
         )
     }, [featuredProjectList])
 
+    const reorderItem = useCallback((sourceIndex: number, direction: "up" | "down") => {
+        reorderFeatured(sourceIndex, direction === "up" ? sourceIndex - 1 : sourceIndex + 1)
+    }, [reorderFeatured])
+
     return (
         <div className={`flex flex-col gap-2 items-start`}>
 
@@ -183,6 +187,8 @@ export function FeaturedProjectsEditor() {
                             featured={true}
                             toggleFeatured={toggleFeaturedProject}
                             index={i}
+                            reorderSelf={reorderItem}
+                            key={p.id}
                         />
                     )
                 })}
@@ -200,6 +206,8 @@ export function FeaturedProjectsEditor() {
                             featured={false}
                             toggleFeatured={toggleFeaturedProject}
                             index={i}
+                            reorderSelf={() => {}}
+                            key={p.id}
                         />
                     )
                 })}

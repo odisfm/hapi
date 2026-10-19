@@ -27,6 +27,7 @@ function renderItem(overrides: Partial<{featured: boolean; iconUrl: string}> = {
                 toggleFeatured={toggleFeatured}
                 index={0}
                 {...overrides}
+                reorderSelf={() => {}}
             />
         </ul>,
     )
@@ -58,7 +59,7 @@ describe('ProjectListItem (featured projects editor)', () => {
             const user = userEvent.setup()
             renderItem({featured: false})
 
-            await user.click(screen.getByRole('button'))
+            await user.click(screen.getByRole('button', {name: "Add favourite"}))
 
             expect(toggleFeatured).toHaveBeenCalledTimes(1)
             expect(toggleFeatured).toHaveBeenCalledWith('project-123')
@@ -68,7 +69,7 @@ describe('ProjectListItem (featured projects editor)', () => {
             const user = userEvent.setup()
             renderItem({featured: true})
 
-            await user.click(screen.getByRole('button'))
+            await user.click(screen.getByRole('button', {name: "Remove favourite"}))
 
             expect(toggleFeatured).toHaveBeenCalledWith('project-123')
         })

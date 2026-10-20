@@ -1,9 +1,9 @@
 export async function sendEmailWithMailgun(address: string, subject: string, body: string) {
     const form = new FormData();
-    const emailDomain = process.env.MAILGUN_DOMAIN;
+    const emailDomain = process.env.EMAIL_DOMAIN;
     const mailgunKey = process.env.MAILGUN_KEY;
     if (!emailDomain) {
-        throw new Error('MAILGUN_DOMAIN env var missing');
+        throw new Error('EMAIL_DOMAIN env var missing');
     }
     if (!mailgunKey) {
         throw new Error('MAILGUN_KEY env var missing');

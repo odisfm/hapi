@@ -118,10 +118,17 @@ jobs:
       - name: deploy frontend
         working-directory: client
         run: |
-          aws s3 sync dist/ "s3://${{ steps.deploy_aws.outputs.frontend_bucket }}" --delete
+          BUCKET="${{ steps.deploy_aws.outputs.frontend_bucket }}"
+
+          aws s3 sync dist/assets "s3://$BUCKET/assets" --delete \
+            --cache-control "public,max-age=31536000,immutable"
+
+          aws s3 sync dist/ "s3://$BUCKET" --delete \
+            --exclude "assets/*" \
+            --cache-control "no-cache"
 
       - name: invalidate cloudfront
         run: |
           aws cloudfront create-invalidation \
             --distribution-id "${{ steps.deploy_aws.outputs.cloudfront_id }}" \
-            --paths "/index.html"
+            --paths "/*"

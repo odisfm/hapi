@@ -10,7 +10,11 @@ variable "mailgun_key" {
   type = string
 }
 
-variable "mailgun_domain" {
+variable "email_provider" {
+  type = string
+}
+
+variable "email_domain" {
   type = string
 }
 

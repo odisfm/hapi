@@ -42,7 +42,8 @@ jobs:
           touch terraform.tfvars
           echo "environment = \"${{ inputs.environment }}\"" >> terraform.tfvars
           echo "lambda_db_url = \"${{ secrets.LAMBDA_DB_URL }}\"" >> terraform.tfvars
-          echo "mailgun_domain = \"${{ secrets.MAILGUN_DOMAIN }}\"" >> terraform.tfvars
+          echo "email_provider = \"${{ secrets.EMAIL_PROVIDER }}\"" >> terraform.tfvars
+          echo "email_domain = \"${{ secrets.EMAIL_DOMAIN }}\"" >> terraform.tfvars
           echo "mailgun_key = \"${{ secrets.MAILGUN_KEY }}\"" >> terraform.tfvars
           echo "transcode_role_arn = \"${{ secrets.TRANSCODE_ROLE_ARN }}\"" >> terraform.tfvars
 

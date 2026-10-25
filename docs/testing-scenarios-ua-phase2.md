@@ -1,6 +1,6 @@
 # HAPI Showcase — Test Scenarios — for User Acceptance (UA) Phase 2
 - **Role:** BA — Imraan Mohammed
-- **Date:** Sprint 3, Week 1 (Week 8) — Sat, 17th Oct 2026 (Version 6.0)
+- **Date:** Sprint 3, Week 1 (Week 8) — Fri, 23rd Oct 2026 (Version 6.0)
 - **Status:** Draft (Version 6.0)
 - **Details:** This document includes test scenarios which are derived from the `requirements-specification.md` document, covering three perspectives: General/Public Access, Student/Developer Access and Admin Access from an end-user perspective, alongside any edge cases identified during feedback sessions from the client and our PM (Nirmal Rajesh). Revision (v5.0) restructures the document into Phase 1 for Completed tests and Phase 2 being the current stage. This shall align UAT scenarios with the updated Requirements Specification from v9.0 while retaining the necessary WCAG Accessibility Testing Scenarios.
 - **Related Document:** The signed Client Project Proposal organised by our PM (Nirmal Rajesh) and the Sprint 1 Week 1's Requirements Specification Document prepared myself, the BA (Imraan Mohammed), which covers functional and non-functional requirements, edge cases and design guides, all are related documents and are referenced in this document as a source of truth.

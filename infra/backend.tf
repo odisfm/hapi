@@ -57,6 +57,8 @@ resource "aws_lambda_function" "api" {
       EMAIL_PROVIDER = var.email_provider
       EMAIL_DOMAIN = var.email_domain
       MAILGUN_KEY = var.mailgun_key
+
+      WEBSITE_URL = "https://${aws_cloudfront_distribution.main.domain_name}"
     }
   }
 }

@@ -9,7 +9,7 @@ generator client {
   output          = "../src/generated/prisma"
   moduleFormat    = "esm"
   binaryTargets   = ["native", "rhel-openssl-3.0.x"]
-  previewFeatures = ["fullTextSearchPostgres", "relationJoins"]
+  previewFeatures = ["relationJoins"]
 }
 
 generator erd {

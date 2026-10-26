@@ -36,12 +36,12 @@ type ProjectPageState = {
 }
 
 const mediaPlatformIconSources: Record<keyof typeof deviceEnumFriendly, string> = {
-    PHONE: "/icons/iphone.svg",
-    TABLET: "/icons/ipad.svg",
-    DESKTOP: "/icons/macbook.svg",
-    WATCH: "/icons/applewatch.svg",
-    AR: "/icons/vision_pro.svg",
-    TV: "/icons/tv.svg",
+    PHONE: "/static-icons/iphone.svg",
+    TABLET: "/static-icons/ipad.svg",
+    DESKTOP: "/static-icons/macbook.svg",
+    WATCH: "/static-icons/applewatch.svg",
+    AR: "/static-icons/vision_pro.svg",
+    TV: "/static-icons/tv.svg",
 };
 
 const platformIconOrder = ["PHONE", "TABLET", "DESKTOP", "AR", "WATCH", "TV"] as const;

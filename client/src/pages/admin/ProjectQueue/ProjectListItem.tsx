@@ -5,6 +5,8 @@ import {useNavigate} from "react-router";
 
 export function ProjectListItem({summary}: {summary: ProjectVersionSummaryType}) {
     const navigate = useNavigate();
+    const pending = summary.alternateVersion
+    if (!pending) return null
     return (
         <li
             className={`bg-neutral-200 rounded-md flex gap-2 p-4`}
@@ -38,7 +40,7 @@ export function ProjectListItem({summary}: {summary: ProjectVersionSummaryType})
             <Button
                 styles={`ml-auto`}
                 onClick={() => {
-                    navigate(`/dashboard/project/${summary.alternateVersion!.id}`)
+                    navigate(`/dashboard/project/${pending.id}`)
                 }}
             >
                 Review

@@ -3,7 +3,7 @@ import {
     type ProjectPreviewType,
     type ProjectAdminType, type ProjectPublicType, type ProjectStudentType,
 } from "@hapi/shared/types/project";
-import {type ProjectGetPayload} from "@hapi/shared/prisma/models";
+import {type ProjectGetPayload, type ShowcaseModel} from "@hapi/shared/prisma/models";
 import {type UserRole} from "@hapi/shared/prisma/enums";
 
 const DEFAULT_ORDER = "zzzzzzzzzzzzz"
@@ -27,7 +27,11 @@ type ProjectPayload = ProjectGetPayload<{
             }
         }
     }
-}>
+}> & {
+    showcase: ShowcaseModel & {
+        slugs?: {slug: string}[]
+    }
+}
 
 export function filterProjectPreview(project: ProjectPayload): ProjectPreviewType {
     const version = project.versions![0]
@@ -71,6 +75,10 @@ export function filterProject(project: ProjectPayload, role: UserRole | null): P
         }),
         developers: version.developerNames,
         showcaseId: project.showcaseId,
+        showcase: project.showcase.slugs ? {
+            name: project.showcase.name,
+            slug: project.showcase.slugs[0]?.slug,
+        } : undefined,
         categories: version.categories.map(pc => pc.category.name),
         slug: project.slugs[0].slug
     }

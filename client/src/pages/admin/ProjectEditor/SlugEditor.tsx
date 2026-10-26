@@ -5,6 +5,7 @@ import {TiDelete} from "react-icons/ti";
 import {useModal} from "../../../contexts/modal/useModal.ts";
 import type {AlterProjectSlugRequestType} from "@hapi/shared/types/apiRequests";
 import {IoMdAddCircle} from "react-icons/io";
+import {throwErrorFromResponse} from "../../../utils/misc.ts";
 
 type Props = {
     projectId: string
@@ -64,19 +65,14 @@ export function SlugEditor({projectId}: Props) {
                     body: JSON.stringify({slug: slug} satisfies AlterProjectSlugRequestType),
                 })
                 if (!res.ok) {
-                    try {
-                        const json = await res.json()
-                        throw new Error(json?.error || res.statusText)
-                    } catch {
-                        throw new Error(res.statusText)
-                    }
+                    await throwErrorFromResponse(res)
                 }
                 await getSlugs()
             } catch (error) {
                 console.error(error)
                 await modalContext.dispatchModal({
                     headline: "Failed to delete slug",
-                    body: res ? String(res) : "Unknown error",
+                    body: String(error),
                     buttons: [{id: "", text: "Ok", variant: "default"}]
                 })
             }

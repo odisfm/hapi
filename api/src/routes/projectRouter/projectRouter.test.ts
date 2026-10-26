@@ -188,6 +188,22 @@ describe("GET /project/search", async () => {
 })
 
 describe("GET /project/search visibility", () => {
+    test("filters by multiple showcase IDs and rejects invalid IDs", async () => {
+        const showcaseIds = [crypto.randomUUID(), crypto.randomUUID()]
+        vi.mocked(db.project.findMany).mockResolvedValue([])
+
+        const res = await app.request(`/project/search?showcase=${showcaseIds.join(",")}`)
+
+        expect(res.status).toBe(200)
+        expect(db.project.findMany).toHaveBeenCalledWith(expect.objectContaining({
+            where: expect.objectContaining({showcaseId: {in: showcaseIds}}),
+        }))
+
+        const invalidRes = await app.request("/project/search?showcase=not-a-uuid,also-invalid")
+        expect(invalidRes.status).toBe(400)
+        expect(db.project.findMany).toHaveBeenCalledTimes(1)
+    })
+
     test("restricts anonymous users to live projects, even when asking for unpublished", async () => {
         vi.mocked(db.project.findMany).mockResolvedValue([
             makeProject({id: "live"}),

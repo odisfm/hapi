@@ -1,7 +1,8 @@
-import type {Category, Showcase} from "@hapi/shared/prisma/client";
-import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
+import type {Category} from "@hapi/shared/prisma/client";
+import type {ShowcaseListResponseItem} from "@hapi/shared/types/apiResponses";
 import {Button} from "../../../components/generic/Button.tsx";
 import {splitList, type UrlSearchQuery, useProjectSearchParams} from "../../../hooks/useProjectSearchParams.ts";
+import {buildConsolidatedShowcases, type ConsolidatedShowcaseType} from "../../public/ShowcaseIndexPage/types.ts";
 
 export type FilterType = "showcase" | "category" | "published";
 
@@ -18,7 +19,7 @@ type Props = {
     /** filters to show, in display order */
     filters: FilterType[];
     categories: Category[];
-    showcases: Showcase[];
+    showcases: ShowcaseListResponseItem[];
     /** show a "Filter" heading, with "clear all" beside it */
     showTitle?: boolean;
 }
@@ -31,6 +32,8 @@ export function FilterSection({
                               }: Props) {
     const [searchQuery, updateQuery] = useProjectSearchParams();
     const selectedCategories = splitList(searchQuery.categoryNames);
+    const selectedShowcaseIds = splitList(searchQuery.showcase);
+    const consolidatedShowcases = buildConsolidatedShowcases(showcases);
     const hasFilter = filters.some((filter) => searchQuery[QUERY_KEY[filter]] !== undefined);
 
     function toggleCategory(categoryName: string) {
@@ -46,6 +49,27 @@ export function FilterSection({
             cleared[QUERY_KEY[filter]] = undefined;
         });
         updateQuery(cleared);
+    }
+
+    function getShowcases(program: ConsolidatedShowcaseType): ShowcaseListResponseItem[] {
+        const yearShowcases = program.yearShowcases?.flatMap((year) => [
+            ...(year.showcase ? [year.showcase] : []),
+            ...(year.semesters?.map((semester) => semester.showcase) ?? []),
+        ]) ?? [];
+        return [
+            ...(program.standaloneShowcase ? [program.standaloneShowcase] : []),
+            ...yearShowcases,
+        ];
+    }
+
+    function toggleShowcase(program: ConsolidatedShowcaseType, showcase?: ShowcaseListResponseItem) {
+        const programShowcases = getShowcases(program);
+        const next = showcase
+            ? [showcase.id]
+            : programShowcases.some((item) => selectedShowcaseIds.includes(item.id))
+                ? []
+                : programShowcases.map((item) => item.id);
+        updateQuery({showcase: next.join(",") || undefined});
     }
 
     const clearButton = hasFilter &&
@@ -68,19 +92,38 @@ export function FilterSection({
                             {!showTitle && clearButton}
                         </div>
                         <ul>
-                            {showcases.map((s) => {
-                                const active = searchQuery.showcase === s.id
+                            {consolidatedShowcases.map((program) => {
+                                const programShowcases = getShowcases(program);
+                                const programSelected = programShowcases.some((item) => selectedShowcaseIds.includes(item.id));
+                                const showSubOptions = programShowcases.length > 1 && programSelected;
                                 return (
-                                    <li key={s.id} className={`mb-1`}>
+                                    <li key={program.name} className={`mb-1`}>
                                         <Button
                                             variant={"compact"}
-                                            color={active ? "light-blue" : "grey"}
-                                            active={active}
+                                            color={programSelected ? "light-blue" : "grey"}
+                                            active={programSelected}
                                             styles={`text-xs text-left !p-1`}
-                                            onClick={() => updateQuery({showcase: s.id})}
+                                            onClick={() => toggleShowcase(program)}
                                         >
-                                            {getShowcaseName(s)}
+                                            {program.name}
                                         </Button>
+                                        {showSubOptions &&
+                                            <ul className="ml-3 mt-1">
+                                                {programShowcases.map((showcase) => (
+                                                    <li key={showcase.id} className="mb-1">
+                                                        <Button
+                                                            variant={"compact"}
+                                                            color={selectedShowcaseIds.includes(showcase.id) ? "light-blue" : "grey"}
+                                                            active={selectedShowcaseIds.includes(showcase.id)}
+                                                            styles="text-xs text-left !p-1"
+                                                            onClick={() => toggleShowcase(program, showcase)}
+                                                        >
+                                                            {showcase.year}{showcase.semester ? ` sem${showcase.semester}` : ""}
+                                                        </Button>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        }
                                     </li>
                                 )
                             })}

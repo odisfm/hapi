@@ -2,7 +2,8 @@ import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {MemoryRouter, useLocation} from 'react-router'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
-import type {Category, Showcase} from '@hapi/shared/prisma/client'
+import type {Category} from '@hapi/shared/prisma/client'
+import type {ShowcaseListResponseItem} from '@hapi/shared/types/apiResponses'
 import {FilterSection, type FilterType} from './FilterSection.tsx'
 
 vi.mock('@hapi/shared/utils/getShowcaseName', () => ({
@@ -12,7 +13,7 @@ vi.mock('@hapi/shared/utils/getShowcaseName', () => ({
 const showcases = [
     {id: 'show-1', name: 'Spring Showcase'},
     {id: 'show-2', name: 'Autumn Showcase'},
-] as unknown as Showcase[]
+] as unknown as ShowcaseListResponseItem[]
 
 const categories = [
     {id: 'cat-1', name: 'Games'},
@@ -29,7 +30,7 @@ function LocationProbe() {
 
 function renderFilters(
     path = '/projects',
-    options: {filters?: FilterType[]; showcases?: Showcase[]; categories?: Category[]; showTitle?: boolean} = {},
+    options: {filters?: FilterType[]; showcases?: ShowcaseListResponseItem[]; categories?: Category[]; showTitle?: boolean} = {},
 ) {
     return render(
         <MemoryRouter initialEntries={[path]}>
@@ -182,14 +183,42 @@ describe('FilterSection', () => {
             expect(params().has('page')).toBe(false)
         })
 
-        it('leaves the address alone when the showcase is already selected', async () => {
+        it('clears the showcase when the selected showcase is clicked again', async () => {
             const user = userEvent.setup()
             renderFilters('/projects?showcase=show-1&page=4')
 
             await user.click(screen.getByRole('button', {name: 'Spring Showcase'}))
 
-            expect(search()).toBe('?showcase=show-1&page=4')
-            expect(screen.getByTestId('location')).toHaveAttribute('data-key', 'default')
+            expect(search()).toBe('')
+        })
+
+        it('groups program showcases and supports selecting all or one sub-option', async () => {
+            const user = userEvent.setup()
+            const groupedShowcases = [
+                {id: 'show-1', name: 'AFP', year: 2025, semester: 2},
+                {id: 'show-2', name: 'AFP', year: 2026, semester: 1},
+            ] as unknown as ShowcaseListResponseItem[]
+            renderFilters('/projects', {showcases: groupedShowcases, filters: ['showcase']})
+
+            await user.click(screen.getByRole('button', {name: 'AFP'}))
+            expect(params().get('showcase')).toBe('show-2,show-1')
+            expect(screen.getByRole('button', {name: '2025 sem2'})).toBeInTheDocument()
+            expect(screen.getByRole('button', {name: '2026 sem1'})).toBeInTheDocument()
+
+            await user.click(screen.getByRole('button', {name: 'AFP'}))
+            expect(params().has('showcase')).toBe(false)
+        })
+
+        it('restores a multi-showcase program selection from the URL', () => {
+            const groupedShowcases = [
+                {id: 'show-1', name: 'AFP', year: 2025, semester: 2},
+                {id: 'show-2', name: 'AFP', year: 2026, semester: 1},
+            ] as unknown as ShowcaseListResponseItem[]
+            renderFilters('/projects?showcase=show-2,show-1', {showcases: groupedShowcases, filters: ['showcase']})
+
+            expect(screen.getByRole('button', {name: 'AFP'})).toHaveClass('bg-r-blue-500')
+            expect(screen.getByRole('button', {name: '2025 sem2'})).toHaveClass('bg-r-blue-500')
+            expect(screen.getByRole('button', {name: '2026 sem1'})).toHaveClass('bg-r-blue-500')
         })
     })
 

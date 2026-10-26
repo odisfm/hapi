@@ -18,6 +18,7 @@ import {NUM_HERO_PROJECTS_FRONT_PAGE} from "@hapi/shared/consts";
 import type {ProjectGetPayload} from "@hapi/shared/prisma/models/Project";
 import {getConnInfo} from "../../helpers/getConnInfo";
 import {addDays} from "date-fns";
+import * as z from "zod";
 
 const SEARCH_SCORE_CUTOFF = 0.6 // 0 - exact match, 1 - no match
 
@@ -135,9 +136,18 @@ projectRouterGet.get("/search", async (c) => {
         searchQuery.published = "published"
     }
 
+    const showcaseIds = searchQuery.showcase?.split(",").map((id) => id.trim()).filter(Boolean);
+    if (searchQuery.showcase && (!showcaseIds?.length || !z.array(z.uuidv4()).safeParse(showcaseIds).success)) {
+        return c.json({error: "Invalid showcase ID"}, 400)
+    }
+
     let records = await db.project.findMany({
         where: {
-            ...(searchQuery.showcase && {showcaseId: searchQuery.showcase}),
+            ...(showcaseIds && {
+                showcaseId: showcaseIds.length === 1
+                    ? showcaseIds[0]
+                    : {in: showcaseIds}
+            }),
             ...(searchQuery.approvalStatus && {approvalStatus: searchQuery.approvalStatus}),
             ...(userRole !== "ADMIN" && {published: true, showcase: {publishedDate: {lt: new Date()}}}),
         },

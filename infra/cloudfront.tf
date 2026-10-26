@@ -1,6 +1,10 @@
 locals {
-  s3_origin_id  = "frontend-bucket"
-  api_origin_id = "api-gateway"
+  s3_origin_id    = "frontend-bucket"
+  api_origin_id   = "api-gateway"
+  media_origin_id = "media-bucket"
+  icons_origin_id = "icons-bucket"
+
+  site_host = var.domain != "" ? var.domain : aws_cloudfront_distribution.main.domain_name
 }
 
 data "aws_cloudfront_cache_policy" "caching_optimized" {
@@ -37,6 +41,18 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   origin {
+    origin_id                = local.media_origin_id
+    domain_name              = aws_s3_bucket.screenshots_bucket.bucket_regional_domain_name
+    origin_access_control_id = aws_cloudfront_origin_access_control.frontend.id
+  }
+
+  origin {
+    origin_id                = local.icons_origin_id
+    domain_name              = aws_s3_bucket.icons_bucket.bucket_regional_domain_name
+    origin_access_control_id = aws_cloudfront_origin_access_control.frontend.id
+  }
+
+  origin {
     origin_id = local.api_origin_id
 
     domain_name = replace(aws_apigatewayv2_api.http.api_endpoint, "https://", "")
@@ -66,6 +82,42 @@ resource "aws_cloudfront_distribution" "main" {
       function_arn = aws_cloudfront_function.strip_api_prefix.arn
     }
 
+  }
+
+  ordered_cache_behavior {
+    path_pattern     = "/media/*"
+    target_origin_id = local.media_origin_id
+
+    allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    cached_methods  = ["GET", "HEAD"]
+
+    cache_policy_id = data.aws_cloudfront_cache_policy.caching_optimized.id
+
+    viewer_protocol_policy = "redirect-to-https"
+    compress               = true
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.strip_first_segment.arn
+    }
+  }
+
+  ordered_cache_behavior {
+    path_pattern     = "/icons/*"
+    target_origin_id = local.icons_origin_id
+
+    allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    cached_methods  = ["GET", "HEAD"]
+
+    cache_policy_id = data.aws_cloudfront_cache_policy.caching_optimized.id
+
+    viewer_protocol_policy = "redirect-to-https"
+    compress               = true
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.strip_first_segment.arn
+    }
   }
 
   default_cache_behavior {
@@ -113,6 +165,13 @@ resource "aws_cloudfront_function" "spa_fallback" {
   runtime = "cloudfront-js-2.0"
   publish = true
   code    = file("${path.module}/functions/spa-fallback.js")
+}
+
+resource "aws_cloudfront_function" "strip_first_segment" {
+  name    = "strip-first-segment-${var.environment}"
+  runtime = "cloudfront-js-2.0"
+  publish = true
+  code    = file("${path.module}/functions/strip-first-segment.js")
 }
 
 output "cloudfront_domain_name" {

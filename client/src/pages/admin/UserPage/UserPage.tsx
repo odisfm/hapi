@@ -7,6 +7,7 @@ import {Button} from "../../../components/generic/Button.tsx";
 import {useNavigate} from "react-router";
 import {FaPlus} from "react-icons/fa";
 import {Spinner} from "../../../components/generic/Spinner.tsx";
+import {throwErrorFromResponse} from "../../../utils/misc.ts";
 
 export function UserPage() {
     const [loading, setLoading] = useState(false);
@@ -22,7 +23,7 @@ export function UserPage() {
             })
             if (!res.ok) {
                 console.error(res)
-                throw new Error(res.statusText);
+                await throwErrorFromResponse(res)
             }
             const json: UserListResponse = await res.json();
             setUserList(json.users)

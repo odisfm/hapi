@@ -4,6 +4,7 @@ import {useModal} from "../../../contexts/modal/useModal.ts";
 import {API_URL} from "../../../consts.ts";
 import {AppIcon} from "../../../components/AppIcon.tsx";
 import {Paginator} from "../ProjectEditor/Paginator.tsx";
+import {throwErrorFromResponse} from "../../../utils/misc.ts";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -53,7 +54,7 @@ export function TopProjects() {
             })
             if (!res.ok) {
                 console.error(res)
-                throw new Error(res.statusText);
+                await throwErrorFromResponse(res)
             }
             const json: AnalyticsProjectResponse = await res.json();
             setAnalytics(json.analytics.filter((project) => project.views > 0));

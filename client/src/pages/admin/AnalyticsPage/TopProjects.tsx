@@ -109,6 +109,7 @@ export function TopProjects() {
                                     setCustomStart(event.target.value);
                                     setPage(0);
                                 }}
+                                aria-label={"Start date"}
                             />
                             <span>to</span>
                             <input
@@ -121,6 +122,7 @@ export function TopProjects() {
                                     setCustomEnd(event.target.value);
                                     setPage(0);
                                 }}
+                                aria-label={"End date"}
                             />
                         </>
                     )}

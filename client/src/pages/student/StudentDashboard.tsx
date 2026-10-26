@@ -81,7 +81,7 @@ export function StudentDashboard() {
             <h3>Projects</h3>
             <ul className={`flex flex-col gap-2 self-start w-full max-w-100`}>
                 {projects.map((p) => {
-                    return (<ProjectListItem summary={p} refresh={getVersions}/>)
+                    return (<ProjectListItem summary={p} refresh={getVersions} key={p.projectId}/>)
                 })}
             </ul>
 

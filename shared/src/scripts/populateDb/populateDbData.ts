@@ -1555,7 +1555,7 @@ type ProjectMediaVersionUnion = ProjectMedia & ProjectVersionMedia
 
 type NewProjectMediaType = Omit<
     ProjectMediaVersionUnion,
-    "id" | "status" | "order" | "mediaId" | "projectVersionId" | "createdAt"
+    "id" | "status" | "order" | "mediaId" | "projectVersionId" | "createdAt" | "failureReason"
 >
 
 export const projectMediaData: NewProjectMediaType[] = [

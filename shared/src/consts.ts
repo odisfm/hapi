@@ -1,1 +1,2 @@
 export const NUM_HERO_PROJECTS_FRONT_PAGE = 2
+export const DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS = 10 // minutes

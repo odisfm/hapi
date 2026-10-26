@@ -332,7 +332,6 @@ describe("list users", () => {
         const json = await res.json() as {users: object[]}
         expect(json.users).toHaveLength(1)
         expect(json.users[0]).not.toHaveProperty("password")
-        expect(json.users[0]).not.toHaveProperty("id")
     })
 })
 

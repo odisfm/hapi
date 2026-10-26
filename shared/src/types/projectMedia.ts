@@ -7,7 +7,8 @@ export const ProjectMediaSchema = z.object({
     mediaType: z.enum(MediaType),
     deviceType: z.enum(DeviceType),
     order: z.string(),
-    status: z.enum(MediaStatus)
+    status: z.enum(MediaStatus),
+    failureReason: z.string().optional()
 })
 
 export type ProjectMediaType = z.infer<typeof ProjectMediaSchema>;

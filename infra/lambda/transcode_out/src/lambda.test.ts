@@ -46,7 +46,7 @@ describe("transcode_out", () => {
     test("moves the transcoded video into place and marks it available, leaving other videos alone", async () => {
         vi.mocked(db.projectMedia.findUnique).mockResolvedValue({
             id: "media-1", projectId: "project-1", mediaUrl: "video-new", mediaType: "VIDEO",
-            status: "PENDING", createdAt: new Date(),
+            status: "PENDING", createdAt: new Date(), failureReason: null
         })
 
         await handler(transcodedEvent("video-new"))

@@ -112,6 +112,7 @@ SUPERSEDED SUPERSEDED
     MediaType mediaType 
     MediaStatus status 
     DateTime createdAt "unlinked media is kept for a grace period, as it may not be saved to a version yet"
+    String failureReason "❓"
     }
   
 

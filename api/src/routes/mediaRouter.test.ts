@@ -17,6 +17,7 @@ import type {ProjectMediaModel} from "@hapi/shared/prisma/models";
 
 const OWNER_ID = "owner-1"
 const projectId = crypto.randomUUID()
+const versionId = crypto.randomUUID()
 
 const png = await sharp({
     create: {width: 1, height: 1, channels: 3, background: "white"}
@@ -30,6 +31,7 @@ function makeMedia(overrides: Partial<ProjectMediaModel> = {}): ProjectMediaMode
         mediaType: "SCREENSHOT",
         status: "AVAILABLE",
         createdAt: new Date(),
+        failureReason: null,
         ...overrides,
     }
 }
@@ -53,7 +55,7 @@ beforeEach(() => {
 
 describe("image uploads", () => {
     const UPLOADS = [
-        ["/media/screenshot", {projectId, deviceType: "PHONE"}, 201],
+        ["/media/screenshot", {projectId, versionId, deviceType: "PHONE"}, 201],
         ["/media/hero", {projectId}, 201],
     ] as const
 
@@ -75,7 +77,7 @@ describe("image uploads", () => {
 
 describe("POST /media/video", () => {
     function uploadVideo(headers: Record<string, string>) {
-        return app.request("/media/video", {method: "POST", headers, body: JSON.stringify({projectId})})
+        return app.request("/media/video", {method: "POST", headers, body: JSON.stringify({projectId, versionId})})
     }
 
     test("rejects students who don't own the project", async () => {
@@ -89,6 +91,7 @@ describe("POST /media/video", () => {
         ownedBy(OWNER_ID)
         const record = makeMedia({mediaType: "VIDEO", status: "PENDING"})
         vi.mocked(db.projectMedia.create).mockResolvedValue(record)
+        vi.mocked(db.projectVersionMedia.create).mockResolvedValue({order: "", mediaId: "", projectVersionId: "", deviceType: "PHONE"})
         const res = await uploadVideo(loginAs("STUDENT", {id: OWNER_ID}))
         expect(res.status).toBe(200)
         expect(await res.json()).toEqual({

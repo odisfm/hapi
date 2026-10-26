@@ -5,8 +5,12 @@ import type {UserDetails} from '@hapi/shared/types/apiResponses'
 import {AuthContext} from '../../../contexts/auth/AuthContext.tsx'
 import {UserList} from './UserList.tsx'
 
+vi.mock('../../../contexts/modal/useModal.ts', () => ({
+    useModal: () => ({dispatchModal: vi.fn()}),
+}))
+
 function makeUser(name: string, email: string): UserDetails {
-    return {name, email, needsPasswordReset: false, role: 'ADMIN'}
+    return {id: email, name, email, needsPasswordReset: false, role: 'ADMIN', videoUploadCredits: null}
 }
 
 const me = makeUser('Me Myself', 'me@example.com')

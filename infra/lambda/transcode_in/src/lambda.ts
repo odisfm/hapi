@@ -14,7 +14,7 @@ const mediaConvertClient = new MediaConvertClient()
 
 const MAX_LONG_EDGE = 1920;
 
-type ProbeInfo = { hasAudio: boolean; width: number; height: number };
+type ProbeInfo = { hasAudio: boolean; width: number; height: number, duration: number };
 
 async function probeMedia(bucket: string, key: string): Promise<ProbeInfo> {
     const res = await mediaConvertClient.send(new ProbeCommand({
@@ -33,10 +33,13 @@ async function probeMedia(bucket: string, key: string): Promise<ProbeInfo> {
         throw new Error(`No video track with dimensions found: ${key}`);
     }
 
+    const duration = result.Container.Duration!
+
     return {
         hasAudio: (result.TrackMappings?.[0]?.AudioTrackIndexes?.length ?? 0) > 0,
         width,
         height,
+        duration
     };
 }
 
@@ -58,10 +61,64 @@ export const handler = async (event: S3Event) => {
     }`;
     const uri = baseName.replace("transcode_in/", "");
     let success = false;
-
+    let didDeductCredits = false
+    const { hasAudio, width, height, duration } = await probeMedia(bucket, key);
+    const roundedDurationMinutes = Math.round(duration / 60);
+    const record = await db.projectMedia.findUnique({
+        where: {
+            mediaUrl: uri
+        },
+        include: {
+            project: {
+                include: {
+                    ownerships: {
+                        include: {
+                            owner: true
+                        }
+                    }
+                }
+            }
+        }
+    })
+    if (!record) {
+        throw new Error(`No DB record with URI ${uri}`)
+    }
+    const owner = record.project.ownerships[0].owner
+    // DB schema technically allows multiple project owners but this is not implemented on frontend
 
     try {
-        const { hasAudio, width, height } = await probeMedia(bucket, key);
+
+        if (owner.videoTranscodeCredits !== null) { // admins have null (unlimited credits)
+            if (roundedDurationMinutes > owner.videoTranscodeCredits) {
+                await db.projectMedia.update({
+                    where: {
+                        mediaUrl: uri
+                    },
+                    data: {
+                        status: "FAILED",
+                        failureReason: "Not enough video upload credits"
+                    }
+                })
+                await s3.send(new DeleteObjectCommand({
+                    Bucket: bucket,
+                    Key: key,
+                }))
+
+                return
+            }
+            await db.user.update({
+                where: {
+                    id: owner.id
+                },
+                data: {
+                    videoTranscodeCredits: {
+                        decrement: roundedDurationMinutes
+                    }
+                }
+            })
+            didDeductCredits = true
+        }
+
         const dims = outputDimensions(width, height);
 
         const jobSettings: JobSettings = {
@@ -147,7 +204,8 @@ export const handler = async (event: S3Event) => {
             await db.projectMedia.update({
                 where: {mediaUrl: uri},
                 data: {
-                    status: "FAILED"
+                    status: "FAILED",
+                    failureReason: "Uncaught error"
                 }
             })
 
@@ -155,6 +213,19 @@ export const handler = async (event: S3Event) => {
                 Bucket: bucket,
                 Key: key,
             } satisfies DeleteObjectCommandInput))
+
+            if (didDeductCredits) {
+                await db.user.update({
+                    where: {
+                        id: owner.id
+                    },
+                    data: {
+                        videoTranscodeCredits: {
+                            increment: roundedDurationMinutes
+                        }
+                    }
+                })
+            }
 
         }
     }

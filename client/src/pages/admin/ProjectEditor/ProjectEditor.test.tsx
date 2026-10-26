@@ -137,7 +137,7 @@ function requestsWithMethod(method: string) {
 function renderEditorPage() {
     return render(
         <AuthContext.Provider value={{
-            user: {email: "a", name: "a", needsPasswordReset: false, role: "ADMIN"},
+            user: {id: "id-a", email: "a", name: "a", needsPasswordReset: false, role: "ADMIN", videoUploadCredits: 10},
             setUserDetails: () => {},
             logOut: () => {},
             authPending: false

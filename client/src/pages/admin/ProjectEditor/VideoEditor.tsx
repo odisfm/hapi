@@ -16,33 +16,45 @@ type Props = {
     setHasChanged: (value: boolean) => void
 }
 
+type FailedMedia = {
+    id: string,
+    reason?: string
+}
+
 export function VideoEditor({media, project, setProject, setHasChanged}: Props) {
     const [videoUploading, setVideoUploading] = useState(false);
     const modalContext = useModal()
     const videoPickerRef = useRef<HTMLInputElement>(null);
-    const {currentVideoUrl, pendingUrls, failedUrls} = useMemo(() => {
+    const {currentVideoId, currentVideoUrl, pendingUrls, failedMedia} = useMemo(() => {
+        let currentVideoId: string | null = null;
         let currentVideoUrl: string | null = null;
         const pendingUrls: string[] = []
-        const failedUrls: string[] = []
+        const failedMedia: FailedMedia[] = []
 
         for (const video of media) {
             if (video.status === "AVAILABLE") {
+                currentVideoId = video.id
                 currentVideoUrl = video.uri
             } else if (video.status === "FAILED") {
-                failedUrls.push(video.uri)
+                const failure = {
+                    id: video.id,
+                    reason: video.failureReason || undefined
+                }
+                failedMedia.push(failure)
             } else if (video.status === "PENDING") {
                 pendingUrls.push(video.uri)
             }
         }
 
         return {
+            currentVideoId,
             currentVideoUrl,
             pendingUrls,
-            failedUrls
+            failedMedia
         }
     }, [media])
 
-    const removeVideo = useCallback(async (uri: string, confirm: boolean) => {
+    const removeVideo = useCallback(async (id: string, confirm: boolean) => {
         if (confirm) {
             const confirmation = await modalContext.dispatchModal({
                 headline: "Remove video?",
@@ -51,10 +63,10 @@ export function VideoEditor({media, project, setProject, setHasChanged}: Props) 
             })
             if (confirmation !== "confirm") return
         }
-        const removeIdx = project.media.findIndex((m) => m.uri === uri)
+        const removeIdx = project.media.findIndex((m) => m.id === id)
         if (removeIdx === -1) return
-        setProject({...project, media: project.media.toSpliced(removeIdx, 1)})
         setHasChanged(true)
+        setProject({...project, media: project.media.toSpliced(removeIdx, 1)})
     }, [modalContext, project, setProject, setHasChanged])
 
     const uploadVideo = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +80,8 @@ export function VideoEditor({media, project, setProject, setHasChanged}: Props) 
                 credentials: "include",
                 method: "POST",
                 body: JSON.stringify({
-                    projectId: project.id
+                    projectId: project.id,
+                    versionId: project.versionId
                 })
             })
             if (!res1.ok) {
@@ -125,24 +138,35 @@ export function VideoEditor({media, project, setProject, setHasChanged}: Props) 
             {pendingUrls.length > 0 &&
             <p className={`p-4 rounded-md bg-r-yellow-500 text-black`}>A video is processing. Save your changes, then refresh this page in a few minutes.</p>
             }
-            {failedUrls.length > 0 &&
+            {failedMedia.length > 0 &&
                 <ul>
-                    {failedUrls.map((url) => (
-                        <li key={url} className={`flex items-center gap-2`}>
-                            <span className={`bg-red-800 p-2 text-white rounded-md mb-2`}>Video upload failed! Check the video file is correct. id: {url}</span>
-                            <button
-                                className={`ml-auto px-2 py-1 rounded-md cursor-pointer bg-neutral-500`}
-                                onClick={() => removeVideo(url, false)}
-                            >
-                                Dismiss
-                            </button>
-                        </li>
-                        ))
+                    {failedMedia.map((m) => {
+                        if (m.reason && m.reason === "Not enough video upload credits") {
+                            m.reason += `. Contact teaching team`
+                        }
+                        return (
+                            <li key={m.id} className={`flex items-start gap-2`}>
+                                <p className={`bg-red-800 p-2 pr-4 text-white rounded-md mb-2 flex flex-col`}>
+                                    <span>Video upload failed!</span>
+                                    {m.reason &&
+                                    <span>{m.reason}</span>
+                                    }
+                                    <span>id: {m.id}</span>
+                                </p>
+                                <button
+                                    className={`ml-auto px-2 py-1 rounded-md cursor-pointer bg-neutral-500 text-white`}
+                                    onClick={() => removeVideo(m.id, false)}
+                                >
+                                    Dismiss
+                                </button>
+                            </li>
+                        );
+                    })
                     }
                 </ul>
             }
             {currentVideoUrl &&
-            <video controls src={`${import.meta.env.VITE_S3_MEDIA_BUCKET}${currentVideoUrl}.webm`} />
+            <video controls src={`${import.meta.env.VITE_S3_MEDIA_BUCKET}${currentVideoUrl}.webm`} className={`max-h-[50dvh]`}/>
             }
             { !videoUploading ?
                 <div className={`flex gap-2`}>
@@ -161,11 +185,11 @@ export function VideoEditor({media, project, setProject, setHasChanged}: Props) 
                     </Button>
                 }
                 {
-                    currentVideoUrl &&
+                    currentVideoId &&
                     <Button
                         color={"danger"}
                         onClick={() => {
-                            removeVideo(currentVideoUrl, true)
+                            removeVideo(currentVideoId, true)
                         }}
                     >
                         <FaTrash/><span>Remove video</span>

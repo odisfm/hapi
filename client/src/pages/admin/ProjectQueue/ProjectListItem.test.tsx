@@ -101,4 +101,11 @@ describe('ProjectListItem (project queue)', () => {
 
         expect(navigate).toHaveBeenCalledWith(`/dashboard/project/${summary.alternateVersion!.id}`)
     })
+
+    it('renders nothing when there is no version awaiting review', () => {
+        renderItem({alternateVersion: undefined})
+
+        expect(screen.queryByRole('listitem')).not.toBeInTheDocument()
+        expect(screen.queryByRole('button', {name: 'Review'})).not.toBeInTheDocument()
+    })
 })

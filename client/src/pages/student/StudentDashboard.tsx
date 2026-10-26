@@ -19,8 +19,7 @@ export function StudentDashboard() {
     useEffect(() => {
         if (!authContext.user && !authContext.authPending) {
             navigate("/admin-login");
-        }
-        if (!authContext.authPending && authContext.user?.role !== "STUDENT") {
+        } else if (!authContext.authPending && authContext.user?.role !== "STUDENT") {
             navigate("/protected")
         }
     }, [authContext.user, authContext.authPending, navigate]);

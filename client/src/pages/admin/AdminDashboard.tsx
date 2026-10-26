@@ -14,8 +14,7 @@ export function AdminDashboard() {
     useEffect(() => {
         if (!authContext.user && !authContext.authPending) {
             navigate("/admin-login");
-        }
-        if (!authContext.authPending && authContext.user?.role !== "ADMIN") {
+        } else if (!authContext.authPending && authContext.user?.role !== "ADMIN") {
             navigate("/protected")
         }
     }, [authContext.user, authContext.authPending, navigate]);

@@ -24,15 +24,12 @@ export function MediaGroup({media, onReorder, deviceType, setActiveMedia}: Props
                 if (sourceIndex === targetIndex) return;
 
                 const edge = extractClosestEdge(target.data);
-                const next = [...media];
-                const [moved] = next.splice(sourceIndex, 1);
 
                 let insertAt = targetIndex;
                 if (sourceIndex < targetIndex && edge === "left") insertAt -= 1;
                 if (sourceIndex > targetIndex && edge === "right") insertAt += 1;
 
-                next.splice(insertAt, 0, moved);
-                onReorder(deviceType, sourceIndex, targetIndex);
+                onReorder(deviceType, sourceIndex, insertAt);
             }
         });
     }, [media, onReorder, deviceType]);

@@ -97,17 +97,16 @@ describe('MediaGroup', () => {
             expect(onReorder).toHaveBeenCalledWith('PHONE', 0, 2)
         })
 
-        // The edge only adjusts a locally computed insert position, which is never used
         it.each([
-            ['forwards onto a left edge', 0, 2, 'left'],
-            ['backwards onto a right edge', 2, 0, 'right'],
-            ['backwards onto a left edge', 2, 0, 'left'],
-        ])('reports the raw positions when dragged %s', (_name, source, target, edge) => {
+            ['forwards onto a left edge', 0, 2, 'left', 1],
+            ['backwards onto a right edge', 2, 0, 'right', 1],
+            ['backwards onto a left edge', 2, 0, 'left', 0],
+        ])('inserts at the drop edge when dragged %s', (_name, source, target, edge, insertAt) => {
             const {onDrop} = renderGroup()
 
             onDrop(drop(source, {index: target, edge}))
 
-            expect(onReorder).toHaveBeenCalledWith('PHONE', source, target)
+            expect(onReorder).toHaveBeenCalledWith('PHONE', source, insertAt)
         })
 
         it('ignores a drop outside any tile', () => {

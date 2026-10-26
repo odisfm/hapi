@@ -21,3 +21,9 @@ variable "email_domain" {
 variable "transcode_role_arn" {
  type = string
 }
+
+variable "domain" {
+  type        = string
+  default     = ""
+  description = "Custom domain for the site (e.g. example.com). Empty means use the CloudFront-assigned domain."
+}

@@ -19,12 +19,20 @@ export const ProjectPreviewSchema = z.object({
 
 export type ProjectPreviewType = z.infer<typeof ProjectPreviewSchema>
 
+export const ProjectShowcaseSchema = z.object({
+    name: z.string(),
+    slug: z.string().optional(),
+})
+
+export type ProjectShowcaseType = z.infer<typeof ProjectShowcaseSchema>
+
 export const ProjectPublicSchema = ProjectPreviewSchema.extend({
     categories: z.array(z.string()),
     description: z.string(),
     links: z.array(z.string()),
     media: z.array(ProjectMediaSchema),
-    showcaseId: z.uuidv4()
+    showcaseId: z.uuidv4(),
+    showcase: ProjectShowcaseSchema.optional(),
 })
 
 export type ProjectPublicType = z.infer<typeof ProjectPublicSchema>

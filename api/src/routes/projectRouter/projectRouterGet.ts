@@ -341,7 +341,16 @@ projectRouterGet.get("/:projectSlug", async (c) => {
             include: {
                 project: {
                     include: {
-                        showcase: true,
+                        showcase: {
+                            include: {
+                                slugs: {
+                                    take: 1,
+                                    orderBy: {
+                                        assignedDate: "desc"
+                                    }
+                                }
+                            }
+                        },
                         versions: {
                             take: 1,
                             where: {
@@ -426,4 +435,3 @@ projectRouterGet.get("/id/:projectId/slug", needsAuth, async (c) => {
         return c.json({error: "Internal server error"}, 500)
     }
 })
-

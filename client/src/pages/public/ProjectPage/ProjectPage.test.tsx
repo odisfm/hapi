@@ -47,6 +47,11 @@ function makeProject(overrides: Record<string, unknown> = {}) {
         links: [] as string[],
         description: 'A description of the project.',
         media: [] as Media[],
+        showcase: {
+            id: 'showcase-1',
+            name: 'Spring Showcase',
+            slug: 'spring-showcase',
+        },
         ...overrides,
     }
 }
@@ -165,6 +170,19 @@ describe('ProjectPage', () => {
 
             expect(screen.getByText('A project subtitle')).toBeInTheDocument()
             expect(screen.getByRole('img', {name: 'App icon'})).toBeInTheDocument()
+        })
+
+        it('links the showcase name to its page', async () => {
+            await renderLoaded()
+
+            expect(screen.getByRole('link', {name: 'Spring Showcase'}))
+                .toHaveAttribute('href', '/showcase/spring-showcase')
+        })
+
+        it('hides the showcase section when there is no showcase', async () => {
+            await renderLoaded({showcase: undefined})
+
+            expect(screen.queryByText('Showcase')).not.toBeInTheDocument()
         })
 
         it('labels a single developer as "Developer"', async () => {

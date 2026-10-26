@@ -10,6 +10,7 @@ import type {DeviceType} from "@hapi/shared/prisma/enums";
 import {Button} from "../../../components/generic/Button.tsx";
 import {Spinner} from "../../../components/generic/Spinner.tsx";
 import {APP_TITLE} from "../../../title.ts";
+import {Link} from "react-router";
 
 type LinkType = "App Store" | "TestFlight" | "GitHub" | "Website"
 
@@ -356,6 +357,19 @@ export default function ProjectPage() {
                         </div>
                     </div>
                     <dl className="grid min-w-0 grid-cols-1 gap-y-3 text-xs sm:grid-cols-3 sm:gap-x-8 font-copy">
+                        {project.showcase &&
+                            <div>
+                                <dt className="font-bold">Showcase</dt>
+                                <dd>
+                                    <Link
+                                        to={`/showcase/${project.showcase.slug || project.showcaseId}`}
+                                        className="hover:underline"
+                                    >
+                                        {project.showcase.name}
+                                    </Link>
+                                </dd>
+                            </div>
+                        }
                         <div>
                             <dt className="font-bold">{developerLabel}</dt>
                             <dd>{project.developers.join(", ")}</dd>

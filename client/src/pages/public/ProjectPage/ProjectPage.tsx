@@ -348,7 +348,7 @@ export default function ProjectPage() {
                 <title>{`${shortAppName} | ${APP_TITLE}`}</title>
             }
             <section className="rounded-2xl bg-neutral-200 p-4 text-black sm:p-5">
-                <div className="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_auto] md:items-center md:gap-8 lg:gap-12">
+                <div className="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)_auto] md:items-center md:gap-4 lg:gap-6">
                     <div className="flex min-w-0 items-center gap-4">
                         <AppIcon uri={project.iconUrl} width={80} />
                         <div className="min-w-0">
@@ -356,7 +356,7 @@ export default function ProjectPage() {
                             <p className="break-words text-sm font-copy">{project.subtitle}</p>
                         </div>
                     </div>
-                    <dl className="grid min-w-0 grid-cols-1 gap-y-3 text-xs sm:grid-cols-3 sm:gap-x-8 font-copy">
+                    <dl className={`grid min-w-0 grid-cols-1 gap-y-3 text-xs sm:grid-cols-3 sm:gap-x-4 font-copy ${project.showcase ? "md:grid-cols-4" : ""}`}>
                         {project.showcase &&
                             <div>
                                 <dt className="font-bold">Showcase</dt>

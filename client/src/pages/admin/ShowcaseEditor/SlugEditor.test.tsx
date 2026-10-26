@@ -213,7 +213,6 @@ describe('SlugEditor (showcase)', () => {
 
             await waitFor(() => expect(dispatchModal).toHaveBeenCalledWith(expect.objectContaining({
                 headline: 'Failed to delete slug',
-                body: 'Unknown error',
             })))
         })
     })

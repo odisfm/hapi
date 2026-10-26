@@ -189,13 +189,17 @@ authRouter.post("/create", needsAuth, async (c) => {
         await sendEmail(
             body.email,
             "A HAPI showcase account has been created for you",
-            `
-            Hello, ${body.name},
-            
-            An account has been created for you on the RMIT Hub for Apple Platform Innovation showcase website.
-            
-            Username: ${body.email}
-            Password: ${password}`
+            [
+                `Hello, ${body.name},`,
+                "",
+                "An account has been created for you on the RMIT Hub for Apple Platform Innovation showcase website.",
+                "",
+                `Username: ${body.email}`,
+                `Password: ${password}`,
+                ...(process.env.WEBSITE_URL
+                    ? ["", `${process.env.WEBSITE_URL}/admin-login`]
+                    : []),
+            ].join("\n")
         )
 
         // todo: link to site
@@ -269,13 +273,17 @@ authRouter.post("/create/batch", needsAuth, async (c) => {
             await sendEmail(
                 u.email,
                 "A HAPI showcase account has been created for you",
-                `
-                Hello, ${u.name},
-                
-                An account has been created for you on the RMIT Hub for Apple Platform Innovation showcase website.
-                
-                Username: ${u.email}
-                Password: ${u.plainPassword}`
+                [
+                    `Hello, ${u.name},`,
+                    "",
+                    "An account has been created for you on the RMIT Hub for Apple Platform Innovation showcase website.",
+                    "",
+                    `Username: ${u.email}`,
+                    `Password: ${u.plainPassword}`,
+                    ...(process.env.WEBSITE_URL
+                        ? ["", `${process.env.WEBSITE_URL}/admin-login`]
+                        : []),
+                ].join("\n")
             )
         }
 

@@ -194,6 +194,18 @@ describe('TopProjects', () => {
             expect(end).toEqual(new Date(2025, 2, 31, 23, 59, 59, 999))
         })
 
+        it('does not request a custom range that starts after it ends', async () => {
+            const user = await renderTopProjects()
+            await user.selectOptions(screen.getByRole('combobox'), 'custom')
+
+            await user.type(dateInputs()[1], '2025-03-01')
+            await user.type(dateInputs()[0], '2025-03-31')
+
+            expect(await screen.findByRole('alert')).toHaveTextContent('Start date must be on or before the end date.')
+            expect(screen.queryByText('No projects were viewed during this period.')).not.toBeInTheDocument()
+            expect(fetchMock).toHaveBeenCalledTimes(1)
+        })
+
         it('hides the date inputs for preset ranges', async () => {
             const user = await renderTopProjects()
             await user.selectOptions(screen.getByRole('combobox'), 'custom')

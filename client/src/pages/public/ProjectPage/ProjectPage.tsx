@@ -348,17 +348,17 @@ export default function ProjectPage() {
                 <title>{`${shortAppName} | ${APP_TITLE}`}</title>
             }
             <section className="rounded-2xl bg-neutral-200 p-4 text-black sm:p-5">
-                <div className="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)_auto] md:items-center md:gap-4 lg:gap-6">
-                    <div className="flex min-w-0 items-center gap-4">
+                <div className="flex flex-col gap-6 md:grid md:grid-cols-[minmax(14rem,1fr)_minmax(0,1.3fr)_auto] md:items-center md:gap-4 lg:gap-6">
+                    <div className="flex min-w-0 items-center gap-4 md:min-w-[14rem]">
                         <AppIcon uri={project.iconUrl} width={80} />
                         <div className="min-w-0">
                             <h1 className="break-words text-xl font-bold">{project.name}</h1>
                             <p className="break-words text-sm font-copy">{project.subtitle}</p>
                         </div>
                     </div>
-                    <dl className={`grid min-w-0 grid-cols-1 gap-y-3 text-xs sm:grid-cols-3 sm:gap-x-4 font-copy ${project.showcase ? "md:grid-cols-4" : ""}`}>
+                    <dl className="flex min-w-0 flex-wrap gap-x-4 gap-y-3 text-xs font-copy">
                         {project.showcase &&
-                            <div>
+                            <div className="min-w-[8rem] flex-1">
                                 <dt className="font-bold">Showcase</dt>
                                 <dd>
                                     <Link
@@ -370,12 +370,12 @@ export default function ProjectPage() {
                                 </dd>
                             </div>
                         }
-                        <div>
+                        <div className="min-w-[8rem] flex-1">
                             <dt className="font-bold">{developerLabel}</dt>
                             <dd>{project.developers.join(", ")}</dd>
                         </div>
                         {project.categories.length > 0 &&
-                            <div>
+                            <div className="min-w-[8rem] flex-1">
                             <dt className="font-bold">
                                 {project.categories.length === 1 ? "Category" : "Categories"}</dt>
                             <dd>
@@ -383,7 +383,7 @@ export default function ProjectPage() {
                             </dd>
                         </div>
                         }
-                        <div>
+                        <div className="min-w-[8rem] flex-1">
                             <dt className="font-bold">Available On</dt>
                             <dd className="mt-1 flex items-center gap-1">
                                 {displayedPlatformIcons.map((platformIcon) => (

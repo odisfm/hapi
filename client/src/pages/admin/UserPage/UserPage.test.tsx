@@ -4,6 +4,8 @@ import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import type {UserDetails} from '@hapi/shared/types/apiResponses'
 import {AuthContext} from '../../../contexts/auth/AuthContext.tsx'
 import {UserPage} from './UserPage.tsx'
+import {DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS} from "@hapi/shared/consts";
+import {ModalContext} from "../../../contexts/modal/ModalContext.tsx";
 
 const {navigate, dispatchModal, modalContext} = vi.hoisted(() => {
     const dispatchModal = vi.fn()
@@ -20,9 +22,9 @@ vi.mock('../../../contexts/modal/useModal.ts', () => ({
     useModal: () => modalContext,
 }))
 
-const admin: UserDetails = {name: 'Ada Admin', email: 'ada@example.com', needsPasswordReset: false, role: 'ADMIN'}
-const student: UserDetails = {name: 'Sam Student', email: 'sam@example.com', needsPasswordReset: false, role: 'STUDENT'}
-const me: UserDetails = {name: 'Me Myself', email: 'me@example.com', needsPasswordReset: false, role: 'ADMIN'}
+const admin: UserDetails = {name: 'Ada Admin', email: 'ada@example.com', needsPasswordReset: false, role: 'ADMIN', id: "id-a", videoUploadCredits: null}
+const student: UserDetails = {name: 'Sam Student', email: 'sam@example.com', needsPasswordReset: false, role: 'STUDENT', id: "id-s", videoUploadCredits: DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS}
+const me: UserDetails = {name: 'Me Myself', email: 'me@example.com', needsPasswordReset: false, role: 'ADMIN', id: "id-m", videoUploadCredits: null}
 
 const fetchMock = vi.fn()
 
@@ -53,6 +55,10 @@ function section(heading: string) {
 
 function renderWithAuth() {
     return render(
+        <ModalContext.Provider value={{
+            dispatchModal: () => Promise.resolve(""),
+            dispatchImage: () => Promise.resolve("")
+        }}>
         <AuthContext.Provider value={{
             user: me,
             setUserDetails: () => {},
@@ -60,7 +66,8 @@ function renderWithAuth() {
             authPending: false,
         }}>
             <UserPage/>
-        </AuthContext.Provider>,
+        </AuthContext.Provider>
+        </ModalContext.Provider>,
     )
 }
 
@@ -126,7 +133,7 @@ describe('UserPage', () => {
 
     describe('deleting', () => {
         async function clickDelete(user: ReturnType<typeof userEvent.setup>, name: string) {
-            await user.click(within(screen.getByText(name).closest('li')!).getByRole('button'))
+            await user.click(within(screen.getByText(name).closest('li')!).getByLabelText('Delete user'))
         }
 
         it('asks for confirmation naming the email', async () => {

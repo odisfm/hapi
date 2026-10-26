@@ -199,7 +199,8 @@ mediaRouter.post("/hero", needsAuth, async (c) => {
 mediaRouter.post("/video", needsAuth, async(c) => {
     const body = await c.req.json()
     const projectId = body?.projectId
-    if (!projectId) {
+    const versionId = body?.versionId
+    if (!projectId || !versionId) {
         return c.json({error: "Malformed input"}, 400)
     }
     if (!await canEditProject(c.get("user")!, projectId)) {
@@ -207,7 +208,7 @@ mediaRouter.post("/video", needsAuth, async(c) => {
     }
     try {
         const uri = createUuid()
-        const record = await db.projectMedia.create({
+        const baseRecord = await db.projectMedia.create({
             data: {
                 mediaUrl: uri,
                 status: "PENDING",
@@ -215,12 +216,20 @@ mediaRouter.post("/video", needsAuth, async(c) => {
                 mediaType: "VIDEO",
             }
         })
+        const versionRecord = await db.projectVersionMedia.create({
+            data: {
+                mediaId: baseRecord.id,
+                projectVersionId: versionId,
+                order: "",
+                deviceType: "PHONE"
+            }
+        })
 
         const presignedUrl = await createVideoUploadUrl(uri)
 
         return c.json({
             presignedUrl,
-            projectMedia: record,
+            projectMedia: baseRecord,
         } satisfies CreateProjectVideoResponse, 200)
 
     } catch (e) {

@@ -71,6 +71,7 @@ export function filterProject(project: ProjectPayload, role: UserRole | null): P
                 mediaType: vm.media.mediaType,
                 deviceType: vm.deviceType,
                 status: vm.media.status,
+                failureReason: vm.media.failureReason || undefined,
             }
         }),
         developers: version.developerNames,

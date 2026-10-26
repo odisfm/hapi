@@ -4,6 +4,7 @@ import {categoryData, projectData, projectMediaData, showcaseData} from "./popul
 import {hashPassword} from "@hapi/api/src/helpers/password";
 import {LexoRank} from "@dalet-oss/lexorank";
 import {Prisma} from "../../generated/prisma/client";
+import {DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS} from "../../consts";
 
 const cliArgDefinitions = [
     { name: "use-external-db", type: Boolean }
@@ -226,7 +227,8 @@ if (process.env.DEFAULT_STUDENT_EMAILS) {
             email: studentEmails[i].toLowerCase(),
             password: await hashPassword(studentPasswords[i]),
             name: studentNames[i],
-            role: "STUDENT"
+            role: "STUDENT",
+            videoTranscodeCredits: DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS
         })
     }
     await db.user.createMany({

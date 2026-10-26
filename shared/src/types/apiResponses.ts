@@ -68,10 +68,12 @@ export type ProjectVersionsSearchResponse = {
 }
 
 export const UserDetailsSchema = z.object({
+    id: z.uuidv4(),
     email: z.email(),
     name: z.string(),
     needsPasswordReset: z.boolean(),
     role: z.enum(UserRole),
+    videoUploadCredits: z.union([z.number(), z.null()])
 })
 
 export type UserDetails = z.infer<typeof UserDetailsSchema>

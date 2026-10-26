@@ -632,7 +632,7 @@ describe("DELETE /project/:projectId cleanup", () => {
         vi.stubEnv("BUCKET_MEDIA", "media-bucket")
         vi.stubEnv("BUCKET_ICONS", "icon-bucket")
         const media = (mediaUrl: string, mediaType: "SCREENSHOT" | "VIDEO") =>
-            ({id: mediaUrl, projectId: "project-1", mediaUrl, mediaType, status: "AVAILABLE", createdAt: new Date()} as const)
+            ({id: mediaUrl, projectId: "project-1", mediaUrl, mediaType, status: "AVAILABLE", failureReason: null, createdAt: new Date()} as const)
         vi.mocked(db.project.findUnique).mockResolvedValue(makeProject({
             id: "project-1",
             media: [media("shot", "SCREENSHOT"), media("vid", "VIDEO")],

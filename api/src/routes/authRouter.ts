@@ -23,6 +23,7 @@ import type {UserRole} from "@hapi/shared/prisma/enums";
 import {Prisma} from "@hapi/shared/prisma/client";
 import {generateResetCode} from "../helpers/generateResetCode";
 import {sendEmail} from "../helpers/sendEmail";
+import {DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS} from "@hapi/shared/consts";
 
 const PASSWORD_RESET_TIMEOUT = 15 // minutes
 
@@ -35,11 +36,13 @@ authRouter.post("/login", async (c) => {
             {
                 user:
                     {
+                        id: user.id,
                         name: user.name,
                         email: user.email,
                         needsPasswordReset:
                         user.needsPasswordReset,
-                        role: user.role
+                        role: user.role,
+                        videoUploadCredits: user.videoTranscodeCredits
                     }
             } satisfies LoginSuccessResponse, 200)
     }
@@ -71,10 +74,12 @@ authRouter.post("/login", async (c) => {
 
         return c.json({
             user: {
+                id: userRecord.id,
                 email: userRecord.email,
                 name: userRecord.name,
                 needsPasswordReset: userRecord.needsPasswordReset,
-                role: userRecord.role
+                role: userRecord.role,
+                videoUploadCredits: userRecord.videoTranscodeCredits
             }
         } satisfies LoginSuccessResponse, 200)
 
@@ -182,7 +187,8 @@ authRouter.post("/create", needsAuth, async (c) => {
                 name: body.name,
                 email: body.email.toLowerCase(),
                 password: await hashPassword(password),
-                role: body.role as UserRole
+                role: body.role as UserRole,
+                videoTranscodeCredits: DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS
             }
         })
 
@@ -225,71 +231,103 @@ authRouter.post("/create/batch", needsAuth, async (c) => {
     if (requestingUser.role !== "ADMIN") {
         return c.json({error: "Insufficient privileges to create user"}, 403)
     }
-    let body
+
+    let raw: unknown
     try {
-        body = BatchCreateUserRequestSchema.parse(await c.req.json())
-    } catch (e) {
-        if (e instanceof z.ZodError) {
-            return c.json({
-                error: "Malformed input"}, 400)
-        } else {
-            // shouldn't happen
-            console.error(e)
-            return c.json({error: "Internal server error"}, 500)
-        }
+        raw = await c.req.json()
+    } catch {
+        return c.json({error: "Malformed input"}, 400)
     }
+    const parsed = BatchCreateUserRequestSchema.safeParse(raw)
+    if (!parsed.success) {
+        return c.json({error: "Malformed input"}, 400)
+    }
+    const body = parsed.data
 
     try {
-        const userList = await Promise.all(
-            body.users.map(async (u) => {
+        const seen = new Set<string>()
+        const incoming = body.users
+            .map((u) => ({...u, email: u.email.trim().toLowerCase()}))
+            .filter((u) => {
+                if (seen.has(u.email)) return false
+                seen.add(u.email)
+                return true
+            })
+
+        const existing = await db.user.findMany({
+            where: {email: {in: incoming.map((u) => u.email)}},
+            select: {email: true},
+        })
+        const existingEmails = new Set(existing.map((u) => u.email.toLowerCase()))
+        const toCreate = incoming.filter((u) => !existingEmails.has(u.email))
+        const skipped = incoming
+            .filter((u) => existingEmails.has(u.email))
+            .map((u) => u.email)
+
+        if (toCreate.length === 0) {
+            return c.json({created: [], skipped, emailFailed: []}, 200)
+        }
+
+        const newUsers = await Promise.all(
+            toCreate.map(async (u) => {
                 const plainPassword = generatePassword()
                 return {
                     name: u.name,
-                    email: u.email.toLowerCase(),
+                    email: u.email,
                     role: u.role,
                     plainPassword,
                     password: await hashPassword(plainPassword),
+                    videoTranscodeCredits: DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS
                 }
             })
         )
 
-        const existingUsers = await db.user.findMany()
-        const existingEmails = new Set(existingUsers.map((u) => u.email.toLowerCase()))
-        const newUsers = userList.filter((u) => !existingEmails.has(u.email))
-
-
-        await db.$transaction(async () => {
-            try {
-                await db.user.createMany({
-                    data: newUsers.map(({plainPassword, ...ud}) => ud),
-                })
-            } catch (e) {
-                console.error(e)
-                return c.json({error: "Internal server error"})
+        try {
+            await db.user.createMany({
+                data: newUsers.map(({plainPassword, ...data}) => data),
+            })
+        } catch (e) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+                return c.json(
+                    {error: "One or more users already exist. Please retry."},
+                    409
+                )
             }
-        })
-
-        for (const u of newUsers) {
-            await sendEmail(
-                u.email,
-                "A HAPI showcase account has been created for you",
-                [
-                    `Hello, ${u.name},`,
-                    "",
-                    "An account has been created for you on the RMIT Hub for Apple Platform Innovation showcase website.",
-                    "",
-                    `Username: ${u.email}`,
-                    `Password: ${u.plainPassword}`,
-                    ...(process.env.WEBSITE_URL
-                        ? ["", `${process.env.WEBSITE_URL}/admin-login`]
-                        : []),
-                ].join("\n")
-            )
+            throw e
         }
 
-        // todo: link to site
+        const emailFailed: string[] = []
+        for (const u of newUsers) {
+            try {
+                await sendEmail(
+                    u.email,
+                    "A HAPI showcase account has been created for you",
+                    [
+                        `Hello, ${u.name},`,
+                        "",
+                        "An account has been created for you on the RMIT Hub for Apple Platform Innovation showcase website.",
+                        "",
+                        `Username: ${u.email}`,
+                        `Password: ${u.plainPassword}`,
+                        ...(process.env.WEBSITE_URL
+                            ? ["", `${process.env.WEBSITE_URL}/admin-login`]
+                            : []),
+                    ].join("\n")
+                )
+            } catch (e) {
+                console.error(`Failed to send account email to ${u.email}`, e)
+                emailFailed.push(u.email)
+            }
+        }
 
-        return c.json({}, 200)
+        return c.json(
+            {
+                created: newUsers.map((u) => u.email),
+                skipped,
+                emailFailed,
+            },
+            200
+        )
     } catch (e) {
         console.error(e)
         return c.json({error: "Internal server error"}, 500)
@@ -300,10 +338,12 @@ authRouter.post("/create/batch", needsAuth, async (c) => {
 authRouter.get("/me", needsAuth, (c) => {
     return c.json({
         user: {
+            id: c.get("user")!.id,
             email: c.get("user")!.email,
             name: c.get("user")!.name,
             needsPasswordReset: c.get("user")!.needsPasswordReset,
-            role: c.get("user")!.role
+            role: c.get("user")!.role,
+            videoUploadCredits: c.get("user")!.videoTranscodeCredits
         }
     } satisfies LoginSuccessResponse, 200)
 })
@@ -404,10 +444,12 @@ authRouter.post("/forgot-password/verify", async (c) => {
 
         return c.json({
             user: {
+                id: record.id,
                 name: record.name,
                 email: record.email,
                 role: record.role,
-                needsPasswordReset: true
+                needsPasswordReset: true,
+                videoUploadCredits: record.videoTranscodeCredits
             }
         } satisfies LoginSuccessResponse, 200)
 
@@ -426,10 +468,12 @@ authRouter.get("/users", needsAuth, async (c) => {
 
     const users = records.map((u) => {
         return {
+            id: u.id,
             name: u.name,
             email: u.email,
             role: u.role,
-            needsPasswordReset: u.needsPasswordReset
+            needsPasswordReset: u.needsPasswordReset,
+            videoUploadCredits: u.videoTranscodeCredits
         }
     })
 
@@ -468,4 +512,43 @@ authRouter.delete("/user", needsAuth, async (c) => {
         console.error(e)
         return c.json({error: "Internal server error"}, 500)
     }
+})
+
+
+authRouter.patch("/user/:userId/video-upload-credits", needsAuth, async (c) => {
+    const requestingUser = c.get("user")!
+    if (requestingUser.role !== "ADMIN") {
+        return c.json({error: "Unauthorised"}, 403)
+    }
+
+    const requestedUserId = c.req.param("userId")
+    const body = await c.req.json()
+    if (body?.credits === undefined) {
+        return c.json({error: "Malformed request"}, 400)
+    }
+    const newCredits = Number(body.credits)
+    if (isNaN(newCredits) || newCredits < 0) {
+        return c.json({error: "Malformed request"}, 400)
+    }
+
+    try {
+        await db.user.update({
+            where: {
+                id: requestedUserId,
+                role: {
+                    not: "ADMIN"
+                }
+            },
+            data: {
+                videoTranscodeCredits:newCredits
+            }
+        })
+    } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+            return c.json({error: "Invalid user"}, 400)
+        }
+        console.error(e)
+        return c.json({error: "Internal server error"}, 500)
+    }
+    return c.json(200)
 })

@@ -50,7 +50,9 @@ export function ShowcaseIndexPage() {
                 <h1 className={`text-3xl font-headline font-bold`}>Showcases</h1>
                 {loading && <Spinner />}
             </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, architecto, blanditiis consequuntur debitis distinctio doloremque doloribus ea error ex exercitationem iste laudantium molestias nisi odit omnis optio, perspiciatis placeat provident qui repellat sapiente sed sequi sint sit sunt tenetur totam.</p>
+            <p>
+                {/*Lorem ipsum dolor amet*/}
+            </p>
 
             <div className={`mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3`}>
                 {showcases.map((s, i) => {

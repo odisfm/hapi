@@ -27,7 +27,7 @@ export function Sidebar({sidebarVisible, setSidebarVisible}: {
                 ${sidebarVisible ? "w-full visible" : "w-0 invisible"}
             `}
         >
-            <nav className="w-screen whitespace-nowrap p-6">
+            <nav className="w-full whitespace-nowrap p-6">
                 <h2 className={`font-bold text-3xl`}>Quick links</h2>
                 <ul className={`flex flex-col gap-2 mt-4`}>
                     {headerLinks.map(link => (

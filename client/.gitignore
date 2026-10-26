@@ -25,3 +25,6 @@ dist-ssr
 
 # vite-pwa
 dev-dist/*
+
+coverage
+coverage/**

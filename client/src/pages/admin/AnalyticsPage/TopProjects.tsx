@@ -31,7 +31,7 @@ export function TopProjects() {
         let endDate: Date
 
         if (range === "custom") {
-            if (!customStart || !customEnd) {
+            if (!customStart || !customEnd || customStart > customEnd) {
                 setAnalytics([]);
                 return
             }
@@ -72,6 +72,9 @@ export function TopProjects() {
         })()
     }, [getAnalytics]);
 
+    const invalidRange = range === "custom" && !!customStart && !!customEnd && customStart > customEnd;
+    const dateInputClass = `rounded-md border bg-white px-2 py-1.5 ${invalidRange ? "border-red-500" : "border-neutral-300"}`;
+
     const pageCount = Math.ceil(analytics.length / PAGE_SIZE);
     const pageProjects = analytics.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
@@ -96,8 +99,10 @@ export function TopProjects() {
                     {range === "custom" && (
                         <>
                             <input
-                                className="rounded-md border border-neutral-300 bg-white px-2 py-1.5"
+                                className={dateInputClass}
                                 type="date"
+                                aria-invalid={invalidRange}
+                                max={customEnd || undefined}
                                 value={customStart}
                                 onChange={(event) => {
                                     setCustomStart(event.target.value);
@@ -106,8 +111,10 @@ export function TopProjects() {
                             />
                             <span>to</span>
                             <input
-                                className="rounded-md border border-neutral-300 bg-white px-2 py-1.5"
+                                className={dateInputClass}
                                 type="date"
+                                aria-invalid={invalidRange}
+                                min={customStart || undefined}
                                 value={customEnd}
                                 onChange={(event) => {
                                     setCustomEnd(event.target.value);
@@ -118,7 +125,11 @@ export function TopProjects() {
                     )}
                 </div>
             </div>
-            {analytics.length === 0 ? (
+            {invalidRange ? (
+                <p role="alert" className="border-t border-neutral-200 px-4 py-4 text-sm text-red-600">
+                    Start date must be on or before the end date.
+                </p>
+            ) : analytics.length === 0 ? (
                 <p className="border-t border-neutral-200 px-4 py-4 text-sm text-neutral-600">
                     No projects were viewed during this period.
                 </p>

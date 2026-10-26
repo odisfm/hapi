@@ -6,9 +6,9 @@ import type {
     CategoryResponse,
     ProjectSearchResponse,
     SearchInfo,
-    ShowcaseListResponse
+    ShowcaseListResponse, ShowcaseListResponseItem
 } from "@hapi/shared/types/apiResponses";
-import type {Category, Showcase} from "@hapi/shared/prisma/client";
+import type {Category} from "@hapi/shared/prisma/client";
 import ProjectCard from "../../../components/ProjectCard.tsx";
 import {Paginator} from "../../admin/ProjectEditor/Paginator.tsx";
 import {FilterSection} from "../../admin/ProjectList/FilterSection.tsx";
@@ -45,7 +45,7 @@ export default function SearchResultsPage() {
     const [loading, setLoading] = useState<boolean>(true);
     const [initialLoading, setInitialLoading] = useState<boolean>(true);
     const [categories, setCategories] = useState<Category[]>([]);
-    const [showcases, setShowcases] = useState<Showcase[]>([]);
+    const [showcases, setShowcases] = useState<ShowcaseListResponseItem[]>([]);
     // start open when arriving with filters already in the URL, so they're visible
     const [filtersOpen, setFiltersOpen] = useState<boolean>(() => Boolean(urlQuery.categoryNames || urlQuery.showcase));
     const [sortStrategy, setSortStrategy] = useState<ProjectSearchSortStrategy>(urlQuery.orderBy || "default")
@@ -179,11 +179,12 @@ export default function SearchResultsPage() {
     }, [searchQuery.page]);
 
     const selectedCategoryNames = splitList(searchQuery.categoryNames);
+    const selectedShowcaseIds = splitList(searchQuery.showcase);
     const activeFilterName = selectedCategoryNames.length > 0
         ? (selectedCategoryNames.length === 1 ? selectedCategoryNames[0] : undefined)
-        : searchQuery.showcase
-            ? showcases.find((showcase) => showcase.id === searchQuery.showcase)
-                ? getShowcaseName(showcases.find((showcase) => showcase.id === searchQuery.showcase)!)
+        : selectedShowcaseIds.length > 0
+            ? showcases.find((showcase) => selectedShowcaseIds.includes(showcase.id))
+                ? getShowcaseName(showcases.find((showcase) => selectedShowcaseIds.includes(showcase.id))!)
                 : undefined
             : undefined;
     const hasFilter = Boolean(searchQuery.categoryNames || searchQuery.showcase);

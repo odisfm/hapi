@@ -11,7 +11,7 @@ import type {
 import {ProjectListItem} from "./ProjectListItem.tsx";
 import {Paginator} from "../ProjectEditor/Paginator.tsx";
 import {FaPlus, FaSearch} from "react-icons/fa";
-import type {Category, Showcase} from "@hapi/shared/prisma/client";
+import type {Category} from "@hapi/shared/prisma/client";
 import {FilterSection} from "./FilterSection.tsx";
 import {SearchBar} from "./SearchBar.tsx";
 import {toApiSearchParams, useProjectSearchParams} from "../../../hooks/useProjectSearchParams.ts";
@@ -28,7 +28,7 @@ export function ProjectList() {
     const [loading, setLoading] = useState<boolean>(true);
     const [initialLoading, setInitialLoading] = useState<boolean>(true);
     const [categories, setCategories] = useState<Category[]>([]);
-    const [showcases, setShowcases] = useState<Showcase[]>([]);
+    const [showcases, setShowcases] = useState<ShowcaseListResponse["showcases"]>([]);
     const [sortStrategy, setSortStrategy] = useState<ProjectSearchSortStrategy>(urlQuery.orderBy || "default")
 
     const pageNumber = urlQuery.page ?? 0;

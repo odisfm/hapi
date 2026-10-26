@@ -72,6 +72,7 @@ export function TextItemEditor({items, setItems, validator, placeholder}: {
                     onFocus={() => setInputFocus(true)}
                     onBlur={() => setInputFocus(false)}
                     onChange={(e) => validate(e.target.value)}
+                    aria-invalid={!inputValid}
                 />
                 <button
                     type="button"

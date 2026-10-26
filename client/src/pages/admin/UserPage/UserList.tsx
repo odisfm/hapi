@@ -28,6 +28,7 @@ export function UserList({users, heading, deleteUser}: {
                                 color={isMe ? "subtle" : "danger"}
                                 disabled={isMe}
                                 onClick={() => {deleteUser(user.email)}}
+                                ariaLabel={"Delete user"}
                             >
                                 <FaTrash />
                             </Button>

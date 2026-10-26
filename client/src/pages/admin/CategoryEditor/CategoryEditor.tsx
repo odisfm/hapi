@@ -169,6 +169,7 @@ export function CategoryEditor() {
                     className={`bg-neutral-200 rounded-md p-1.5`}
                     ref={newCategoryInputRef}
                     name={"categoryName"}
+                    aria-label={"Category name"}
                 />
                 <Button
                     buttonType={"submit"}

@@ -116,6 +116,7 @@ export function SlugEditor({showcaseId}: Props) {
                                 type={"button"}
                                 className={`p-1 rounded-md hover:bg-red-600 hover:text-white cursor-pointer`}
                                 onClick={() => {deleteSlug(slug.slug)}}
+                                aria-label={"Delete slug"}
                             >
                                 <TiDelete />
                             </button>

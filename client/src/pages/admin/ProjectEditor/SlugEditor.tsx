@@ -9,11 +9,12 @@ import {throwErrorFromResponse} from "../../../utils/misc.ts";
 
 type Props = {
     projectId: string
+    setHasChanged: (value: boolean) => void
 }
 
 const liStyles = `bg-neutral-200 pl-4 pr-2 py-1 flex rounded-lg w-min flex gap-4 items-center`
 
-export function SlugEditor({projectId}: Props) {
+export function SlugEditor({projectId, setHasChanged}: Props) {
     const [slugs, setSlugs] = useState<ProjectSlugType[]>([])
     const inputRef = useRef<HTMLInputElement>(null)
     const modalContext = useModal()
@@ -67,6 +68,7 @@ export function SlugEditor({projectId}: Props) {
                 if (!res.ok) {
                     await throwErrorFromResponse(res)
                 }
+                setHasChanged(true)
                 await getSlugs()
             } catch (error) {
                 console.error(error)
@@ -97,6 +99,7 @@ export function SlugEditor({projectId}: Props) {
                 }
                 throw new Error(errorMessage)
             }
+            setHasChanged(true)
             await getSlugs()
             inputRef.current!.value = ""
         } catch (e) {

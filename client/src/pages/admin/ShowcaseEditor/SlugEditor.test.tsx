@@ -14,6 +14,7 @@ vi.mock('../../../contexts/modal/useModal.ts', () => ({
 
 const showcaseId = '123e4567-e89b-42d3-a456-426614174000'
 const fetchMock = vi.fn()
+const setHasChanged = vi.fn()
 
 function slugsResponse(slugs: string[]) {
     return {ok: true, json: async () => ({slugs: slugs.map((slug) => ({slug}))})}
@@ -34,7 +35,7 @@ function addButton() {
 
 async function renderEditor(slugs: string[]) {
     fetchMock.mockResolvedValueOnce(slugsResponse(slugs))
-    render(<SlugEditor showcaseId={showcaseId}/>)
+    render(<SlugEditor showcaseId={showcaseId} setHasChanged={setHasChanged}/>)
     if (slugs.length) await screen.findAllByRole('listitem')
     else await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1))
 }
@@ -61,11 +62,12 @@ describe('SlugEditor (showcase)', () => {
                 expect.objectContaining({credentials: 'include'}),
             )
             expect(shownSlugs()).toEqual(['/newest', '/older'])
+            expect(setHasChanged).not.toHaveBeenCalled()
         })
 
         it('lists nothing when loading fails', async () => {
             fetchMock.mockRejectedValueOnce(new TypeError('Network down'))
-            render(<SlugEditor showcaseId={showcaseId}/>)
+            render(<SlugEditor showcaseId={showcaseId} setHasChanged={setHasChanged}/>)
 
             await waitFor(() => expect(console.error).toHaveBeenCalled())
             expect(shownSlugs()).toEqual([])
@@ -84,6 +86,7 @@ describe('SlugEditor (showcase)', () => {
             await user.click(addButton())
 
             await waitFor(() => expect(shownSlugs()).toEqual(['/fresh', '/existing']))
+            expect(setHasChanged).toHaveBeenCalledWith(true)
             expect(fetchMock).toHaveBeenNthCalledWith(2,
                 expect.stringContaining(`/showcase/id/${showcaseId}/slug`),
                 expect.objectContaining({
@@ -179,6 +182,7 @@ describe('SlugEditor (showcase)', () => {
             await user.click(deleteButtonFor('second'))
 
             await waitFor(() => expect(shownSlugs()).toEqual(['/first']))
+            expect(setHasChanged).toHaveBeenCalledWith(true)
             expect(fetchMock).toHaveBeenNthCalledWith(2,
                 expect.stringContaining(`/showcase/id/${showcaseId}/slug`),
                 expect.objectContaining({

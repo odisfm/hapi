@@ -14,6 +14,7 @@ vi.mock('../../../contexts/modal/useModal.ts', () => ({
 
 const projectId = '123e4567-e89b-42d3-a456-426614174000'
 const fetchMock = vi.fn()
+const setHasChanged = vi.fn()
 
 function slugsResponse(slugs: string[]) {
     return {ok: true, json: async () => ({slugs: slugs.map((slug) => ({slug}))})}
@@ -25,7 +26,7 @@ function shownSlugs() {
 
 async function renderEditor(slugs: string[]) {
     fetchMock.mockResolvedValueOnce(slugsResponse(slugs))
-    render(<SlugEditor projectId={projectId}/>)
+    render(<SlugEditor projectId={projectId} setHasChanged={setHasChanged}/>)
     if (slugs.length) await screen.findAllByRole('listitem')
     else await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1))
 }
@@ -52,11 +53,12 @@ describe('SlugEditor (project)', () => {
                 expect.objectContaining({credentials: 'include'}),
             )
             expect(shownSlugs()).toEqual(['/newest', '/older'])
+            expect(setHasChanged).not.toHaveBeenCalled()
         })
 
         it('lists nothing when loading fails', async () => {
             fetchMock.mockRejectedValueOnce(new TypeError('Network down'))
-            render(<SlugEditor projectId={projectId}/>)
+            render(<SlugEditor projectId={projectId} setHasChanged={setHasChanged}/>)
 
             await waitFor(() => expect(console.error).toHaveBeenCalled())
             expect(shownSlugs()).toEqual([])
@@ -75,6 +77,7 @@ describe('SlugEditor (project)', () => {
             await user.click(screen.getByRole('button', {name: 'Add slug'}))
 
             await waitFor(() => expect(shownSlugs()).toEqual(['/fresh', '/existing']))
+            expect(setHasChanged).toHaveBeenCalledWith(true)
             expect(fetchMock).toHaveBeenNthCalledWith(2,
                 expect.stringContaining(`/project/id/${projectId}/slug`),
                 expect.objectContaining({
@@ -167,6 +170,7 @@ describe('SlugEditor (project)', () => {
             await user.click(screen.getByRole('button', {name: 'Delete slug second'}))
 
             await waitFor(() => expect(shownSlugs()).toEqual(['/first']))
+            expect(setHasChanged).toHaveBeenCalledWith(true)
             expect(fetchMock).toHaveBeenNthCalledWith(2,
                 expect.stringContaining(`/project/id/${projectId}/slug`),
                 expect.objectContaining({

@@ -1,22 +1,24 @@
 import {
-    MDXEditor,
-    headingsPlugin,
-    listsPlugin,
-    quotePlugin,
-    thematicBreakPlugin,
-    UndoRedo,
+    BlockTypeSelect,
     BoldItalicUnderlineToggles,
-    toolbarPlugin,
     CreateLink,
+    diffSourcePlugin,
+    DiffSourceToggleWrapper,
+    headingsPlugin,
     linkDialogPlugin,
     linkPlugin,
+    listsPlugin,
     ListsToggle,
-    diffSourcePlugin,
-    DiffSourceToggleWrapper, BlockTypeSelect
+    MDXEditor,
+    quotePlugin,
+    thematicBreakPlugin,
+    toolbarPlugin,
+    UndoRedo
 } from '@mdxeditor/editor'
 
 import '@mdxeditor/editor/style.css'
-import {useCallback, useEffect, useRef} from "react";
+import {useCallback, useEffect} from "react";
+import {normalizeMarkdown} from "../../utils/NormalizeMarkdown.ts";
 
 export function MarkdownEditor({initText, setHasChanged, markdownRef, setDescription, contentStyles, containerStyles}: {
     initText: string,
@@ -26,18 +28,15 @@ export function MarkdownEditor({initText, setHasChanged, markdownRef, setDescrip
     containerStyles?: string,
     contentStyles?: string,
 }) {
-    const hasMounted = useRef(false)
-
-    const onChange = useCallback((newMarkdown: string) => {
+    const onChange = useCallback((newMarkdown: string, initialMarkdownNormalize: boolean) => {
         markdownRef.current = newMarkdown
-        if (!hasMounted.current) {
-            hasMounted.current = true
+        if (initialMarkdownNormalize || normalizeMarkdown(newMarkdown) === normalizeMarkdown(initText)) {
             return
         }
 
         setHasChanged(true)
         setDescription(newMarkdown)
-    }, [markdownRef, setHasChanged, setDescription])
+    }, [initText, markdownRef, setHasChanged, setDescription])
 
     useEffect(() => {
         markdownRef.current = initText

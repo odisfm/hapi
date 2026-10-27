@@ -1,4 +1,4 @@
-import {useNavigate, useParams} from "react-router";
+import {useBlocker, useNavigate, useParams} from "react-router";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import type {ShowcaseAdminType} from "@hapi/shared/types/showcase";
 import {API_URL} from "../../../consts.ts";
@@ -26,6 +26,10 @@ export function ShowcaseEditor() {
     const [showcase, setShowcase] = useState<ShowcaseAdminType | null>(null);
     const [hasChanged, setHasChanged] = useState(false);
     const descriptionRef = useRef<string>("");
+    const blocker = useBlocker(
+        ({currentLocation, nextLocation}) =>
+            hasChanged && currentLocation.pathname !== nextLocation.pathname
+    );
 
     const getShowcase = useCallback(async () => {
         let res: Response;
@@ -64,6 +68,30 @@ export function ShowcaseEditor() {
             await getShowcase();
         })()
     }, [isNew, getShowcase])
+
+    const preventUnload = useCallback((e: BeforeUnloadEvent) => {
+        e.preventDefault()
+    }, [])
+
+    useEffect(() => {
+        if (hasChanged) {
+            window.addEventListener("beforeunload", preventUnload)
+        } else {
+            window.removeEventListener("beforeunload", preventUnload)
+        }
+
+        return () => {
+            window.removeEventListener("beforeunload", preventUnload)
+        }
+    }, [preventUnload, hasChanged])
+
+    useEffect(() => {
+        if (blocker.state === "blocked") {
+            const confirm = window.confirm("You have unsaved changes. Leave anyway?")
+            if (confirm) blocker.proceed()
+            else blocker.reset()
+        }
+    }, [blocker])
 
     const publishDateText = useMemo(() => {
         if (!showcase) return ""

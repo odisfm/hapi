@@ -4,14 +4,22 @@ import {MemoryRouter, Route, Routes} from 'react-router'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import {ShowcaseEditor} from './ShowcaseEditor.tsx'
 
-const {navigate, dispatchModal, modalContext} = vi.hoisted(() => {
+const {navigate, dispatchModal, modalContext, blockerState, proceed, reset} = vi.hoisted(() => {
     const dispatchModal = vi.fn()
-    return {navigate: vi.fn(), dispatchModal, modalContext: {dispatchModal}}
+    return {
+        navigate: vi.fn(),
+        dispatchModal,
+        modalContext: {dispatchModal},
+        blockerState: {value: 'unblocked' as 'unblocked' | 'blocked'},
+        proceed: vi.fn(),
+        reset: vi.fn(),
+    }
 })
 
 vi.mock('react-router', async (importOriginal) => ({
     ...(await importOriginal<typeof import('react-router')>()),
     useNavigate: () => navigate,
+    useBlocker: () => ({state: blockerState.value, proceed, reset}),
 }))
 
 // One stable object, so the page's load effect doesn't re-run on every render
@@ -120,6 +128,8 @@ describe('ShowcaseEditor', () => {
         vi.stubGlobal('fetch', fetchMock)
         vi.spyOn(console, 'error').mockImplementation(() => {})
         vi.spyOn(window, 'open').mockImplementation(() => null)
+        vi.spyOn(window, 'confirm').mockReturnValue(false)
+        blockerState.value = 'unblocked'
     })
 
     afterEach(() => {
@@ -242,6 +252,43 @@ describe('ShowcaseEditor', () => {
             expect(screen.getByRole('button', {name: 'no changes'})).toBeDisabled()
         })
 
+        it('adds a beforeunload warning only after an edit and removes it on unmount', async () => {
+            const user = userEvent.setup()
+            mockApi()
+            const {unmount} = renderEditorPage()
+            await screen.findByLabelText('Showcase name')
+
+            const unchangedEvent = new Event('beforeunload')
+            const unchangedPreventDefault = vi.spyOn(unchangedEvent, 'preventDefault')
+            window.dispatchEvent(unchangedEvent)
+            expect(unchangedPreventDefault).not.toHaveBeenCalled()
+
+            await user.type(screen.getByLabelText('Showcase name'), '!')
+            const changedEvent = new Event('beforeunload')
+            const changedPreventDefault = vi.spyOn(changedEvent, 'preventDefault')
+            window.dispatchEvent(changedEvent)
+            expect(changedPreventDefault).toHaveBeenCalled()
+
+            unmount()
+            const afterUnmountEvent = new Event('beforeunload')
+            const afterUnmountPreventDefault = vi.spyOn(afterUnmountEvent, 'preventDefault')
+            window.dispatchEvent(afterUnmountEvent)
+            expect(afterUnmountPreventDefault).not.toHaveBeenCalled()
+        })
+
+        it('blocks in-app navigation and resets the blocker when leaving is cancelled', async () => {
+            const user = userEvent.setup()
+            await renderEditor()
+
+            await user.type(screen.getByLabelText('Showcase name'), '!')
+            blockerState.value = 'blocked'
+            await user.type(screen.getByLabelText('Showcase name'), '?')
+
+            await waitFor(() => expect(window.confirm).toHaveBeenCalledWith('You have unsaved changes. Leave anyway?'))
+            expect(reset).toHaveBeenCalled()
+            expect(proceed).not.toHaveBeenCalled()
+        })
+
         it.each([
             ['the name', async (user: ReturnType<typeof userEvent.setup>) => {
                 await user.type(screen.getByLabelText('Showcase name'), '!')
@@ -304,6 +351,11 @@ describe('ShowcaseEditor', () => {
                 expect.objectContaining({id: showcaseId, name: 'Spring Showcase v2', year: 2025}),
             )
             expect(await screen.findByRole('button', {name: 'no changes'})).toBeDisabled()
+
+            const event = new Event('beforeunload')
+            const preventDefault = vi.spyOn(event, 'preventDefault')
+            window.dispatchEvent(event)
+            expect(preventDefault).not.toHaveBeenCalled()
         })
 
         it('sends the edited description', async () => {

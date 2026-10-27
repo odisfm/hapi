@@ -254,8 +254,8 @@ describe('ProjectEditor', () => {
     })
 
     describe('tracking changes', () => {
-        it('starts with nothing to save', async () => {
-            await renderEditor()
+        it.each(['', 'A description\n', 'A description\r\n'])('starts with nothing to save for %j', async (description) => {
+            await renderEditor({project: makeProject({description})})
 
             expect(screen.getByRole('button', {name: 'no changes'})).toBeDisabled()
         })

@@ -233,7 +233,7 @@ export function ShowcaseEditor() {
 
                 <div>
                     <label className={legendStyles} htmlFor={"slugEditor"}>Slugs</label>
-                    <SlugEditor showcaseId={showcase.id} />
+                    <SlugEditor showcaseId={showcase.id} setHasChanged={setHasChanged} />
                 </div>
 
                 <div>

@@ -755,7 +755,7 @@ export function ProjectEditor() {
 
                                 <div>
                                     <label className={legendStyles} id={"slugsLabel"} htmlFor={"slugsEditor"}>Slugs</label>
-                                    <SlugEditor projectId={project.id}/>
+                                    <SlugEditor projectId={project.id} setHasChanged={setHasChanged}/>
                                 </div>
 
                                 <div className={`flex items-center gap-2 mt-4`}>

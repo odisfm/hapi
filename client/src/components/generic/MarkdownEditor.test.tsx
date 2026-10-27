@@ -2,6 +2,8 @@ import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {MarkdownEditor} from './MarkdownEditor.tsx'
+import {useEffect} from 'react'
+import {normalizeMarkdown} from "../../utils/NormalizeMarkdown.ts";
 
 // MDXEditor doesn't run in jsdom; this stand-in renders the markdown in a textbox and reports edits through onChange
 vi.mock('@mdxeditor/editor', () => {
@@ -10,15 +12,8 @@ vi.mock('@mdxeditor/editor', () => {
         MDXEditor: ({markdown, contentEditableClassName, onChange}: {
             markdown: string
             contentEditableClassName: string
-            onChange: (markdown: string) => void
-        }) => (
-            <textarea
-                aria-label="Markdown editor"
-                className={contentEditableClassName}
-                defaultValue={markdown}
-                onChange={(e) => onChange(e.target.value)}
-            />
-        ),
+            onChange: (markdown: string, initialMarkdownNormalize: boolean) => void
+        }) => <MarkdownEditorTestDouble markdown={markdown} contentEditableClassName={contentEditableClassName} onChange={onChange}/>,
         headingsPlugin: plugin,
         listsPlugin: plugin,
         quotePlugin: plugin,
@@ -35,6 +30,23 @@ vi.mock('@mdxeditor/editor', () => {
         BlockTypeSelect: () => null,
     }
 })
+
+function MarkdownEditorTestDouble({markdown, contentEditableClassName, onChange}: {
+    markdown: string
+    contentEditableClassName: string
+    onChange: (markdown: string, initialMarkdownNormalize: boolean) => void
+}) {
+    useEffect(() => onChange(`${markdown.replace(/\r\n?/g, "\n")}\n`, true), [markdown, onChange])
+
+    return (
+        <textarea
+            aria-label="Markdown editor"
+            className={contentEditableClassName}
+            defaultValue={markdown}
+            onChange={(e) => onChange(e.target.value, false)}
+        />
+    )
+}
 
 vi.mock('@mdxeditor/editor/style.css', () => ({}))
 
@@ -86,15 +98,47 @@ describe('MarkdownEditor', () => {
     })
 
     describe('editing', () => {
-        it('treats the first change as the editor settling, not an edit', async () => {
+        it('does not treat loaded content as an edit when the initial value changes', () => {
+            const markdownRef = {current: ''}
+            const editor = render(
+                <MarkdownEditor
+                    initText=""
+                    setHasChanged={setHasChanged}
+                    markdownRef={markdownRef}
+                    setDescription={setDescription}
+                />,
+            )
+
+            editor.rerender(
+                <MarkdownEditor
+                    initText={'loaded\r\ncontent'}
+                    setHasChanged={setHasChanged}
+                    markdownRef={markdownRef}
+                    setDescription={setDescription}
+                />,
+            )
+
+            expect(setHasChanged).not.toHaveBeenCalled()
+            expect(setDescription).not.toHaveBeenCalled()
+        })
+
+        it('does not treat normalized mount content as an edit', () => {
+            const markdownRef = renderEditor('saved\r\ntext\r\n')
+
+            expect(normalizeMarkdown(markdownRef.current)).toBe('saved\ntext')
+            expect(setHasChanged).not.toHaveBeenCalled()
+            expect(setDescription).not.toHaveBeenCalled()
+        })
+
+        it('reports the first real change as an edit', async () => {
             const user = userEvent.setup()
             const markdownRef = renderEditor('')
 
             await user.type(screen.getByRole('textbox', {name: 'Markdown editor'}), 'a')
 
             expect(markdownRef.current).toBe('a')
-            expect(setHasChanged).not.toHaveBeenCalled()
-            expect(setDescription).not.toHaveBeenCalled()
+            expect(setHasChanged).toHaveBeenCalledWith(true)
+            expect(setDescription).toHaveBeenCalledWith('a')
         })
 
         it('reports later changes and keeps the markdown ref up to date', async () => {
@@ -105,7 +149,7 @@ describe('MarkdownEditor', () => {
 
             expect(markdownRef.current).toBe('ab')
             expect(setHasChanged).toHaveBeenCalledWith(true)
-            expect(setDescription).toHaveBeenCalledTimes(1)
+            expect(setDescription).toHaveBeenCalledTimes(2)
             expect(setDescription).toHaveBeenCalledWith('ab')
         })
     })

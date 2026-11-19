@@ -16,7 +16,7 @@ import {LoginSuccessResponseSchema} from "@hapi/shared/types/apiResponses";
 import {app} from "../index";
 import {makeSession, makeUser} from "../test/fixtures";
 import {resetDb} from "../test/mockDb";
-import {loginAs} from "../test/auth";
+import {loginAs, sameOriginHeaders} from "../test/auth";
 
 beforeEach(() => {
     resetDb()
@@ -24,7 +24,7 @@ beforeEach(() => {
     vi.spyOn(console, "error").mockImplementation(() => {})
 })
 
-function post(path: string, body: unknown, headers: Record<string, string> = {}) {
+function post(path: string, body: unknown, headers: Record<string, string> = sameOriginHeaders) {
     return app.request(path, {method: "POST", headers, body: JSON.stringify(body)})
 }
 
@@ -44,6 +44,8 @@ describe("login", () => {
         })
         expect(res.status).toBe(200)
         expect(z.validate(LoginSuccessResponseSchema, await res.json())).toBe(true)
+        // Lax keeps the browser from sending the session cookie with other sites' POSTs (CSRF)
+        expect(res.headers.get("Set-Cookie")).toMatch(/SameSite=Lax/)
     })
 
     test("rejects invalid password", async () => {

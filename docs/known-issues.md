@@ -17,21 +17,6 @@ Contents:
 
 ## Security
 
-### No protection against cross-site request forgery (CSRF)
-
-- **Problem:** the session cookie is `SameSite=None`
-  (`api/src/utils/cookieOptions.ts`), and the API has no CSRF check.
-  (`hono/csrf` is imported in `api/src/index.ts` but never used.) The API
-  also parses JSON bodies whatever their content type.
-- **Impact:** a malicious website could make a logged-in admin's browser
-  send requests to the API, for example to create users or change
-  projects, without the admin knowing.
-- **Fix:** set `sameSite: "Lax"` in `cookieOptions.ts`. Production serves
-  the site and API from one origin, and locally `localhost` ports count as
-  the same site, so nothing should break. Also add `app.use(csrf())` in
-  `index.ts`. Test login, logout and an upload both locally and after
-  deploying.
-
 ### Users are never forced to change their password
 
 - **Problem:** `User.needsPasswordReset` exists, and the `createAdmin`
@@ -147,6 +132,7 @@ Contents:
 | Demo data has no images | `db:populate`'s projects refer to images that no longer exist in any bucket. Local demo projects show without images. |
 | Media isn't backed up | The S3 buckets have no versioning. See [backups](infrastructure/runbooks.md#back-up-and-restore-the-database). |
 | The database restore runbook hasn't been tested | Practise it once before you need it. |
+| Very old browsers can't save in production | The CSRF check accepts a request in production only if the browser sends `Sec-Fetch-Site: same-origin`. Browsers from before 2023 (Safari before 16.4, for example) don't, so their uploads and saves get a 403. Checking the `Origin` header instead would need the API to know the CloudFront address, but CloudFront is created after the API. See [the API](dev/architecture.md#7-the-api). |
 
 ---
 

@@ -30,3 +30,12 @@ dist-ssr
 
 # Slop 😏
 repomix-output.xml
+
+# OpenTofu / Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+infra/app/terraform.tfvars
+infra/modules/**/.terraform.lock.hcl

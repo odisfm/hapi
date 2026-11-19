@@ -20,7 +20,7 @@ data "aws_cloudfront_origin_request_policy" "all_viewer_except_host" {
 }
 
 resource "aws_cloudfront_origin_access_control" "frontend" {
-  name                              = "frontend-${var.environment}-oac"
+  name                              = "${local.name}-oac"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
@@ -30,7 +30,7 @@ resource "aws_cloudfront_distribution" "main" {
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
-  comment             = "frontend + api (${var.environment})"
+  comment             = "HAPI frontend + api (${var.environment})"
 
   price_class = "PriceClass_All"
 
@@ -154,24 +154,24 @@ resource "aws_cloudfront_distribution" "main" {
 }
 
 resource "aws_cloudfront_function" "strip_api_prefix" {
-  name    = "strip-api-prefix-${var.environment}"
+  name    = "${local.name}-strip-api-prefix"
   runtime = "cloudfront-js-2.0"
   publish = true
-  code    = file("${path.module}/functions/strip-api-prefix.js")
+  code    = file("${path.module}/../functions/strip-api-prefix.js")
 }
 
 resource "aws_cloudfront_function" "spa_fallback" {
-  name    = "spa-fallback-${var.environment}"
+  name    = "${local.name}-spa-fallback"
   runtime = "cloudfront-js-2.0"
   publish = true
-  code    = file("${path.module}/functions/spa-fallback.js")
+  code    = file("${path.module}/../functions/spa-fallback.js")
 }
 
 resource "aws_cloudfront_function" "strip_first_segment" {
-  name    = "strip-first-segment-${var.environment}"
+  name    = "${local.name}-strip-first-segment"
   runtime = "cloudfront-js-2.0"
   publish = true
-  code    = file("${path.module}/functions/strip-first-segment.js")
+  code    = file("${path.module}/../functions/strip-first-segment.js")
 }
 
 output "cloudfront_domain_name" {

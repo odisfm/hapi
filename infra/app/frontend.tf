@@ -1,10 +1,6 @@
 
-locals {
-  bucket_suffix = "${data.aws_caller_identity.current.account_id}-${data.aws_region.current.region}-an"
-}
-
 resource "aws_s3_bucket" "frontend_bucket" {
-  bucket           = "frontend-${var.environment}-${local.bucket_suffix}"
+  bucket           = "hapi-frontend-${var.environment}-${local.bucket_suffix}"
   bucket_namespace = "account-regional"
 }
 

@@ -1,49 +1,116 @@
 # Infrastructure design
 
-The cloud infrastructure, deployed primarily on AWS, was chosen to satisfy these requirements:
+The cloud infrastructure runs entirely on AWS, in `ap-southeast-2` (Sydney).
+It was chosen to satisfy these requirements:
 
 - High availability
 - Low cost
 - Simple administration and maintenance
+- The client's security rules: every IAM role is named `rmit-…` and carries
+  the client's permissions boundary, there are no IAM users, and secrets live
+  only in AWS Secrets Manager
+
+> The diagram below shows the earlier design (Supabase, GitHub Actions) and
+> has not been redrawn yet. The text and the flow below are current.
 
 ![Diagram of solution](./images/infra-diagram.png)
 
+```
+Browser ──► CloudFront ──► S3 (frontend, /media, /icons)
+                     └──► API Gateway (HTTP) ──► api Lambda (private subnets)
+                                                    ├──► RDS PostgreSQL 17 (private, IAM auth, TLS)
+                                                    ├──► S3 (gateway endpoint)
+                                                    └──► fck-nat ──► Internet (Mailgun, Secrets Manager, MediaConvert)
+S3 screenshots bucket ──► transcode_in / transcode_out Lambdas (private subnets)
+EventBridge Scheduler ──► media_cleanup Lambda (private subnets)
+CodeCommit main ──► EventBridge ──► CodeBuild (private subnets) ──► checks ► db ► migrate ► app ► frontend
+Admins ──► SSM Session Manager ──► fck-nat instance ──(port forward)──► RDS
+```
+
 ## Serving the frontend
 
-This solution serves the frontend HTML/JS/CSS from an [S3 bucket](https://aws.amazon.com/s3/).
-This is a very simple solution, and it means we don't have to maintain an actual web server.
-The site is built by GitHub actions as part of our [CI/CD process](../processes/CI-CD.md), and automatically pushed to the bucket.
+The frontend HTML/JS/CSS is served from an [S3 bucket](https://aws.amazon.com/s3/),
+so there is no web server to maintain. The site is built and uploaded by the
+[deploy pipeline](../processes/CI-CD.md). Cost is well under $1 USD per month.
 
-It is also a cheap solution, at well under $1USD per month.
-
-The bucket is physically located in Melbourne, as presumably that will be where the majority of our visitors are located.
-The bucket is behind an [Amazon CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html) distribution, which will reduce latency to visitors around the world, and provide additional features.
+The bucket sits behind an [Amazon CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html)
+distribution, which reduces latency for visitors around the world and also
+serves uploaded media (`/media`, `/icons`) and the API (`/api`).
 
 ## Serving the API
 
-This solution serves the API as a [Hono app](https://hono.dev/) hosted on [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html).
+The API is a [Hono app](https://hono.dev/) on [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html),
+behind an [API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)
+HTTP API, which is itself behind CloudFront.
 
-The client expects that traffic to the site will be relatively low.
-Rather than pay for a server to run 24/7, Lambda's [serverless paradigm](https://www.cloudflare.com/learning/serverless/what-is-serverless/) means that we only pay when the API is accessed.
-It also means we do not have to maintain the infrastructure (i.e. updating software, patching vulnerabilities).
+Traffic is expected to be low, and with Lambda we pay only when the API is
+used. AWS runs more instances automatically when demand rises, and there are
+no servers to patch.
 
-In times of higher demand, AWS will automatically run more instances of the app to meet this demand.
+Media processing runs on three more Lambdas: `transcode_in` (starts an
+[Elemental MediaConvert](https://aws.amazon.com/mediaconvert/) job for each
+uploaded video), `transcode_out` (publishes the result) and `media_cleanup`
+(weekly removal of media nothing references any more).
 
-Due to the relatively low anticipated access patterns, I also estimate backend costs at well under $1USD per month.
+## Network
 
-To run a self-managed server on [AWS EC2](https://aws.amazon.com/ec2/), we would likely be looking at a minimum of several USD for one server, plus upwards of $15USD for an [application load balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) to facilitate spinning up additional servers in periods of higher demand (plus the cost of those additional servers).
+All Lambdas, the database and the build pipeline run in **private subnets**
+of a dedicated VPC, with no inbound access from the internet.
 
-The backend is behind an [API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html), simplifying some operations and providing a level of defence against malicious actions like DDoS attacks.
-The API gateway is also behinf the previously mentioned CloudFront distribution.
+- **S3** traffic goes through a free VPC gateway endpoint.
+- **Internet egress** (email via Mailgun, Secrets Manager, the MediaConvert
+  API, package downloads during builds) goes through a single
+  [fck-nat](https://fck-nat.dev) instance, an open-source NAT image on a
+  `t4g.nano`. It costs a few dollars a month instead of the ~$40+ of an AWS
+  NAT Gateway. It runs in an Auto Scaling Group, so a failed instance is
+  replaced automatically, and it keeps a fixed public IP. It is patched
+  weekly by SSM. Patch reboots briefly interrupt outbound internet only; the
+  database and S3 are unaffected.
 
 ## Database
 
-PostgreSQL was chosen as the database engine.
+[Amazon RDS for PostgreSQL](https://aws.amazon.com/rds/postgresql/) 17
+(matching Supabase Local, which developers still use), single-AZ, encrypted,
+with 7 days of automated backups and deletion protection.
 
-At this time, production and staging databases are hosted on [Supabase](https://supabase.com/).
-If the team is given access to RMIT RACE facilities, the database resources will be transferred there.
-In any case, devs will use [Supabase Local](https://supabase.com/docs/guides/local-development) during development.
+- **No application passwords.** Lambdas connect as `hapi_app` and migrations
+  run as `hapi_owner`, both with
+  [IAM database authentication](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.html):
+  a 15-minute token signed with the function's own IAM role.
+- `hapi_owner` owns the schema objects; `hapi_app` can only read and write
+  rows. These roles and grants are code (`infra/db`), applied by the pipeline.
+- Only the RDS master user has a password. RDS manages and rotates it in
+  Secrets Manager, and only the pipeline reads it, to apply `infra/db`.
+- TLS is enforced by the server (`rds.force_ssl`) and verified by every client.
+- There is no RDS Proxy. Connections are capped by giving each Lambda
+  reserved concurrency and a pool of one connection (budget documented in
+  `infra/app/main.tf`).
+
+Humans reach the database only through an SSM Session Manager port forward
+([runbook](runbooks.md#6-database-access-for-humans-ssm-port-forward)).
+
+## Identity and secrets
+
+- Every role (one per Lambda, MediaConvert, the scheduler, the NAT instance,
+  CodeBuild and its trigger) is created through `infra/modules/iam_role`.
+  That module enforces the `rmit-hapi-<env>-` name and the permissions
+  boundary, and permissions are inline and scoped to specific resources.
+- There are no IAM users or access keys in this project. The pipeline uses
+  its CodeBuild role. Humans use the identity the account owner gives them.
+- The one application secret, the Mailgun API key, is stored in Secrets
+  Manager. The api Lambda receives only its ARN and reads the value at start-up.
 
 ## Infrastructure as Code
 
-The majority of cloud resources are managed via our [infrastructure as code system](../../infra), harnessing OpenTofu (Terraform).
+All cloud resources are managed with [OpenTofu](https://opentofu.org/) in
+[`infra/`](../../infra), split by lifecycle:
+
+| Root | Scope | Applied by |
+|---|---|---|
+| `bootstrap` | Per account: state bucket, CodeCommit repo | Admin, once |
+| `platform` | Per environment: VPC, NAT, RDS, secret container, CodeBuild pipeline | Admin, when it changes |
+| `db` | Per environment: Postgres roles and grants | Pipeline |
+| `app` | Per environment: Lambdas, API Gateway, CloudFront, buckets | Pipeline |
+
+The pipeline cannot modify `platform`, so it cannot change its own
+permissions. The [runbooks](runbooks.md) cover setup and operations.

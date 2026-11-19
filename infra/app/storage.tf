@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "icons_bucket" {
-  bucket           = "icons-${var.environment}-${local.bucket_suffix}"
+  bucket           = "hapi-icons-${var.environment}-${local.bucket_suffix}"
   bucket_namespace = "account-regional"
 }
 
@@ -51,7 +51,7 @@ resource "aws_s3_bucket_policy" "icons_bucket" {
 }
 
 resource "aws_s3_bucket" "screenshots_bucket" {
-  bucket           = "screenshots-${var.environment}-${local.bucket_suffix}"
+  bucket           = "hapi-screenshots-${var.environment}-${local.bucket_suffix}"
   bucket_namespace = "account-regional"
 }
 
@@ -106,10 +106,8 @@ resource "aws_s3_bucket_cors_configuration" "screenshots_bucket" {
   bucket = aws_s3_bucket.screenshots_bucket.id
 
   cors_rule {
-    allowed_origins = concat(
-      ["https://${local.site_host}"],
-        var.environment == "dev" ? ["http://localhost:5173"] : []
-    )
+    # Local development uses its own buckets (infra/local_dev).
+    allowed_origins = ["https://${local.site_host}"]
     allowed_methods = ["PUT"]
     allowed_headers = ["*"]
     expose_headers  = ["ETag"]

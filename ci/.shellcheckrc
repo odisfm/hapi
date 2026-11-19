@@ -1,0 +1,3 @@
+# Lets `shellcheck ci/*.sh` follow `source .../lib.sh` (set -euo pipefail).
+source-path=SCRIPTDIR
+external-sources=true

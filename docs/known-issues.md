@@ -16,21 +16,11 @@ Contents:
 
 ## Bugs
 
-### Deleting an admin who has rejected a version breaks the project queue
-
-- **Problem:** deleting a user sets `reviewerId` to null on the versions
-  they reviewed, and `GET /project/versions`
-  (`projectVersionRouter.ts`) then reads `v.reviewer!.name` and crashes.
-- **Impact:** the admin project queue, and the dashboards of affected
-  students, fail with an error.
-- **Fix:** use `v.reviewer?.name ?? "Former admin"`. Until then, don't
-  delete admins. Change their password instead
-  ([runbook](infrastructure/runbooks.md#team-access)).
-
-### Deleting a student leaves their projects without an owner
+### Deleting a user leaves their projects without an owner
 
 - **Problem:** deleting a user deletes their project ownerships, but the
-  projects stay.
+  projects stay. This applies to admins too: an admin owns every project
+  they create.
 - **Impact:**
   - Nobody can edit those projects as a student.
   - Their pending versions disappear from the admin queue, which is built
@@ -38,7 +28,7 @@ Contents:
   - Video uploads to them crash `transcode_in`, which charges the
     project's first owner.
 - **Fix:** block deleting users who own projects, or reassign their
-  projects to the deleting admin. Until then, don't delete students whose
+  projects to the deleting admin. Until then, don't delete users whose
   projects should stay.
 
 ### View counts are probably wrong

@@ -342,7 +342,8 @@ projectVersionRouter.get("/versions", needsAuth, async (c) => {
         }).map((v) => {
             return {
                 reviewedAt: v.reviewedAt!,
-                reviewer: v.reviewer!.name,
+                // null once the reviewing admin's account is deleted
+                reviewer: v.reviewer?.name ?? "Former admin",
                 feedback: v.rejectionReason || ""
             }
         })

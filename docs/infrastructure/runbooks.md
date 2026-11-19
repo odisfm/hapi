@@ -521,8 +521,8 @@ The RACE account comes with one IAM user, which the whole team shares:
 2. **Change the console password** of the IAM user, if they knew it.
 3. **Their site login:** set a new password for it by hand (see
    [Manage users](../dev/common-tasks.md#manage-users)) rather than deleting
-   it. Deleting an admin who has reviewed projects currently breaks the
-   project queue (see [known issues](../known-issues.md#deleting-an-admin-who-has-rejected-a-version-breaks-the-project-queue)).
+   it. An admin owns every project they created, and deleting them leaves
+   those projects without an owner (see [known issues](../known-issues.md#deleting-a-user-leaves-their-projects-without-an-owner)).
 4. **Mailgun and Umami:** change the passwords if they were shared, and
    [rotate the Mailgun key](#rotate-the-mailgun-key) if they could see it.
 

@@ -278,6 +278,16 @@ describe("GET /project/versions summaries", () => {
         expect(summary.feedbackHistory[0].reviewer).toBe("Reviewer")
     })
 
+    test("credits feedback to \"Former admin\" once the reviewer's account is deleted", async () => {
+        // deleting a user sets reviewerId to null on the versions they reviewed
+        const [summary] = await getSummaries("STUDENT", [ownerRecord([
+            makeVersion({submissionStatus: "REJECTED", reviewedAt: daysAgo(1), reviewerId: null, rejectionReason: "needs work"}),
+        ])])
+        expect(summary.feedbackHistory).toEqual([
+            expect.objectContaining({reviewer: "Former admin", feedback: "needs work"}),
+        ])
+    })
+
     test("uses the latest draft's name when nothing is approved", async () => {
         const [summary] = await getSummaries("STUDENT", [ownerRecord([
             makeVersion({submissionStatus: "PENDING", name: "Draft name"}),

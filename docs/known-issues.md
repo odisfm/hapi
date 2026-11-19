@@ -16,21 +16,6 @@ Contents:
 
 ## Bugs
 
-### Deleting a user leaves their projects without an owner
-
-- **Problem:** deleting a user deletes their project ownerships, but the
-  projects stay. This applies to admins too: an admin owns every project
-  they create.
-- **Impact:**
-  - Nobody can edit those projects as a student.
-  - Their pending versions disappear from the admin queue, which is built
-    from ownerships.
-  - Video uploads to them crash `transcode_in`, which charges the
-    project's first owner.
-- **Fix:** block deleting users who own projects, or reassign their
-  projects to the deleting admin. Until then, don't delete users whose
-  projects should stay.
-
 ### View counts are probably wrong
 
 - **Problem:** project and showcase views are de-duplicated per IP address

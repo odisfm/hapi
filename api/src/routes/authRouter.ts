@@ -508,8 +508,23 @@ authRouter.delete("/user", needsAuth, async (c) => {
     }
 
     try {
-        await db.user.delete({
-            where: {id: record.id}
+        await db.$transaction(async (tx) => {
+            // Deleting the user deletes their ownerships. A project nobody else owns would be left
+            // with no owner: no student could edit it, and it would drop out of the admin queue,
+            // which is built from ownerships. Give those projects to the admin doing the deleting.
+            const ownerships = await tx.projectOwner.findMany({
+                where: {ownerId: record.id},
+                select: {projectId: true, project: {select: {_count: {select: {ownerships: true}}}}}
+            })
+            const soleOwned = ownerships.filter((o) => o.project._count.ownerships === 1)
+            if (soleOwned.length) {
+                await tx.projectOwner.createMany({
+                    data: soleOwned.map((o) => ({projectId: o.projectId, ownerId: user.id}))
+                })
+            }
+            await tx.user.delete({
+                where: {id: record.id}
+            })
         })
         return c.json({}, 200)
     } catch (e) {

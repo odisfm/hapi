@@ -41,7 +41,7 @@ export function UserPage() {
     const deleteUser = useCallback(async (email: string) => {
         const confirm = await modalContext.dispatchModal({
             headline: "Delete user?",
-            body: `User with email ${email} will be deleted immediately.`,
+            body: `User with email ${email} will be deleted immediately. Projects only they own will be transferred to you.`,
             buttons: [
                 {id: "cancel", text: "Cancel", variant: "default"},
                 {id: "confirm", text: "Delete user", variant: "danger"},

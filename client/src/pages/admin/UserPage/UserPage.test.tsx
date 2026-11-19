@@ -144,7 +144,7 @@ describe('UserPage', () => {
 
             expect(dispatchModal).toHaveBeenCalledWith(expect.objectContaining({
                 headline: 'Delete user?',
-                body: 'User with email sam@example.com will be deleted immediately.',
+                body: 'User with email sam@example.com will be deleted immediately. Projects only they own will be transferred to you.',
             }))
         })
 

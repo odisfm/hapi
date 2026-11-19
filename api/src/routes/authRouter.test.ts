@@ -355,10 +355,33 @@ describe("delete user", () => {
     test("deletes another user", async () => {
         const headers = loginAs("ADMIN", {id: "admin-1"})
         vi.mocked(db.user.findUnique).mockResolvedValue(makeUser({id: "user-2"}))
+        vi.mocked(db.projectOwner.findMany).mockResolvedValue([])
         vi.mocked(db.user.delete).mockResolvedValue(makeUser())
         const res = await deleteUser("user@example.com", headers)
         expect(res.status).toBe(200)
         expect(db.user.delete).toHaveBeenCalledWith({where: {id: "user-2"}})
+        expect(db.projectOwner.createMany).not.toHaveBeenCalled()
+    })
+
+    test("gives projects only the deleted user owned to the deleting admin, then deletes the user", async () => {
+        const headers = loginAs("ADMIN", {id: "admin-1"})
+        vi.mocked(db.user.findUnique).mockResolvedValue(makeUser({id: "user-2"}))
+        vi.mocked(db.projectOwner.findMany).mockResolvedValue([
+            {projectId: "sole-owned", project: {_count: {ownerships: 1}}},
+            {projectId: "co-owned", project: {_count: {ownerships: 2}}},
+        ] as never)
+        vi.mocked(db.projectOwner.createMany).mockResolvedValue({count: 1})
+        vi.mocked(db.user.delete).mockResolvedValue(makeUser())
+
+        const res = await deleteUser("user@example.com", headers)
+
+        expect(res.status).toBe(200)
+        expect(db.projectOwner.findMany).toHaveBeenCalledWith(expect.objectContaining({where: {ownerId: "user-2"}}))
+        expect(db.projectOwner.createMany).toHaveBeenCalledWith({data: [{projectId: "sole-owned", ownerId: "admin-1"}]})
+        expect(db.user.delete).toHaveBeenCalledWith({where: {id: "user-2"}})
+        expect(vi.mocked(db.projectOwner.createMany).mock.invocationCallOrder[0])
+            .toBeLessThan(vi.mocked(db.user.delete).mock.invocationCallOrder[0])
+        expect(db.$transaction).toHaveBeenCalledOnce()
     })
 
     test("404s for an unknown email", async () => {

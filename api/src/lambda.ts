@@ -1,14 +1,9 @@
 import { handle } from 'hono/aws-lambda'
-// import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager'
-// const environment = process.env.ENVIRONMENT!
+import { tryLoadMailgunKey } from './lambdaSecrets.js'
 
-// const client = new SecretsManagerClient({})
-// const { SecretString } = await client.send(
-//     new GetSecretValueCommand({ SecretId: `lambda-secrets-${environment}` })
-// )
-// const secrets = JSON.parse(SecretString!)
-//
-// process.env.ALLOWED_CORS = secrets.ALLOWED_CORS
+// Secrets must be in process.env before the app (and anything that reads env at
+// import time) loads, hence the top-level await before the dynamic import.
+await tryLoadMailgunKey()
 
 const { app } = await import('./index.js')
 

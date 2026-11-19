@@ -1,16 +1,27 @@
 # Environments
 
-This project uses two live environments, with near-identical but separate [cloud infrastructure](infrastructure-design.md).
+## Production (`prod`)
 
-## Staging
+The only live environment. It runs the latest code on `main`:
+[every merge is checked and deployed automatically](../processes/CI-CD.md).
 
-This environment contains the absolute latest code on the `main` branch, [deployed automatically](../processes/CI-CD.md#on-merge-to-main) when code is merged.
+It lives in AWS `ap-southeast-2` (Sydney) with its own VPC, database, buckets
+and CloudFront distribution. Every per-environment resource name includes
+the environment name (`hapi-prod-*`, roles `rmit-hapi-prod-*`), and each root
+keeps its state under `prod/` in the state bucket.
 
-This allows us to always have a live version of the codebase with the latest changes, and lets us manually test the project in a real environment. 
-The database is separate from the production environment, so we can modify data without affecting production.
+## Local development
 
-## Production
+Developers run everything locally against
+[Supabase Local](https://supabase.com/docs/guides/local-development)
+(Postgres 17). See the [dev environment guide](../dev/dev-environment.md).
 
-This environment is only deployed manually, once we are satisfied that the staging environment is working properly.
-If this were a live project, this would be the site that the public sees.
+## Adding environments
 
+The infrastructure is built so that another environment (e.g. `staging`)
+needs no structural changes: a CIDR, a `platform` apply with
+`environment = "staging"`, and the branch that deploys it. See the
+[runbook](runbooks.md#9-adding-another-environment).
+
+The previous `staging` and `production` environments (Supabase databases,
+`ap-southeast-4`) were retired in the move to the current setup.

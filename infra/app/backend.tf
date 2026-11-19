@@ -1,19 +1,11 @@
 locals {
-  api_lambda_zip = "${path.module}/../api/dist/lambda.zip"
-}
-
-data "aws_iam_role" "lambda_exec_role" {
-  name = "lambda_exec_role"
+  api_lambda_zip = "${path.module}/../../api/dist/lambda.zip"
 }
 
 resource "aws_s3_bucket" "lambda_artifacts" {
-  bucket = "lambda-artifacts-${var.environment}-${data.aws_caller_identity.current.account_id}"
-}
-
-resource "aws_s3_object" "api_code" {
-  bucket = aws_s3_bucket.lambda_artifacts.id
-  key    = "api/${filebase64sha256(local.api_lambda_zip)}.zip"
-  source = local.api_lambda_zip
+  bucket           = "hapi-lambda-artifacts-${var.environment}-${local.bucket_suffix}"
+  bucket_namespace = "account-regional"
+  force_destroy    = true # build artifacts only; rebuilt on every deploy
 }
 
 resource "aws_s3_bucket_public_access_block" "lambda_artifacts" {
@@ -35,38 +27,74 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "lambda_artifacts"
   }
 }
 
+# Old zips are never referenced again once a function is updated.
+resource "aws_s3_bucket_lifecycle_configuration" "lambda_artifacts" {
+  bucket = aws_s3_bucket.lambda_artifacts.id
+
+  rule {
+    id     = "expire-old-artifacts"
+    status = "Enabled"
+
+    filter {}
+
+    expiration {
+      days = 90
+    }
+  }
+}
+
+resource "aws_s3_object" "api_code" {
+  bucket = aws_s3_bucket.lambda_artifacts.id
+  key    = "api/${filebase64sha256(local.api_lambda_zip)}.zip"
+  source = local.api_lambda_zip
+}
+
+resource "aws_cloudwatch_log_group" "lambda" {
+  for_each = local.lambda_names
+
+  name              = "/aws/lambda/${each.value}"
+  retention_in_days = var.lambda_log_retention_days
+}
+
 resource "aws_lambda_function" "api" {
-  function_name    = "api-${var.environment}"
+  function_name    = local.lambda_names.api
   s3_bucket        = aws_s3_object.api_code.bucket
   s3_key           = aws_s3_object.api_code.key
   source_code_hash = filebase64sha256(local.api_lambda_zip)
   handler          = "lambda.handler"
   runtime          = "nodejs24.x"
-  role             = data.aws_iam_role.lambda_exec_role.arn
+  architectures    = ["x86_64"] # the bundled sharp binary is linux-x64-glibc
+  role             = module.lambda_role_api.arn
   timeout          = 30
   memory_size      = 512
 
-  environment {
-    variables = {
-      ENVIRONMENT  = var.environment
-      DATABASE_URL = var.lambda_db_url
+  reserved_concurrent_executions = var.lambda_reserved_concurrency.api
 
-      BUCKET_ICONS       = aws_s3_bucket.icons_bucket.bucket
+  vpc_config {
+    subnet_ids         = local.lambda_vpc_config.subnet_ids
+    security_group_ids = local.lambda_vpc_config.security_group_ids
+  }
+
+  environment {
+    variables = merge(local.db_env, {
+      BUCKET_ICONS = aws_s3_bucket.icons_bucket.bucket
       BUCKET_MEDIA = aws_s3_bucket.screenshots_bucket.bucket
 
-      EMAIL_PROVIDER = var.email_provider
-      EMAIL_DOMAIN = var.email_domain
-      MAILGUN_KEY = var.mailgun_key
+      EMAIL_PROVIDER = local.platform.email_provider
+      EMAIL_DOMAIN   = local.platform.email_domain
+      # The ARN, not the key: api/src/lambda.ts reads the value at init.
+      MAILGUN_SECRET_ARN = local.platform.mailgun_secret_arn
 
       WEBSITE_URL = "https://${local.site_host}"
-    }
+    })
   }
+
+  depends_on = [aws_cloudwatch_log_group.lambda]
 }
 
 resource "aws_apigatewayv2_api" "http" {
-  name          = "api-gateway-${var.environment}"
+  name          = "${local.name}-api"
   protocol_type = "HTTP"
-
 }
 
 resource "aws_apigatewayv2_integration" "lambda" {

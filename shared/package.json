@@ -13,6 +13,7 @@
   "scripts": {
     "db:migrate:deploy": "dotenv -e ../.env -- sh -c 'npx prisma migrate deploy && npx prisma db push'",
     "db:populate": "dotenv -e ../.env -- sh -c 'tsx ./src/scripts/populateDb/populateDb.ts'",
+    "db:create-admin": "tsx ./src/scripts/createAdmin.ts",
     "db:reset": "dotenv -e ../.env -- sh -c 'npx prisma db push --force-reset'",
     "test": "vitest run",
     "test:watch": "vitest watch",
@@ -20,12 +21,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@aws-sdk/rds-signer": "^3.1172.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.7.0",
     "puppeteer-core": "^25.12.0"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.1128.0",
     "@types/command-line-args": "^5.2.3",
     "@types/node": "^25.6.0",
     "command-line-args": "^6.0.2",

@@ -1,0 +1,68 @@
+# HAPI deploy pipeline (CodeBuild project hapi-<env>-deploy, created by
+# infra/platform). Runs on every push to main:
+#
+#   checks (lint, typecheck, tests, audit)  -- nothing deploys unless all pass
+#   -> build Lambda bundles
+#   -> db root (Postgres roles/grants, as the RDS master)
+#   -> prisma migrate deploy (as hapi_owner, IAM auth)
+#   -> app root (Lambdas, API Gateway, CloudFront, buckets)
+#   -> frontend build, S3 sync, CloudFront invalidation
+#
+# Each step is a script in ci/ (set -euo pipefail; runnable locally).
+# Environment variables set on the project by infra/platform/codebuild.tf:
+#   ENVIRONMENT TF_STATE_BUCKET PLATFORM_STATE_KEY TOFU_VERSION
+#   DB_HOST DB_PORT DB_NAME DB_MASTER_USERNAME DB_MASTER_SECRET_ARN
+#   VITE_UMAMI_SCRIPT_URL VITE_UMAMI_WEBSITE_ID VITE_UMAMI_DASHBOARD_URL
+# CodeBuild itself provides AWS_REGION and CODEBUILD_SRC_DIR.
+#
+# No secret is ever echoed: the RDS master password exists only in the
+# apply-db step's environment, the IAM token only in the migrate step's.
+
+version: 0.2
+
+env:
+  shell: bash
+  variables:
+    DISABLE_ERD: "true"
+    TF_IN_AUTOMATION: "true"
+    TF_INPUT: "0"
+    TF_PLUGIN_CACHE_DIR: /root/.cache/tofu-plugins
+    RDS_CA_BUNDLE: /tmp/rds-ca-bundle.pem
+    NPM_CONFIG_UPDATE_NOTIFIER: "false"
+    NPM_CONFIG_FUND: "false"
+
+phases:
+  install:
+    on-failure: ABORT
+    runtime-versions:
+      nodejs: 24
+    commands:
+      - bash ci/install-tools.sh
+
+  pre_build:
+    on-failure: ABORT
+    commands:
+      - bash ci/checks.sh
+
+  build:
+    on-failure: ABORT
+    commands:
+      - bash ci/build-lambdas.sh
+      - bash ci/apply-db.sh
+      - bash ci/migrate.sh
+      - bash ci/apply-app.sh
+      - bash ci/deploy-frontend.sh
+
+  post_build:
+    commands:
+      - |
+        if [ "${CODEBUILD_BUILD_SUCCEEDING:-0}" = "1" ]; then
+          echo "Deployed ${CODEBUILD_RESOLVED_SOURCE_VERSION:-unknown} to ${ENVIRONMENT}"
+        else
+          echo "Build FAILED for ${CODEBUILD_RESOLVED_SOURCE_VERSION:-unknown}; see the log above. Nothing after the failing step ran."
+        fi
+
+cache:
+  paths:
+    - /root/.npm/**/*
+    - /root/.cache/tofu-plugins/**/*

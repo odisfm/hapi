@@ -1,6 +1,10 @@
+import { loadMailgunKey } from '../lambdaSecrets.js';
+
 export async function sendEmailWithMailgun(address: string, subject: string, body: string) {
     const form = new FormData();
     const emailDomain = process.env.EMAIL_DOMAIN;
+    // No-op locally and once loaded; in AWS retries if the cold-start load failed.
+    await loadMailgunKey();
     const mailgunKey = process.env.MAILGUN_KEY;
     if (!emailDomain) {
         throw new Error('EMAIL_DOMAIN env var missing');

@@ -10,7 +10,24 @@
 
 ### Clone this repository
 
-Via HTTPS:
+The repository is moving from GitHub to AWS CodeCommit (`ap-southeast-2`).
+Until the move is finished, GitHub is still the place to work.
+
+**CodeCommit** (once migrated). There are no IAM users, Git passwords or SSH
+keys for this; Git authenticates with your AWS CLI profile through
+[`git-remote-codecommit`](https://github.com/aws/git-remote-codecommit):
+
+```sh
+pip install git-remote-codecommit
+aws configure --profile hapi            # credentials provided by the account owner
+git clone codecommit::ap-southeast-2://hapi@hapi
+```
+
+(The format is `codecommit::<region>://<profile>@<repository>`.) Don't push
+directly to `main`; open a pull request in CodeCommit. Every change to
+`main` deploys to production; see [CI/CD](../processes/CI-CD.md).
+
+**GitHub** (until the move is finished), via HTTPS:
 
 `git clone https://github.com/odisfm/hapi.git`
 

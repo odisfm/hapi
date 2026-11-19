@@ -444,8 +444,9 @@ unset ADMIN_PASSWORD DATABASE_URL
 - It doesn't read `.env`, so a missing `DATABASE_URL` is an error rather
   than a silent write to your local database.
 
-> **Never run `db:populate` against AWS.** It deletes every row in the
-> database before loading demo data. It's for local development only.
+> **Never run `db:populate` or `db:reset` against AWS.** They delete every
+> row in the database. Both refuse to run against an RDS database, but
+> close the tunnel and `unset DATABASE_URL` before local work anyway.
 
 ---
 

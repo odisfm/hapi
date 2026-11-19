@@ -5,34 +5,20 @@ import {hashPassword} from "@hapi/api/src/helpers/password";
 import {LexoRank} from "@dalet-oss/lexorank";
 import {Prisma} from "../../generated/prisma/client";
 import {DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS} from "../../consts";
+import {localDbProblem} from "../localDbGuard";
 
 const cliArgDefinitions = [
     { name: "use-external-db", type: Boolean }
 ]
 const cliArgs = commandLineArgs(cliArgDefinitions)
 
-if (!process.env.DATABASE_URL) {
-    console.error("Missing environment variable `DATABASE_URL`, check .env")
+// Refuses production even with --use-external-db; see localDbGuard.ts
+const dbProblem = await localDbProblem(db, process.env.DATABASE_URL, {
+    allowRemoteHost: cliArgs["use-external-db"] === true,
+})
+if (dbProblem) {
+    console.error(dbProblem)
     process.exit(1)
-}
-
-const LOCAL_DB_INDICATORS = ["localhost", "127.0.0.1"]
-
-if (cliArgs["use-external-db"] !== true) {
-    let localIndicator = false
-    for (const indicator of LOCAL_DB_INDICATORS) {
-        if (process.env.DATABASE_URL.includes(indicator)) {
-            localIndicator = true
-            break
-        }
-    }
-    if (!localIndicator) {
-        console.error(`
-        Environment variable DATABASE_URL seems to point to non-local database. 
-        If intentional, re-run this command with option --use-external-db
-        `)
-        process.exit(1)
-    }
 }
 
 console.log(`Truncating table ProjectMedia`)

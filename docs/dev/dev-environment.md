@@ -150,9 +150,14 @@ repository root:
 npm run db:populate --workspace shared
 ```
 
-**This deletes everything in the database first.** It refuses to run unless
-`DATABASE_URL` points at `localhost`, but don't rely on that: never run it
-with a tunnel to the production database open.
+**This deletes everything in the database first.** So does `db:reset`. Both
+refuse to run unless `DATABASE_URL` points at this computer and the
+database isn't an Amazon RDS one (`shared/src/scripts/localDbGuard.ts`).
+The second check is what stops them wiping production through the
+[database tunnel](../infrastructure/runbooks.md#database-access-ssm-port-forward),
+which is also on `localhost`. `.env` doesn't override a `DATABASE_URL`
+already exported in your shell, so `unset DATABASE_URL` after using the
+tunnel.
 
 It also creates the admin and student logins from `DEFAULT_ADMIN_*` and
 `DEFAULT_STUDENT_*` in `.env`, if they're set. The demo projects' images

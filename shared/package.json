@@ -14,7 +14,7 @@
     "db:migrate:deploy": "dotenv -e ../.env -- sh -c 'npx prisma migrate deploy && npx prisma db push'",
     "db:populate": "dotenv -e ../.env -- sh -c 'tsx ./src/scripts/populateDb/populateDb.ts'",
     "db:create-admin": "tsx ./src/scripts/createAdmin.ts",
-    "db:reset": "dotenv -e ../.env -- sh -c 'npx prisma db push --force-reset'",
+    "db:reset": "dotenv -e ../.env -- sh -c 'tsx ./src/scripts/localDbGuard.ts && npx prisma db push --force-reset'",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "lint": "eslint .",

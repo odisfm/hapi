@@ -46,10 +46,10 @@ projectRouterPatch.patch("/", needsAuth, async (c) => {
         }
     }
 
-    const transaction = await db.$transaction(async () => {
+    const transaction = await db.$transaction(async (tx) => {
         if (body.project) {
             const {id, ...projectUpdates} = body.project
-            await db.project.update({
+            await tx.project.update({
                 where: {
                     id: body.project.id
                 },
@@ -58,7 +58,7 @@ projectRouterPatch.patch("/", needsAuth, async (c) => {
         }
         if (body.projectVersion) {
             const {id, categoryIds, media, ...versionUpdates} = body.projectVersion
-            await db.projectVersion.update({
+            await tx.projectVersion.update({
                 where: {
                     id: body.projectVersion.id
                 },
@@ -66,10 +66,10 @@ projectRouterPatch.patch("/", needsAuth, async (c) => {
             })
 
             if (categoryIds) {
-                await db.projectCategory.deleteMany({
+                await tx.projectCategory.deleteMany({
                     where: {projectVersionId: body.projectVersion.id}
                 })
-                await db.projectCategory.createMany({
+                await tx.projectCategory.createMany({
                     data: categoryIds.map((c) => {
                         return {
                             categoryId: c,
@@ -80,11 +80,11 @@ projectRouterPatch.patch("/", needsAuth, async (c) => {
             }
 
             if (media) {
-                await db.projectVersionMedia.deleteMany({
+                await tx.projectVersionMedia.deleteMany({
                     where: {projectVersionId: body.projectVersion.id}
                 })
 
-                await db.projectVersionMedia.createMany({
+                await tx.projectVersionMedia.createMany({
                     data: media.map((_m) => {
                         const {id: mediaId, uri, mediaType, status, ...m} = _m
                         return {

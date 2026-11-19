@@ -21,7 +21,7 @@ Developers run everything locally against
 The infrastructure is built so that another environment (e.g. `staging`)
 needs no structural changes: a CIDR, a `platform` apply with
 `environment = "staging"`, and the branch that deploys it. See the
-[runbook](runbooks.md#9-adding-another-environment).
+[runbook](runbooks.md#adding-another-environment).
 
 The previous `staging` and `production` environments (Supabase databases,
 `ap-southeast-4`) were retired in the move to the current setup.

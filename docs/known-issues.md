@@ -1,0 +1,270 @@
+# Known issues
+
+Problems we know about but haven't fixed, roughly in order of importance,
+followed by traps that have caught people before. When you fix one,
+delete it from this page in the same pull request.
+
+Contents:
+
+- [Security](#security)
+- [Bugs](#bugs)
+- [Missing or incomplete](#missing-or-incomplete)
+- [Adding a staging environment](#adding-a-staging-environment)
+- [Code quality](#code-quality)
+- [Gotchas](#gotchas)
+
+---
+
+## Security
+
+### No protection against cross-site request forgery (CSRF)
+
+- **Problem:** the session cookie is `SameSite=None`
+  (`api/src/utils/cookieOptions.ts`), and the API has no CSRF check.
+  (`hono/csrf` is imported in `api/src/index.ts` but never used.) The API
+  also parses JSON bodies whatever their content type.
+- **Impact:** a malicious website could make a logged-in admin's browser
+  send requests to the API, for example to create users or change
+  projects, without the admin knowing.
+- **Fix:** set `sameSite: "Lax"` in `cookieOptions.ts`. Production serves
+  the site and API from one origin, and locally `localhost` ports count as
+  the same site, so nothing should break. Also add `app.use(csrf())` in
+  `index.ts`. Test login, logout and an upload both locally and after
+  deploying.
+
+### Users are never forced to change their password
+
+- **Problem:** `User.needsPasswordReset` exists, and the `createAdmin`
+  script sets it, but nothing acts on it:
+  - The website never checks it, and changing the password doesn't clear
+    it.
+  - The `force-reset` stage in `client/src/pages/admin/PasswordReset/`
+    exists, but nothing links to it.
+- **Impact:** new users keep the password emailed to them in plain text,
+  and new admins keep the temporary one, unless they change it themselves.
+- **Fix:** have `POST /auth/password` set `needsPasswordReset = false`. In
+  the website, after login (and in `AuthProvider`), send users with the
+  flag to `/reset-password/force-reset`. Set the flag when an admin creates
+  an account (`authRouter.ts`, `/create` and `/create/batch`).
+
+### `db:populate` can wipe production through the database tunnel
+
+- **Problem:** the demo-data script refuses to run unless `DATABASE_URL`
+  contains `localhost`. Through the
+  [database tunnel](infrastructure/runbooks.md#database-access-ssm-port-forward),
+  production *is* on `localhost`.
+- **Impact:** running `npm run db:populate --workspace shared` with the
+  tunnel open deletes all production data.
+- **Fix:** also require an explicit flag, or refuse when the URL uses port
+  `15432` or an IAM token. Until then: close the tunnel before running it.
+
+---
+
+## Bugs
+
+### Deleting an admin who has rejected a version breaks the project queue
+
+- **Problem:** deleting a user sets `reviewerId` to null on the versions
+  they reviewed, and `GET /project/versions`
+  (`projectVersionRouter.ts`) then reads `v.reviewer!.name` and crashes.
+- **Impact:** the admin project queue, and the dashboards of affected
+  students, fail with an error.
+- **Fix:** use `v.reviewer?.name ?? "Former admin"`. Until then, don't
+  delete admins. Change their password instead
+  ([runbook](infrastructure/runbooks.md#team-access)).
+
+### Deleting a student leaves their projects without an owner
+
+- **Problem:** deleting a user deletes their project ownerships, but the
+  projects stay.
+- **Impact:**
+  - Nobody can edit those projects as a student.
+  - Their pending versions disappear from the admin queue, which is built
+    from ownerships.
+  - Video uploads to them crash `transcode_in`, which charges the
+    project's first owner.
+- **Fix:** block deleting users who own projects, or reassign their
+  projects to the deleting admin. Until then, don't delete students whose
+  projects should stay.
+
+### View counts are probably wrong
+
+- **Problem:** project and showcase views are de-duplicated per IP address
+  per 24 hours. The IP comes from `api/src/helpers/getConnInfo.ts`. Behind
+  CloudFront, that's most likely CloudFront's edge server, not the visitor.
+- **Impact:** views are under-counted, because every visitor going through
+  the same edge looks like one person. That affects the "Most popular"
+  sort and the admin analytics.
+- **Fix:** read the visitor's IP from the `CloudFront-Viewer-Address` or
+  `X-Forwarded-For` header. CloudFront must be configured to forward it to
+  the API. Confirm by logging both values in production first.
+
+### Admins created from the dashboard have limited video credits
+
+- **Problem:** `/auth/create` gives every new user 10 video credits,
+  including admins. The `createAdmin` script gives admins unlimited
+  (`null`).
+- **Impact:** a dashboard-created admin's own projects can run out of
+  video credits.
+- **Fix:** set `videoTranscodeCredits: null` when `role` is `ADMIN`. For
+  existing admins, set it in the database.
+
+### Video credits are charged to the project owner
+
+- **Problem:** `transcode_in` charges the project's owner, not the person
+  uploading.
+- **Impact:** an admin uploading a video to a student's project uses the
+  student's credits.
+- **Fix:** record the uploader on `ProjectMedia`, if this matters.
+
+### Approving a version isn't atomic
+
+- **Problem:** approving a version marks the previous approved version
+  `SUPERSEDED`, then approves the new one, in two separate writes
+  (`projectVersionRouter.ts`).
+- **Impact:** if the second write fails, the project has no approved
+  version and disappears from the public site until it's approved again.
+- **Fix:** wrap both writes in `db.$transaction(async (tx) => …)`, and use
+  `tx` inside it.
+
+### Filtering search by approval status fails
+
+- **Problem:** `GET /project/search?approvalStatus=…` (admins only) filters
+  on a field `Project` doesn't have.
+- **Impact:** the request fails. The website doesn't seem to use it.
+- **Fix:** filter on the versions' `submissionStatus`, or remove the
+  parameter.
+
+---
+
+## Missing or incomplete
+
+| Gap | Notes |
+|---|---|
+| No checks on pull requests | Checks only run after a merge. See [decisions](infrastructure/decisions.md#every-merge-to-main-deploys-with-no-approval-step). |
+| No alarms | Failures are only noticed by users or by reading logs. See [decisions](infrastructure/decisions.md#no-alarms). |
+| No custom domain | See [decisions](infrastructure/decisions.md#no-custom-domain-yet). |
+| Demo data has no images | `db:populate`'s projects refer to images that no longer exist in any bucket. Local demo projects show without images. |
+| Media isn't backed up | The S3 buckets have no versioning. See [backups](infrastructure/runbooks.md#back-up-and-restore-the-database). |
+| The database restore runbook hasn't been tested | Practise it once before you need it. |
+
+---
+
+## Adding a staging environment
+
+The [runbook](infrastructure/runbooks.md#adding-another-environment)
+covers the infrastructure, but a second environment has gaps:
+
+- **Its first build will probably fail.** Without
+  `infra/app/<env>.tfvars`, the `app` root falls back to reserving Lambda
+  concurrency (20/5/5/1), which AWS rejects while the account's quota is
+  below 1000. Copy `infra/app/prod.tfvars` to fix this, or change the
+  defaults in `infra/app/variables.tf` to `-1`.
+- **It shares the Lambda quota with production.** The concurrency quota
+  covers the whole AWS account, so a busy staging site can slow
+  production. A separate AWS account for staging avoids this.
+- **There's no release flow.** Only `main` needs an approval (if any).
+  Pushes to the staging branch deploy straight away. Agree a flow first,
+  for example: features → `staging` → test → merge `staging` into `main`.
+- **The runbook commands name `hapi-prod-*`.** Substitute the environment
+  name.
+- **It costs roughly as much as production again.**
+
+---
+
+## Code quality
+
+- **The API's TypeScript isn't linted.** `api/eslint.config.js` has no
+  `files` pattern, so ESLint only checks `.js` files there. Add
+  TypeScript linting like `client/` has, then fix what it finds.
+- **Role checks are written by hand in each handler**
+  (`if (user.role !== "ADMIN")`). An `adminOnly` middleware would make
+  mistakes less likely.
+- **Some handlers don't validate their input with zod.** They read the
+  body directly, for example `/auth/forgot-password` and `/media/video`.
+- **Search filters in memory.** `GET /project/search` loads every visible
+  project, then filters and pages in JavaScript. That's fine for hundreds
+  of projects, but slow for thousands.
+- **`db:migrate:deploy` also runs `prisma db push`**
+  (`shared/package.json`). It can make a local database match the schema
+  without a migration, which hides a forgotten migration until it fails in
+  the pipeline. Run `prisma migrate dev` when changing the schema
+  ([common tasks](dev/common-tasks.md#change-the-database-schema)).
+- **Leftovers:**
+  - the unused SES email code (`api/src/services/simpleEmailService.ts`)
+  - `GET /analytics/example`
+  - `api/src/index.ts`'s `GET /` ("Hello Hono!")
+  - a `// todo: link to site` in `authRouter.ts`
+
+---
+
+## Gotchas
+
+Things that look wrong, or that are easy to get wrong. Most were learned
+the hard way while building the AWS setup.
+
+**Application**
+
+- **Inside a transaction, use `tx`, never `db`.** Each production Lambda
+  has one database connection. A query on `db` inside a transaction waits
+  for the connection the transaction holds, and fails after 5 seconds
+  (Prisma error `P2028`). Locally there's a pool of 10, so the bug hides.
+- **Media URLs in the database have no extension.** Images are
+  `<uuid>.webp` and videos `<uuid>.webm` in S3, but the database stores
+  just the UUID.
+- **The project editor's `:projectId` route parameter is a version ID.**
+
+**Database connections**
+
+- **Node's `pg` treats `sslmode=require` as full certificate verification**,
+  unlike `psql`, where it only encrypts. Through the database tunnel
+  (`localhost`), Node needs `sslmode=no-verify`.
+- **Prisma's migration engine ignores `sslrootcert`.** It needs `sslcert`
+  (the CA bundle path) plus `sslaccept=strict`; see `ci/migrate.sh`.
+- **IAM database tokens last 15 minutes and must be URL-encoded** in a
+  connection string. They're only checked when connecting, so a session
+  that's already open keeps working.
+- **The first IAM login to a new database can take over 5 seconds.**
+  That's why migrations use `connect_timeout=30`.
+- **Don't give the RDS master user permanent membership of `hapi_owner`.**
+  It would inherit `rds_iam`, which can stop it logging in with its
+  password. The PostgreSQL provider grants membership temporarily when it
+  needs it.
+
+**AWS**
+
+- **Reserved concurrency fails if it would leave fewer than 100 unreserved
+  executions** in the account. New accounts often have a quota of 10. Use
+  `-1` for "unreserved". `null` doesn't work, because OpenTofu's
+  `optional()` turns it back into the default.
+- **CodeBuild in the VPC fetches its source through the NAT.** With the NAT
+  down, a build hangs at `DOWNLOAD_SOURCE` instead of failing.
+- **Extra CodeBuild builds fail to start; they don't queue.**
+- **CodeCommit doesn't let a pull request's author approve it.**
+- **The `sharp` image library is bundled for x86_64 Linux.** The API
+  Lambda and CodeBuild must stay on x86_64.
+- **SSM schedules are in UTC**, so the NAT patch time shifts by an hour with
+  daylight saving.
+- **A NAT network interface can only attach in its own availability
+  zone,** so the fck-nat Auto Scaling group is pinned to that subnet.
+
+**OpenTofu**
+
+- **`tofu validate` on `infra/app` needs the Lambda zips to exist.** Run
+  `bash ci/build-lambdas.sh` first, or create placeholder zips.
+- **The S3 state backend needs plain `s3:ListBucket`.** A prefix condition
+  breaks `tofu init`.
+- **`create_before_destroy` with a fixed `name` can't replace a resource**
+  (the names clash). The RDS parameter group uses `name_prefix` for this
+  reason.
+- **Lock provider versions for all four platforms**
+  (`linux_amd64`, `linux_arm64`, `darwin_amd64`, `darwin_arm64`), or the
+  pipeline and laptops disagree. See
+  [upgrades](infrastructure/runbooks.md#opentofu-and-providers).
+
+**Shell scripts**
+
+- **`set -o pipefail` with `cmd | grep -q` fails randomly**, because
+  `grep -q` exits early and `cmd` gets SIGPIPE. Use `grep … >/dev/null`.
+- **macOS ships Bash 3.2.** With `set -u`, `"${arr[@]}"` on an empty
+  array is an error. Use `${arr[@]+"${arr[@]}"}`.

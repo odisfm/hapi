@@ -127,6 +127,11 @@ Example: an admin-only `GET /category/:categoryId/stats`.
    })
    ```
 
+   `loginAs` also sends `Sec-Fetch-Site: same-origin`, as a browser on the
+   site would. Without it, the CSRF check rejects POST, PATCH and DELETE
+   requests with 403. For a request without `loginAs`, spread in
+   `sameOriginHeaders` from `api/src/test/auth.ts`.
+
    Any database call you don't stub throws, so stub each one with
    `vi.mocked(db.category.findUnique).mockResolvedValue(...)`. Test the
    permission rules as well as the success case.

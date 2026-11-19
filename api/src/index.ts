@@ -23,12 +23,23 @@ if (process.env.SERVER_DELAY) {
 
 export const app = createHono()
 
+const allowedOrigins = process.env.ALLOWED_CORS ? process.env.ALLOWED_CORS.split(" ") : []
+
 app.use(
     cors({
-        origin: process.env.ALLOWED_CORS ? process.env.ALLOWED_CORS.split(" ") : [],
+        origin: allowedOrigins,
         credentials: true
     })
 )
+
+// Rejects form-style requests (form, multipart and text/plain bodies) from other sites.
+// Browsers send JSON as text/plain unless told otherwise, so this covers most requests.
+// A request passes if either:
+// - Sec-Fetch-Site is "same-origin" (production, where CloudFront serves the site and API
+//   from one origin; checking Origin alone fails there, because CloudFront doesn't pass the
+//   Host header on, so the API sees API Gateway's URL as its own)
+// - Origin is in ALLOWED_CORS (local dev, where the website is on another port)
+app.use(csrf({origin: allowedOrigins}))
 
 app.use("*", async (c, next) => {
     if (serverDelay[0] && serverDelay[1]) {

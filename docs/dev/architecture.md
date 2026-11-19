@@ -257,6 +257,10 @@ password and emails it to the new user.
 - Logging in (`POST /auth/login`) checks the password and creates a
   `Session` row. Its ID goes in an HTTP-only cookie, `sessionId`, valid for
   30 days.
+- The cookie is `SameSite=Lax` (`api/src/utils/cookieOptions.ts`), so
+  browsers don't send it with requests that other websites make to the
+  API. That, together with the CSRF check (see [the API](#7-the-api)),
+  protects against cross-site request forgery.
 - On every request, `api/src/middleware/session.ts` looks the cookie up. If
   the session is valid, it puts the user on the request context
   (`c.get("user")`).
@@ -391,8 +395,16 @@ otherwise delete every file in the buckets. Deleting a project
 
 1. CORS (`ALLOWED_CORS`; only needed locally, where the website and API are
    on different ports)
-2. an optional artificial delay (`SERVER_DELAY`, local only)
-3. the session middleware
+2. Hono's CSRF check (`hono/csrf`). It rejects a POST, PATCH or DELETE with
+   a form, multipart or plain-text body unless the browser says it came
+   from the same origin (`Sec-Fetch-Site: same-origin`, which covers
+   production) or its `Origin` is in `ALLOWED_CORS` (which covers local
+   dev). JSON requests without a `Content-Type` header count as plain
+   text, so most of the website's requests are checked. Requests that set
+   `Content-Type: application/json` aren't checked, but another site can
+   only send those after a CORS preflight, which the API refuses.
+3. an optional artificial delay (`SERVER_DELAY`, local only)
+4. the session middleware
 
 Then it mounts the routers:
 

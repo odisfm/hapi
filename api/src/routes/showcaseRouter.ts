@@ -15,7 +15,7 @@ import {createUuid} from "@hapi/client/src/utils/misc";
 import {getShowcaseName} from "@hapi/shared/utils/getShowcaseName";
 import type {ShowcaseGetPayload, ShowcaseInclude} from "@hapi/shared/prisma/models/Showcase";
 import type {ShowcaseSlugGetPayload} from "@hapi/shared/prisma/models/ShowcaseSlug";
-import {getConnInfo} from "../helpers/getConnInfo";
+import {getClientIp} from "../helpers/getClientIp";
 
 export const showcaseRouter = createHono()
 
@@ -114,8 +114,7 @@ showcaseRouter.get(":showcaseSlug", async (c) => {
 
     const showcase = filterShowcase(showcaseRecord, null)
 
-    const connInfo = getConnInfo(c)
-    const ipAddress = connInfo.remote.address
+    const ipAddress = getClientIp(c)
     const viewed24HoursRecord = await db.showcaseView.findFirst({
         where: {
             showcaseId: showcase.id,

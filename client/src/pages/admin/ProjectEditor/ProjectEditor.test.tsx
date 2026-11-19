@@ -145,7 +145,7 @@ function renderEditorPage() {
         <AuthContext.Provider value={{
             user: {id: "id-a", email: "a", name: "a", needsPasswordReset: false, role: "ADMIN", videoUploadCredits: 10},
             setUserDetails: () => {},
-            logOut: () => {},
+            logOut: async () => {},
             authPending: false
         }}>
             <MemoryRouter initialEntries={[`/dashboard/project/${projectId}`]}>

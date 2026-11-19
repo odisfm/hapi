@@ -5,10 +5,11 @@ import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import {useAuth} from '../../../contexts/auth/useAuth.ts'
 import {PasswordReset} from './PasswordReset.tsx'
 
-const {navigate, dispatchModal, setUserDetails} = vi.hoisted(() => ({
+const {navigate, dispatchModal, setUserDetails, logOut} = vi.hoisted(() => ({
     navigate: vi.fn(),
     dispatchModal: vi.fn(),
     setUserDetails: vi.fn(),
+    logOut: vi.fn(),
 }))
 
 vi.mock('react-router', async (importOriginal) => ({
@@ -25,7 +26,7 @@ vi.mock('../../../contexts/auth/useAuth.ts', () => ({
 }))
 
 const fetchMock = vi.fn()
-const signedInUser = {name: 'Max', needsPasswordReset: true}
+const signedInUser = {name: 'Max', email: 'max@example.com', needsPasswordReset: true}
 const strongPassword = 'Str0ngPassw0rd2025'
 
 function renderStage(stage: string) {
@@ -68,6 +69,7 @@ describe('PasswordReset', () => {
         vi.mocked(useAuth).mockReturnValue({
             user: signedInUser,
             setUserDetails,
+            logOut,
         } as unknown as ReturnType<typeof useAuth>)
         vi.spyOn(console, 'error').mockImplementation(() => {})
     })
@@ -239,7 +241,7 @@ describe('PasswordReset', () => {
             expect(screen.queryByRole('button', {name: 'Log out and return home'})).not.toBeInTheDocument()
         })
 
-        it('saves the new password, clears the reset flag and goes to the dashboard', async () => {
+        it('saves the new password, clears the reset flag and goes to the right dashboard', async () => {
             fetchMock.mockResolvedValue(okResponse())
             renderStage('new-password')
 
@@ -252,7 +254,38 @@ describe('PasswordReset', () => {
             expect(init.credentials).toBe('include')
             expect(JSON.parse(init.body)).toEqual({password: strongPassword})
             expect(setUserDetails).toHaveBeenCalledWith({...signedInUser, needsPasswordReset: false})
-            expect(navigate).toHaveBeenCalledWith('/dashboard')
+            expect(navigate).toHaveBeenCalledWith('/protected')
+        })
+
+        it('refuses passwords that don\'t match, without sending anything', async () => {
+            renderStage('new-password')
+
+            await fillNewPassword(strongPassword, strongPassword + 'x')
+
+            expect(fetchMock).not.toHaveBeenCalled()
+            expect(dispatchModal).toHaveBeenCalledWith(
+                expect.objectContaining({headline: 'Error', body: 'Passwords do not match'}),
+            )
+        })
+
+        it('shows the signed-in user\'s email when forced', () => {
+            renderStage('force-reset')
+
+            expect(screen.getByRole('textbox')).toHaveValue('max@example.com')
+        })
+
+        it('logs out before going home, so the forced-reset redirect doesn\'t bring the user back', async () => {
+            let finishLogOut!: () => void
+            logOut.mockReturnValue(new Promise<void>((resolve) => {finishLogOut = resolve}))
+            renderStage('force-reset')
+
+            await userEvent.setup().click(screen.getByRole('button', {name: 'Log out and return home'}))
+
+            expect(logOut).toHaveBeenCalledOnce()
+            expect(navigate).not.toHaveBeenCalledWith('/')
+            finishLogOut()
+            await vi.waitFor(() => expect(navigate).toHaveBeenCalledWith('/'))
+            expect(fetchMock).not.toHaveBeenCalled()
         })
 
         it('shows an error and stays put when the server rejects the password', async () => {
@@ -265,7 +298,7 @@ describe('PasswordReset', () => {
                 expect.objectContaining({headline: 'Error', body: expect.stringContaining('Bad Request')}),
             )
             expect(setUserDetails).not.toHaveBeenCalled()
-            expect(navigate).not.toHaveBeenCalledWith('/dashboard')
+            expect(navigate).not.toHaveBeenCalledWith('/protected')
         })
     })
 })

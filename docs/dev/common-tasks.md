@@ -233,8 +233,7 @@ Most user management is in the admin dashboard, under **Users**.
 | Delete a user | Users page. You can't delete yourself. |
 | First admin, or nobody can log in | [Runbook: create an admin user](../infrastructure/runbooks.md#create-an-admin-user) |
 
-New users aren't forced to change the emailed password. Ask them to change
-it at `/reset-password/new-password` after they log in.
+New users must choose a new password the first time they log in.
 
 **Someone forgot their password:** they use "Forgot password?" on the login
 page and get a code by email. If email isn't working, an admin can set a
@@ -245,10 +244,12 @@ password by hand:
    then run:
 
    ```sql
-   UPDATE "User" SET password = '<the hash>' WHERE email = 'student@example.com';
+   UPDATE "User" SET password = '<the hash>', "needsPasswordReset" = true
+   WHERE email = 'student@example.com';
    ```
 
-3. Send them the temporary password, and ask them to change it.
+3. Send them the temporary password. The site makes them choose a new one
+   when they log in.
 
 **Before deleting a user**, know what goes with them:
 

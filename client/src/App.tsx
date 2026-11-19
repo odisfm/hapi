@@ -3,11 +3,13 @@ import {type ReactNode, useEffect, useState} from "react";
 import {Header} from "./components/Header.tsx";
 import {Footer} from "./components/Footer.tsx";
 import {Sidebar} from "./components/Sidebar.tsx";
+import {useForcedPasswordReset} from "./contexts/auth/useForcedPasswordReset.ts";
 
 export function App({children}: {children?: ReactNode}) {
     const currentLocation = useLocation();
     const isAdminPage = currentLocation.pathname === "/admin-login" || currentLocation.pathname === "/dashboard";
     const [sidebarVisible, setSidebarVisible] = useState(false);
+    useForcedPasswordReset();
 
     useEffect(() => {
         if (!sidebarVisible) return;

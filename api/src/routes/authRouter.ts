@@ -142,7 +142,7 @@ authRouter.post("/password", needsAuth, async (c) => {
     try {
         await db.user.update({
             where: {id: c.get("user")!.id},
-            data: {password: passwordHash}
+            data: {password: passwordHash, needsPasswordReset: false}
         })
         await db.session.deleteMany({
             where: {
@@ -188,7 +188,9 @@ authRouter.post("/create", needsAuth, async (c) => {
                 email: body.email.toLowerCase(),
                 password: await hashPassword(password),
                 role: body.role as UserRole,
-                videoTranscodeCredits: DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS
+                videoTranscodeCredits: DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS,
+                // the password was emailed in plain text
+                needsPasswordReset: true
             }
         })
 
@@ -277,7 +279,9 @@ authRouter.post("/create/batch", needsAuth, async (c) => {
                     role: u.role,
                     plainPassword,
                     password: await hashPassword(plainPassword),
-                    videoTranscodeCredits: DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS
+                    videoTranscodeCredits: DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS,
+                    // the password was emailed in plain text
+                    needsPasswordReset: true
                 }
             })
         )

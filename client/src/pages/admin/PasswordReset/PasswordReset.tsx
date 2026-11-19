@@ -114,8 +114,8 @@ export function PasswordReset() {
         }
         else if (stage === "new-password" || stage === "force-reset") {
             if (!newPasswordRef.current || !confirmNewPasswordRef.current) return
-            const password = formData.get("password");
-            const confirmPassword = formData.get("confirmPassword");
+            const password = formData.get("newPassword");
+            const confirmPassword = formData.get("confirmNewPassword");
             if (password !== confirmPassword) {
                 newPasswordRef.current.value = ""
                 confirmNewPasswordRef.current.value = ""
@@ -142,7 +142,8 @@ export function PasswordReset() {
                     ...authContext.user!,
                     needsPasswordReset: false
                 })
-                navigate("/dashboard")
+                // picks the admin or student dashboard
+                navigate("/protected")
             } catch (e) {
                 console.error(e)
                 await modalContext.dispatchModal({
@@ -175,7 +176,13 @@ export function PasswordReset() {
                             <p className={`w-80`}>
                                 You must set a new password before proceeding.
                             </p>
-                            <Button>
+                            <Button
+                                onClick={async () => {
+                                    // wait for the logout, or the redirect for flagged users sends them back here
+                                    await authContext.logOut()
+                                    navigate("/")
+                                }}
+                            >
                                 Log out and return home
                             </Button>
                         </>
@@ -191,6 +198,7 @@ export function PasswordReset() {
                             className={`p-2 rounded-md bg-neutral-200 ${stage !== "request" && `cursor-not-allowed`}`}
                             required={true}
                             disabled={stage !== "request"}
+                            defaultValue={stage === "force-reset" ? authContext.user?.email : undefined}
                         />
                     </fieldset>
 

@@ -62,7 +62,7 @@ function renderWithAuth() {
         <AuthContext.Provider value={{
             user: me,
             setUserDetails: () => {},
-            logOut: () => {},
+            logOut: async () => {},
             authPending: false,
         }}>
             <UserPage/>

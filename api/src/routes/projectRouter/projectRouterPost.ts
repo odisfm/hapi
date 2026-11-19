@@ -36,7 +36,7 @@ projectRouterPost.post("/", needsAuth, async (c) => {
         }
 
         const transaction = await db.$transaction(async (tx) => {
-            const projectRecord = await db.project.create({
+            const projectRecord = await tx.project.create({
                 data: {
                     showcaseId,
                     published: false,
@@ -63,14 +63,14 @@ projectRouterPost.post("/", needsAuth, async (c) => {
                 include: {versions: true}
             })
 
-            const ownershipRecord = await db.projectOwner.create({
+            const ownershipRecord = await tx.projectOwner.create({
                 data: {
                     projectId: projectRecord.id,
                     ownerId: user.id
                 }
             })
 
-            const slugRecord = await db.projectSlug.create({
+            const slugRecord = await tx.projectSlug.create({
                 data: {
                     projectId: projectRecord.id,
                     slug: projectRecord.id,

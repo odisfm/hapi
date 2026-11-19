@@ -205,8 +205,8 @@ projectVersionRouter.post("/version/:versionId/new", needsAuth, async (c) => {
         }
     }
     const {id, project, categories, media, ...prevRecord} = record
-    const transaction = await db.$transaction(async () => {
-        const newRecord = await db.projectVersion.create({
+    const transaction = await db.$transaction(async (tx) => {
+        const newRecord = await tx.projectVersion.create({
             data: {
                 ...prevRecord,
                 createdAt: new Date(),
@@ -214,7 +214,7 @@ projectVersionRouter.post("/version/:versionId/new", needsAuth, async (c) => {
             }
         })
 
-        const newMediaRecords = await db.projectVersionMedia.createManyAndReturn({
+        const newMediaRecords = await tx.projectVersionMedia.createManyAndReturn({
             data: media.map((m) => {
                 return {
                     ...m,
@@ -223,7 +223,7 @@ projectVersionRouter.post("/version/:versionId/new", needsAuth, async (c) => {
             })
         })
 
-        const newCategoryRecords = await db.projectCategory.createManyAndReturn({
+        const newCategoryRecords = await tx.projectCategory.createManyAndReturn({
             data: categories.map((c) => {
                 return {
                     ...c,

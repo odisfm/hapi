@@ -16,8 +16,6 @@ export type ProjectSearchQuery = {
     categoryNames?: string,
     /** UUID of capstone **/
     showcase?: string,
-    /** admin only **/
-    approvalStatus?: SubmissionStatus,
     published?: "published" | "unpublished",
     orderBy?: ProjectSearchSortStrategy
 }

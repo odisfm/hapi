@@ -253,16 +253,12 @@ password by hand:
 
 **Before deleting a user**, know what goes with them:
 
-- Their sessions and their ownership of projects are deleted. Their
-  projects stay, with no owner. Nobody can then edit them as a student,
-  their pending versions no longer appear in the admin project queue, and
-  video uploads to them fail.
+- Their sessions are deleted.
+- Projects only they owned are transferred to you, the admin deleting
+  them, so the projects' pending versions stay in the project queue.
+  Admins own the projects they created, so this applies to them too.
 - Versions they reviewed lose their reviewer. Students then see their
   feedback as from "Former admin".
-- Admins own the projects they created, so the same applies to them.
-
-If a student is leaving but their projects should stay, it's usually
-better not to delete the account.
 
 ---
 

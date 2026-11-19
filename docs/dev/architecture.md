@@ -145,9 +145,11 @@ The key ideas:
     hero art, developers, links, categories and media. A project has many
     versions, so a student can draft changes while the approved version
     stays live. See [section 4](#4-projects-versions-and-the-approval-queue).
-- **Owners.** `ProjectOwner` links students to their projects. The schema
+- **Owners.** `ProjectOwner` links users to their projects. The schema
   allows several owners per project, but the website only ever sets one:
-  the student who created it.
+  whoever created it, student or admin. Deleting a user
+  (`DELETE /auth/user`) gives the projects only they owned to the admin
+  doing the deleting, so no project is left without an owner.
 - **Media** is recorded twice. `ProjectMedia` is every file uploaded for a
   project. `ProjectVersionMedia` says which of them a version uses, in which
   order and for which device (iPhone, iPad, Mac, …). Versions can share

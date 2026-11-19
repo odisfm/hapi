@@ -519,10 +519,9 @@ The RACE account comes with one IAM user, which the whole team shares:
 
    If the user isn't allowed to manage its own keys, ask RACE to do it.
 2. **Change the console password** of the IAM user, if they knew it.
-3. **Their site login:** set a new password for it by hand (see
-   [Manage users](../dev/common-tasks.md#manage-users)) rather than deleting
-   it. An admin owns every project they created, and deleting them leaves
-   those projects without an owner (see [known issues](../known-issues.md#deleting-a-user-leaves-their-projects-without-an-owner)).
+3. **Their site login:** another admin deletes it on the Users page.
+   Projects only they owned are transferred to the admin who deletes it
+   (see [Manage users](../dev/common-tasks.md#manage-users)).
 4. **Mailgun and Umami:** change the passwords if they were shared, and
    [rotate the Mailgun key](#rotate-the-mailgun-key) if they could see it.
 

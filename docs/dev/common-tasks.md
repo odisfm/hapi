@@ -257,7 +257,9 @@ password by hand:
   projects stay, with no owner. Nobody can then edit them as a student,
   their pending versions no longer appear in the admin project queue, and
   video uploads to them fail.
-- Versions they reviewed lose their reviewer.
+- Versions they reviewed lose their reviewer. Students then see their
+  feedback as from "Former admin".
+- Admins own the projects they created, so the same applies to them.
 
 If a student is leaving but their projects should stay, it's usually
 better not to delete the account.

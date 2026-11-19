@@ -116,13 +116,19 @@ function jsonOk(body: unknown) {
     return {ok: true, statusText: 'OK', json: async () => body}
 }
 
-function mockApi({project = makeProject(), loadFails = false, patchOk = true, deleteOk = true} = {}) {
+function mockApi({
+    project = makeProject(),
+    categoryList = categories as {id: string, name: string}[],
+    loadFails = false,
+    patchOk = true,
+    deleteOk = true,
+} = {}) {
     fetchMock.mockImplementation(async (url: string, init?: RequestInit) => {
         const method = init?.method ?? 'GET'
         if (url.includes('/project/id/')) {
             return loadFails ? {ok: false, statusText: 'Not Found', json: async () => ({})} : jsonOk({project})
         }
-        if (url.endsWith('/category')) return jsonOk({categories})
+        if (url.endsWith('/category')) return jsonOk({categories: categoryList})
         if (url.includes('/showcase/all')) return jsonOk({showcases})
         if (method === 'PATCH') return {ok: patchOk, statusText: 'Bad Request', json: async () => ({})}
         if (method === 'DELETE') return {ok: deleteOk, statusText: 'Server Error', json: async () => ({})}
@@ -227,6 +233,16 @@ describe('ProjectEditor', () => {
 
             expect(screen.getByText('Selected categories: Games')).toBeInTheDocument()
             expect(screen.getByText(`Slugs for ${projectId}`)).toBeInTheDocument()
+        })
+
+        it('renders the editor when there are no categories', async () => {
+            mockApi({project: makeProject({categories: []}), categoryList: []})
+            const {container} = renderEditorPage()
+            await screen.findByLabelText('Project name')
+
+            expect(screen.getByText('Categories')).toBeInTheDocument()
+            expect(screen.getByText('Selected categories:')).toBeInTheDocument()
+            expect(container.textContent).not.toMatch(/^0/)
         })
 
         it('offers every showcase and selects the project\'s own', async () => {

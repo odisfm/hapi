@@ -56,6 +56,7 @@ export function ProjectEditor() {
     const [projectName, setProjectName] = useState<string>('');
     const [subtitle, setSubtitle] = useState<string>('');
     const [categories, setCategories] = useState<Category[]>([]);
+    const [categoriesLoaded, setCategoriesLoaded] = useState(false);
     const [developers, setDevelopers] = useState<string[]>([]);
     const [showcases, setShowcases] = useState<Showcase[]>([]);
     const [selectedShowcase, setSelectedShowcase] = useState<Showcase | null>(null);
@@ -168,6 +169,7 @@ export function ProjectEditor() {
                    else if (a.name > b.name) return 1;
                    else return 0
                }))
+               setCategoriesLoaded(true)
 
            } catch (e) {
                console.error(e)
@@ -528,7 +530,7 @@ export function ProjectEditor() {
             {shortAppName &&
                 <title>{`${shortAppName} | ${APP_TITLE}`}</title>
             }
-            { project && categories.length &&
+            { project && categoriesLoaded &&
                 <div className={"flex flex-col self-center gap-2"}>
                     <div className={`flex gap-4 w-full`}>
                         <div className={`flex flex-col gap-2 w-full`}>

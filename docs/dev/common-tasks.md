@@ -302,4 +302,6 @@ There's no admin UI for everything. For anything else:
 3. Before changing data, take a manual snapshot in the RDS console
    (`hapi-prod` → Actions → Take snapshot), so you can undo a mistake.
 
-**Never run `db:populate` against production.** It deletes everything.
+**Never run `db:populate` or `db:reset` against production.** They delete
+everything. Both refuse to run against an RDS database, but don't rely on
+it.

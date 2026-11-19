@@ -6,27 +6,11 @@ delete it from this page in the same pull request.
 
 Contents:
 
-- [Security](#security)
 - [Bugs](#bugs)
 - [Missing or incomplete](#missing-or-incomplete)
 - [Adding a staging environment](#adding-a-staging-environment)
 - [Code quality](#code-quality)
 - [Gotchas](#gotchas)
-
----
-
-## Security
-
-### `db:populate` can wipe production through the database tunnel
-
-- **Problem:** the demo-data script refuses to run unless `DATABASE_URL`
-  contains `localhost`. Through the
-  [database tunnel](infrastructure/runbooks.md#database-access-ssm-port-forward),
-  production *is* on `localhost`.
-- **Impact:** running `npm run db:populate --workspace shared` with the
-  tunnel open deletes all production data.
-- **Fix:** also require an explicit flag, or refuse when the URL uses port
-  `15432` or an IAM token. Until then: close the tunnel before running it.
 
 ---
 

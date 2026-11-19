@@ -170,6 +170,7 @@ SUPERSEDED SUPERSEDED
     "ProjectMedia" }o--|| "Project" : "project"
     "ProjectMedia" |o--|| "MediaType" : "enum:mediaType"
     "ProjectMedia" |o--|| "MediaStatus" : "enum:status"
+    "ProjectMedia" }o--|o "User" : "uploader"
     "ProjectVersionMedia" }o--|| "ProjectMedia" : "media"
     "ProjectVersionMedia" }o--|| "ProjectVersion" : "projectVersion"
     "ProjectVersionMedia" |o--|| "DeviceType" : "enum:deviceType"

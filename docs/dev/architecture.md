@@ -541,7 +541,13 @@ There are two separate systems:
 - **The site's own view counts.** Opening a project or showcase page records
   a `ProjectView` or `ShowcaseView`, at most once per visitor IP address
   per 24 hours. These drive the "Most popular" sort and the admin
-  analytics tables (`analyticsRouter.ts`).
+  analytics tables (`analyticsRouter.ts`). The API's direct client in
+  production is a CloudFront edge server, so `api/src/helpers/getClientIp.ts`
+  reads the visitor's address from CloudFront's `CloudFront-Viewer-Address`
+  header. The CloudFront `/api/*` behaviour's origin request policy
+  (`AllViewerExceptHostHeader`) is what forwards that header. Views
+  recorded before this fix (November 2026) used the edge server's address,
+  so older counts are too low.
 - **[Umami](https://umami.is/)** (optional) records page views for the
   whole site. If `VITE_UMAMI_SCRIPT_URL` and `VITE_UMAMI_WEBSITE_ID` are
   set, `client/src/main.tsx` adds Umami's script. The admin analytics page

@@ -16,18 +16,6 @@ Contents:
 
 ## Bugs
 
-### View counts are probably wrong
-
-- **Problem:** project and showcase views are de-duplicated per IP address
-  per 24 hours. The IP comes from `api/src/helpers/getConnInfo.ts`. Behind
-  CloudFront, that's most likely CloudFront's edge server, not the visitor.
-- **Impact:** views are under-counted, because every visitor going through
-  the same edge looks like one person. That affects the "Most popular"
-  sort and the admin analytics.
-- **Fix:** read the visitor's IP from the `CloudFront-Viewer-Address` or
-  `X-Forwarded-For` header. CloudFront must be configured to forward it to
-  the API. Confirm by logging both values in production first.
-
 ### Admins created from the dashboard have limited video credits
 
 - **Problem:** `/auth/create` gives every new user 10 video credits,

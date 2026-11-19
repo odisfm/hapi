@@ -16,7 +16,7 @@ import {needsAuth} from "../../middleware/needsAuth";
 import type {ProjectAdminType} from "@hapi/shared/types/project";
 import {NUM_HERO_PROJECTS_FRONT_PAGE} from "@hapi/shared/consts";
 import type {ProjectGetPayload} from "@hapi/shared/prisma/models/Project";
-import {getConnInfo} from "../../helpers/getConnInfo";
+import {getClientIp} from "../../helpers/getClientIp";
 import {addDays} from "date-fns";
 import * as z from "zod";
 
@@ -396,8 +396,7 @@ projectRouterGet.get("/:projectSlug", async (c) => {
         }, 404)
     }
     const project = filterProject(record, userRole)
-    const connInfo = getConnInfo(c)
-    const ipAddress = connInfo.remote.address
+    const ipAddress = getClientIp(c)
     const viewed24HoursRecord = await db.projectView.findFirst({
         where: {
             projectId: record.id,

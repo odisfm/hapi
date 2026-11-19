@@ -390,6 +390,20 @@ describe("GET /project/:projectSlug", () => {
         expect(db.projectSlug.findUnique).toHaveBeenCalledWith(expect.objectContaining({where: {slug: "test-app"}}))
         expect(db.projectView.create).toHaveBeenCalledWith({data: {projectId: project.id, viewDate: expect.any(String), ipAddress: "0.0.0.0"}})
     })
+
+    test("records the visitor's address from CloudFront, not the edge server's", async () => {
+        const project = makeProject()
+        vi.mocked(db.projectSlug.findUnique).mockResolvedValue(makeProjectSlug({project}))
+        vi.mocked(db.projectView.findFirst).mockResolvedValue(null)
+        vi.mocked(db.projectView.create).mockResolvedValue({id: "view", projectId: project.id, viewDate: new Date(), ipAddress: "203.0.113.7"})
+        const res = await app.request("/project/test-app", {headers: {"CloudFront-Viewer-Address": "203.0.113.7:46532"}}, {
+            event: {requestContext: {http: {sourceIp: "198.51.100.9"}}},
+            requestContext: {http: {sourceIp: "198.51.100.9"}},
+        })
+        expect(res.status).toBe(200)
+        expect(db.projectView.findFirst).toHaveBeenCalledWith(expect.objectContaining({where: expect.objectContaining({ipAddress: "203.0.113.7"})}))
+        expect(db.projectView.create).toHaveBeenCalledWith({data: expect.objectContaining({ipAddress: "203.0.113.7"})})
+    })
 })
 
 describe("GET /project/featured", () => {

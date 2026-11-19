@@ -17,21 +17,6 @@ Contents:
 
 ## Security
 
-### Users are never forced to change their password
-
-- **Problem:** `User.needsPasswordReset` exists, and the `createAdmin`
-  script sets it, but nothing acts on it:
-  - The website never checks it, and changing the password doesn't clear
-    it.
-  - The `force-reset` stage in `client/src/pages/admin/PasswordReset/`
-    exists, but nothing links to it.
-- **Impact:** new users keep the password emailed to them in plain text,
-  and new admins keep the temporary one, unless they change it themselves.
-- **Fix:** have `POST /auth/password` set `needsPasswordReset = false`. In
-  the website, after login (and in `AuthProvider`), send users with the
-  flag to `/reset-password/force-reset`. Set the flag when an admin creates
-  an account (`authRouter.ts`, `/create` and `/create/batch`).
-
 ### `db:populate` can wipe production through the database tunnel
 
 - **Problem:** the demo-data script refuses to run unless `DATABASE_URL`

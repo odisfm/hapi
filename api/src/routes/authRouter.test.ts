@@ -179,7 +179,7 @@ describe("change password", () => {
         expect(res.status).toBe(400)
     })
 
-    test("stores a hash of the new password and logs out other sessions", async () => {
+    test("stores a hash of the new password, clears the reset flag and logs out other sessions", async () => {
         const headers = loginAs("STUDENT", {id: "user-1"})
         const sessionId = headers.Cookie.split("=")[1]
         vi.mocked(db.user.update).mockResolvedValue(makeUser())
@@ -190,6 +190,7 @@ describe("change password", () => {
         const {data} = vi.mocked(db.user.update).mock.calls[0][0]
         expect(data.password).not.toBe("NewPassword1!")
         expect(await checkPassword("NewPassword1!", data.password as string)).toBe(true)
+        expect(data.needsPasswordReset).toBe(false)
         expect(db.session.deleteMany).toHaveBeenCalledWith({
             where: {userId: "user-1", id: {not: sessionId}},
         })
@@ -197,7 +198,7 @@ describe("change password", () => {
 })
 
 describe("create user", () => {
-    test("lowercases the email, hashes a generated password and emails it to the user", async () => {
+    test("lowercases the email, hashes a generated password, emails it to the user and flags it for reset", async () => {
         vi.mocked(db.user.create).mockResolvedValue(makeUser())
         const res = await post("/auth/create", {name: "New", email: "New@Example.com", role: "STUDENT"}, loginAs("ADMIN"))
         expect(res.status).toBe(200)
@@ -207,6 +208,7 @@ describe("create user", () => {
         const emailBody = vi.mocked(sendEmail).mock.calls[0][2]
         const plainPassword = emailBody.match(/Password: (.+)$/)![1]
         expect(await checkPassword(plainPassword, data.password)).toBe(true)
+        expect(data.needsPasswordReset).toBe(true)
     })
 
     test("409s when the email is taken", async () => {
@@ -237,7 +239,7 @@ describe("batch create users", () => {
         expect(res.status).toBe(200)
 
         const {data} = vi.mocked(db.user.createMany).mock.calls[0][0]!
-        expect(data).toEqual([expect.objectContaining({email: "new@example.com"})])
+        expect(data).toEqual([expect.objectContaining({email: "new@example.com", needsPasswordReset: true})])
         expect(data).toEqual([expect.not.objectContaining({plainPassword: expect.anything()})])
         expect(sendEmail).toHaveBeenCalledOnce()
         expect(sendEmail).toHaveBeenCalledWith("new@example.com", expect.any(String), expect.any(String))

@@ -437,9 +437,8 @@ unset ADMIN_PASSWORD DATABASE_URL
 ```
 
 - Pass the plain password. The script hashes it the same way the API does.
-- Tell the new admin to change the password after logging in, at
-  `/reset-password/new-password`. The site doesn't force them to (see
-  [known issues](../known-issues.md#users-are-never-forced-to-change-their-password)).
+- The site makes the new admin choose a new password the first time they
+  log in.
 - The script is safe to re-run: if the email already exists, it does
   nothing. It never deletes anything.
 - It doesn't read `.env`, so a missing `DATABASE_URL` is an error rather

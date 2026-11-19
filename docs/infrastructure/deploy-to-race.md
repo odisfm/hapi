@@ -382,8 +382,7 @@ and run a script.
 2. Then follow [Create an admin user](runbooks.md#create-an-admin-user).
 
 Log in at the site address (`/admin-login`) with the email and temporary
-password you chose. Then change the password at `/reset-password/new-password`.
-The site doesn't make you change it, so don't skip this.
+password you chose. The site then makes you choose a new password.
 
 **Before you add projects,** create at least one showcase, because every
 project belongs to one. Create some categories too.

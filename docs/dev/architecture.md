@@ -299,12 +299,24 @@ The pages are `/reset-password/request`, `/verify` and `/new-password`
 (`client/src/pages/admin/PasswordReset/`). A logged-in user can also go
 straight to `/reset-password/new-password` to change their password.
 
-> **Not enforced:** `User.needsPasswordReset` is stored, and the
-> `createAdmin` script sets it, but nothing makes the user change their
-> password, and changing it doesn't clear the flag. A `force-reset` page
-> stage exists but nothing links to it. Users keep the generated or
-> temporary password until they change it themselves. See
-> [known issues](../known-issues.md#users-are-never-forced-to-change-their-password).
+### Forced password changes
+
+`User.needsPasswordReset` makes a user choose a new password before they
+can use the site. It's set:
+
+- on accounts an admin creates (`POST /auth/create`, `/create/batch`),
+  because their password was emailed in plain text
+- by the `createAdmin` script
+- when a "forgot password" code is verified, until the user picks a new
+  password
+
+`POST /auth/password` clears it. On the website,
+`client/src/contexts/auth/useForcedPasswordReset.ts` (called from `App`)
+sends a flagged user to `/reset-password/force-reset` from any page
+outside `/reset-password/`. That page also offers "Log out and return home".
+
+Only the website enforces this. The API doesn't refuse requests from a
+flagged user.
 
 ---
 

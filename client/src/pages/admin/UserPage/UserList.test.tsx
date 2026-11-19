@@ -22,7 +22,7 @@ function renderList(users: UserDetails[], loggedIn: UserDetails | null = me) {
         <AuthContext.Provider value={{
             user: loggedIn,
             setUserDetails: () => {},
-            logOut: () => {},
+            logOut: async () => {},
             authPending: false,
         }}>
             <UserList users={users} heading={'Admins'} deleteUser={deleteUser}/>

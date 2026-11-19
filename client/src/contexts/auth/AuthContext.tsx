@@ -4,7 +4,7 @@ import {createContext} from "react";
 type AuthContextValue = {
     user: UserDetails | null;
     setUserDetails: (value: UserDetails) => void;
-    logOut: () => void;
+    logOut: () => Promise<void>;
     authPending: boolean
 }
 

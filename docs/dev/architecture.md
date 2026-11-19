@@ -194,7 +194,7 @@ NOT_SUBMITTED ──────────────► PENDING ────
 
 - A project has **at most one `APPROVED` version**. That's the one the
   public sees. Approving a version marks the previous approved one
-  `SUPERSEDED`.
+  `SUPERSEDED`, in the same transaction.
 - To change a project, a student makes a **new version**
   (`POST /project/version/:versionId/new`). It copies an existing version,
   including its categories and media links, as `NOT_SUBMITTED`. The student

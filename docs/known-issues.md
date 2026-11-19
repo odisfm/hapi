@@ -16,16 +16,6 @@ Contents:
 
 ## Bugs
 
-### Approving a version isn't atomic
-
-- **Problem:** approving a version marks the previous approved version
-  `SUPERSEDED`, then approves the new one, in two separate writes
-  (`projectVersionRouter.ts`).
-- **Impact:** if the second write fails, the project has no approved
-  version and disappears from the public site until it's approved again.
-- **Fix:** wrap both writes in `db.$transaction(async (tx) => …)`, and use
-  `tx` inside it.
-
 ### Filtering search by approval status fails
 
 - **Problem:** `GET /project/search?approvalStatus=…` (admins only) filters

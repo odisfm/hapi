@@ -124,6 +124,22 @@ describe("PATCH /project/version/:versionId/status", () => {
             data: {submissionStatus: "APPROVED", reviewerId: "admin-1", reviewedAt: expect.any(Date)},
         })
     })
+
+    test("supersedes and approves in one transaction, on the transaction's client", async () => {
+        const tx = {projectVersion: {updateMany: vi.fn().mockResolvedValue({count: 1}), update: vi.fn().mockRejectedValue(new Error("write failed"))}}
+        vi.mocked(db.$transaction).mockImplementation((async (fn: (client: typeof tx) => unknown) => fn(tx)) as never)
+        vi.mocked(db.projectVersion.findUnique).mockResolvedValue(versionOwnedBy(OWNER_ID))
+        vi.spyOn(console, "error").mockImplementation(() => {})
+
+        const res = await setStatus({status: "APPROVED"}, loginAs("ADMIN", {id: "admin-1"}))
+
+        // the failed approval rejects the transaction, so the database rolls back the supersede
+        expect(res.status).toBe(500)
+        expect(tx.projectVersion.updateMany).toHaveBeenCalledOnce()
+        expect(tx.projectVersion.update).toHaveBeenCalledOnce()
+        expect(db.projectVersion.updateMany).not.toHaveBeenCalled()
+        expect(db.projectVersion.update).not.toHaveBeenCalled()
+    })
 })
 
 describe("POST /project/version/:versionId/new", () => {

@@ -379,11 +379,10 @@ videos stay `PENDING`.
 
 **Video credits:** one credit is one minute of video, rounded to the
 nearest minute. Students start with 10 (`shared/src/consts.ts`), and
-admins can change a user's credits on the Users page. `null` means
-unlimited. The `createAdmin` script gives admins `null`, but admins created
-from the dashboard get 10 like students. Credits are charged to the
-project's owner, not the uploader, so an admin uploading to a student's
-project uses the student's credits.
+admins can change a student's credits on the Users page. Admins have
+`null`, which means unlimited, however they were created. Credits are
+charged to the project's owner, not the uploader, so an admin uploading to
+a student's project uses the student's credits.
 
 ### Clean-up
 

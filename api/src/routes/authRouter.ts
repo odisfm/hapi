@@ -27,6 +27,11 @@ import {DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS} from "@hapi/shared/consts";
 
 const PASSWORD_RESET_TIMEOUT = 15 // minutes
 
+/** Admins get unlimited video credits (null), as the createAdmin script gives them. */
+function initialVideoCredits(role: UserRole): number | null {
+    return role === "ADMIN" ? null : DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS
+}
+
 export const authRouter = createHono()
 
 authRouter.post("/login", async (c) => {
@@ -188,7 +193,7 @@ authRouter.post("/create", needsAuth, async (c) => {
                 email: body.email.toLowerCase(),
                 password: await hashPassword(password),
                 role: body.role as UserRole,
-                videoTranscodeCredits: DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS,
+                videoTranscodeCredits: initialVideoCredits(body.role as UserRole),
                 // the password was emailed in plain text
                 needsPasswordReset: true
             }
@@ -279,7 +284,7 @@ authRouter.post("/create/batch", needsAuth, async (c) => {
                     role: u.role,
                     plainPassword,
                     password: await hashPassword(plainPassword),
-                    videoTranscodeCredits: DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS,
+                    videoTranscodeCredits: initialVideoCredits(u.role),
                     // the password was emailed in plain text
                     needsPasswordReset: true
                 }

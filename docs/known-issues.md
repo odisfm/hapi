@@ -16,16 +16,6 @@ Contents:
 
 ## Bugs
 
-### Admins created from the dashboard have limited video credits
-
-- **Problem:** `/auth/create` gives every new user 10 video credits,
-  including admins. The `createAdmin` script gives admins unlimited
-  (`null`).
-- **Impact:** a dashboard-created admin's own projects can run out of
-  video credits.
-- **Fix:** set `videoTranscodeCredits: null` when `role` is `ADMIN`. For
-  existing admins, set it in the database.
-
 ### Video credits are charged to the project owner
 
 - **Problem:** `transcode_in` charges the project's owner, not the person

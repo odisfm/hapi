@@ -17,6 +17,7 @@ import {app} from "../index";
 import {makeSession, makeUser} from "../test/fixtures";
 import {resetDb} from "../test/mockDb";
 import {loginAs, sameOriginHeaders} from "../test/auth";
+import {DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS} from "@hapi/shared/consts";
 
 beforeEach(() => {
     resetDb()
@@ -211,6 +212,15 @@ describe("create user", () => {
         expect(data.needsPasswordReset).toBe(true)
     })
 
+    test.each([
+        ["STUDENT", DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS],
+        ["ADMIN", null],
+    ])("gives a new %s %s video credits (null is unlimited)", async (role, credits) => {
+        vi.mocked(db.user.create).mockResolvedValue(makeUser())
+        await post("/auth/create", {name: "New", email: "new@example.com", role}, loginAs("ADMIN"))
+        expect(vi.mocked(db.user.create).mock.calls[0][0].data.videoTranscodeCredits).toBe(credits)
+    })
+
     test("409s when the email is taken", async () => {
         vi.mocked(db.user.create).mockRejectedValue(
             new Prisma.PrismaClientKnownRequestError("dupe", {code: "P2002", clientVersion: "test"})
@@ -243,6 +253,22 @@ describe("batch create users", () => {
         expect(data).toEqual([expect.not.objectContaining({plainPassword: expect.anything()})])
         expect(sendEmail).toHaveBeenCalledOnce()
         expect(sendEmail).toHaveBeenCalledWith("new@example.com", expect.any(String), expect.any(String))
+    })
+
+    test("gives admins unlimited video credits and students the default", async () => {
+        vi.mocked(db.user.findMany).mockResolvedValue([])
+        vi.mocked(db.user.createMany).mockResolvedValue({count: 2})
+        await post("/auth/create/batch", {
+            users: [
+                {name: "Admin", email: "admin@example.com", role: "ADMIN"},
+                {name: "Student", email: "student@example.com", role: "STUDENT"},
+            ],
+        }, loginAs("ADMIN"))
+        const {data} = vi.mocked(db.user.createMany).mock.calls[0][0]!
+        expect(data).toEqual([
+            expect.objectContaining({email: "admin@example.com", videoTranscodeCredits: null}),
+            expect.objectContaining({email: "student@example.com", videoTranscodeCredits: DEFAULT_STUDENT_VIDEO_TRANSCODE_CREDITS}),
+        ])
     })
 
     test("rejects malformed input", async () => {

@@ -5,7 +5,6 @@ import {
     AlterProjectSlugRequestSchema,
     type ProjectSearchQuery, type ProjectSearchSortStrategy,
 } from "@hapi/shared/types/apiRequests";
-import type {SubmissionStatus} from "@hapi/shared/prisma/enums";
 import type {
     ProjectDetailsAdminResponse,
     ProjectDetailsResponse, ProjectGetSlugsResponse,
@@ -102,7 +101,6 @@ projectRouterGet.get("/search", async (c) => {
         categoryIds: query?.categoryIds,
         categoryNames: query?.categoryNames,
         showcase: query?.showcase,
-        approvalStatus: query.approvalStatus ? query.approvalStatus as SubmissionStatus : undefined,
         page: query.page !== undefined ? Number(query.page) : undefined,
         published: (query.published === "published" || query.published === "unpublished") ? query.published : undefined,
         orderBy: query.orderBy ? query.orderBy as ProjectSearchSortStrategy : "default"
@@ -129,9 +127,6 @@ projectRouterGet.get("/search", async (c) => {
         searchQuery.limit = Math.min(searchQuery.limit, MAX_SEARCH_LIMIT)
     }
 
-    if (userRole !== "ADMIN" && searchQuery.approvalStatus) {
-        searchQuery.approvalStatus = undefined
-    }
     if (userRole !== "ADMIN" && searchQuery.published) {
         searchQuery.published = "published"
     }
@@ -148,7 +143,6 @@ projectRouterGet.get("/search", async (c) => {
                     ? showcaseIds[0]
                     : {in: showcaseIds}
             }),
-            ...(searchQuery.approvalStatus && {approvalStatus: searchQuery.approvalStatus}),
             ...(userRole !== "ADMIN" && {published: true, showcase: {publishedDate: {lt: new Date()}}}),
         },
         include: {

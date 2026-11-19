@@ -6,23 +6,10 @@ delete it from this page in the same pull request.
 
 Contents:
 
-- [Bugs](#bugs)
 - [Missing or incomplete](#missing-or-incomplete)
 - [Adding a staging environment](#adding-a-staging-environment)
 - [Code quality](#code-quality)
 - [Gotchas](#gotchas)
-
----
-
-## Bugs
-
-### Filtering search by approval status fails
-
-- **Problem:** `GET /project/search?approvalStatus=…` (admins only) filters
-  on a field `Project` doesn't have.
-- **Impact:** the request fails. The website doesn't seem to use it.
-- **Fix:** filter on the versions' `submissionStatus`, or remove the
-  parameter.
 
 ---
 

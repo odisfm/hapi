@@ -151,27 +151,30 @@ projectVersionRouter.patch("/version/:versionId/status", needsAuth, async (c) =>
         }
     }
 
-    if (body.status === "APPROVED") {
-        await db.projectVersion.updateMany({
+    // One transaction, so a failure can't leave the project with no approved version
+    await db.$transaction(async (tx) => {
+        if (body.status === "APPROVED") {
+            await tx.projectVersion.updateMany({
+                where: {
+                    projectId: record.projectId,
+                    submissionStatus: "APPROVED"
+                },
+                data: {
+                    submissionStatus: "SUPERSEDED"
+                }
+            })
+        }
+
+        await tx.projectVersion.update({
             where: {
-                projectId: record.projectId,
-                submissionStatus: "APPROVED"
+                id: versionId
             },
             data: {
-                submissionStatus: "SUPERSEDED"
+                submissionStatus: body.status,
+                ...(user.role === "ADMIN" && {reviewerId: user.id, reviewedAt: new Date()}),
+                ...(body.rejectionReason && {rejectionReason: body.rejectionReason})
             }
         })
-    }
-
-    await db.projectVersion.update({
-        where: {
-            id: versionId
-        },
-        data: {
-            submissionStatus: body.status,
-            ...(user.role === "ADMIN" && {reviewerId: user.id, reviewedAt: new Date()}),
-            ...(body.rejectionReason && {rejectionReason: body.rejectionReason})
-        }
     })
 
     return c.json({}, 200)

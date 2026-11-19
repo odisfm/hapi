@@ -6,12 +6,13 @@ It was chosen to satisfy these requirements:
 - High availability
 - Low cost
 - Simple administration and maintenance
-- The client's security rules: every IAM role is named `rmit-…` and carries
-  the client's permissions boundary, there are no IAM users, and secrets live
-  only in AWS Secrets Manager
+- The security rules of RACE, the RMIT team that owns the AWS account:
+  every IAM role is named `rmit-…` and carries RACE's permissions boundary,
+  there are no IAM users, and secrets live only in AWS Secrets Manager
 
-> The diagram below shows the earlier design (Supabase, GitHub Actions) and
-> has not been redrawn yet. The text and the flow below are current.
+The diagram's source is [`infrastructure-diagram.drawio`](infrastructure-diagram.drawio).
+Edit it with [draw.io](https://www.drawio.com/) and export it over
+`images/infra-diagram.png` when the infrastructure changes.
 
 ![Diagram of solution](./images/infra-diagram.png)
 
@@ -87,7 +88,7 @@ with 7 days of automated backups and deletion protection.
   `infra/app/main.tf`).
 
 Humans reach the database only through an SSM Session Manager port forward
-([runbook](runbooks.md#6-database-access-for-humans-ssm-port-forward)).
+([runbook](runbooks.md#database-access-ssm-port-forward)).
 
 ## Identity and secrets
 
@@ -96,7 +97,7 @@ Humans reach the database only through an SSM Session Manager port forward
   That module enforces the `rmit-hapi-<env>-` name and the permissions
   boundary, and permissions are inline and scoped to specific resources.
 - There are no IAM users or access keys in this project. The pipeline uses
-  its CodeBuild role. Humans use the identity the account owner gives them.
+  its CodeBuild role. Humans use the IAM user RACE provides.
 - The one application secret, the Mailgun API key, is stored in Secrets
   Manager. The api Lambda receives only its ARN and reads the value at start-up.
 
@@ -111,6 +112,7 @@ All cloud resources are managed with [OpenTofu](https://opentofu.org/) in
 | `platform` | Per environment: VPC, NAT, RDS, secret container, CodeBuild pipeline | Admin, when it changes |
 | `db` | Per environment: Postgres roles and grants | Pipeline |
 | `app` | Per environment: Lambdas, API Gateway, CloudFront, buckets | Pipeline |
+| `local_dev` | Per account: media buckets for local development ([details](../dev/dev-environment.md#media-images-and-video)) | Admin, once |
 
 The pipeline cannot modify `platform`, so it cannot change its own
-permissions. The [runbooks](runbooks.md) cover setup and operations.
+permissions. [Deploying to the RACE AWS account](deploy-to-race.md) covers the first-time setup, and the [runbooks](runbooks.md) cover operations. [Decisions](decisions.md) explains why things are built this way, and [known issues](../known-issues.md) lists what's still wrong.

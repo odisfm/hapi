@@ -1,145 +1,297 @@
 # Setting up a development environment
 
+This gets the site running on your machine: the frontend, the API and a
+local PostgreSQL database. You don't need an AWS account for most
+development work. You only need one for [media uploads](#media-images-and-video)
+and [deploying](../processes/CI-CD.md).
+
 ## Prerequisites
 
 ### Install required software
 
-- [Node.js and NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install) (Windows users only; the rest of this guide assumes you are running commands in WSL)
+- [Node.js](https://nodejs.org/) **24** with npm. That's the version the
+  pipeline and AWS Lambda use.
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/). The
+  local database runs in Docker.
+- [Git](https://git-scm.com/)
+- Windows only: [WSL](https://learn.microsoft.com/en-us/windows/wsl/install).
+  The rest of this guide assumes you run commands inside WSL.
 
-### Clone this repository
+### Get the code
 
-The repository is moving from GitHub to AWS CodeCommit (`ap-southeast-2`).
-Until the move is finished, GitHub is still the place to work.
+The code lives in an AWS CodeCommit repository called `hapi`, in the RACE
+AWS account (region `ap-southeast-2`). Every merge to its `main` branch
+deploys to production. See [CI/CD](../processes/CI-CD.md).
 
-**CodeCommit** (once migrated). There are no IAM users, Git passwords or SSH
-keys for this; Git authenticates with your AWS CLI profile through
-[`git-remote-codecommit`](https://github.com/aws/git-remote-codecommit):
+Git signs in with your AWS credentials, through
+[`git-remote-codecommit`](https://github.com/aws/git-remote-codecommit).
+There are no Git passwords or SSH keys.
 
-```sh
-pip install git-remote-codecommit
-aws configure --profile hapi            # credentials provided by the account owner
-git clone codecommit::ap-southeast-2://hapi@hapi
-```
+1. Install the [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+   and `git-remote-codecommit`:
 
-(The format is `codecommit::<region>://<profile>@<repository>`.) Don't push
-directly to `main`; open a pull request in CodeCommit. Every change to
-`main` deploys to production; see [CI/CD](../processes/CI-CD.md).
+   ```sh
+   pip install git-remote-codecommit
+   ```
 
-**GitHub** (until the move is finished), via HTTPS:
+2. Create an AWS CLI profile called `hapi` with the access key for the RACE
+   account. Ask whoever manages the team's AWS access.
 
-`git clone https://github.com/odisfm/hapi.git`
+   ```sh
+   aws configure --profile hapi     # region: ap-southeast-2
+   ```
 
-or SSH:
+3. Clone:
 
-`git clone git@github.com:odisfm/hapi.git`
+   ```sh
+   git clone codecommit::ap-southeast-2://hapi@hapi
+   cd hapi
+   ```
+
+   The URL format is `codecommit::<region>://<profile>@<repository>`.
+
+A copy of the code is also on [GitHub](https://github.com/odisfm/hapi). Use
+it to read the code without AWS access, but **CodeCommit is the source of
+truth**. Pushing to GitHub deploys nothing.
+
+Work on a branch and open a pull request; don't push to `main`. See
+[branching and committing](../processes/branching-and-committing.md).
 
 ### Install dependencies
 
-From the repo root:
+From the repository root:
 
-`npm install`
+```sh
+npm install
+```
+
+This is an npm workspaces monorepo. One install covers every package:
+
+| Folder | What it is |
+|---|---|
+| `client/` | The website (React, Vite, Tailwind) |
+| `api/` | The API (Hono). Runs on AWS Lambda in production and as a Node server locally. |
+| `shared/` | Code both use: the database schema and client (Prisma), shared types, scripts |
+| `infra/lambda/*` | The media-processing Lambdas |
+| `infra/` | The AWS infrastructure (OpenTofu). See [infrastructure design](../infrastructure/infrastructure-design.md). |
 
 ### Create `.env`
 
-In the repo root, locate the file `.env.example`, and create a copy of it called `.env`.
+In the repository root, copy `.env.example` to `.env`:
 
-Many variables in `.env.example` have usable defaults.
-For those that don't, contact the dev team to get access to them.
+```sh
+cp .env.example .env
+```
 
-## Setting up the local database
+The defaults are enough to run the site locally, minus media. Each variable
+is explained in `.env.example`. A few to know about:
 
-Create/start the database:
+| Variable | Notes |
+|---|---|
+| `DATABASE_URL` | Points at the local database. Leave it as is. |
+| `EMAIL_PROVIDER` | Leave as `mock`: emails are printed in the API's terminal instead of sent. That's how you see password reset codes locally. |
+| `DEFAULT_ADMIN_*`, `DEFAULT_STUDENT_*` | Logins created when you [load demo data](#load-demo-data). Choose your own. |
+| `AWS_*`, `BUCKET_*`, `VITE_S3_*` | Only for [media](#media-images-and-video). |
 
-`npx supabase start`
+`.env` is ignored by Git. Never commit it.
 
-### Perform a database migration
+## The local database
 
-The first time you create the database, and any time the [database schema](../../shared/prisma/schema.prisma) changes, you will need to update your local DB to match the new schema.
+The local database is [Supabase Local](https://supabase.com/docs/guides/local-development),
+a PostgreSQL 17 server in Docker, the same version as production. Its
+config is in `shared/supabase/`, so run the Supabase commands from
+`shared/`.
 
-To do so:
-```shell
+### Start it
+
+With Docker running:
+
+```sh
+cd shared
+npx supabase start     # the first run downloads images and takes a few minutes
+```
+
+Stop it with `npx supabase stop`. Data survives restarts.
+
+### Apply the schema
+
+The first time, and whenever someone changes the
+[database schema](../../shared/prisma/schema.prisma):
+
+```sh
 cd shared
 npm run db:migrate:deploy
-```
-
-If the new schema is incompatible with the current state of the DB, you will need to completely reset it with:
-
-```shell
-npm run db:reset
-```
-
-You can then [re-seed](#populating-the-database) the DB.
-
-After creating/migrating the database, you will need to [regenerate the Prisma client](https://www.prisma.io/docs/cli/v7/generate):
-
-```shell
-cd shared
 npx prisma generate
 ```
 
-### Populating the database
+- `db:migrate:deploy` applies any migrations your database doesn't have
+  yet. It then runs `prisma db push`, which makes your database match the
+  schema file even where no migration exists yet.
+- `prisma generate` rebuilds the Prisma client, the TypeScript code the API
+  uses to query the database. Run it after every schema change, or the
+  types won't match.
 
-To populate the database with dummy data, from the repo root, run:
+If your local database gets into a state the migrations can't fix, wipe it
+and start again:
 
-`npm run db:populate --workspace shared`
+```sh
+cd shared
+npm run db:reset
+```
 
-**Note:** this will truncate (delete) all data in the database and replace it with dummy data!
+Then [load the demo data](#load-demo-data) again.
 
-If you have `DEFAULT_ADMIN_EMAIL` and `DEFAULT_ADMIN_PASSWORD` in your `.env`, an admin account will be created with these credentials.
+### Load demo data
 
-View the script [here](../../shared/src/scripts/populateDb/populateDb.ts).
+To fill the database with demo projects, showcases and categories, from the
+repository root:
 
-### Viewing the database in a GUI
+```sh
+npm run db:populate --workspace shared
+```
 
-You may like to view the database in a friendly UI.
-To do so, you can open <http://127.0.0.1:54323> in a web browser after [starting the database](#setting-up-the-local-database).
+**This deletes everything in the database first.** It refuses to run unless
+`DATABASE_URL` points at `localhost`, but don't rely on that: never run it
+with a tunnel to the production database open.
 
+It also creates the admin and student logins from `DEFAULT_ADMIN_*` and
+`DEFAULT_STUDENT_*` in `.env`, if they're set. The demo projects' images
+won't load unless you've set up [media](#media-images-and-video).
 
-## Developing
+See [the script](../../shared/src/scripts/populateDb/populateDb.ts).
 
-### API
+### Look at the data
 
-#### Build
+Supabase Studio, a web UI for the database, runs at
+<http://127.0.0.1:54323> while the database is running.
 
-To start building the API, from the repo root run:
+## Running the site
 
-`npm run api:dev`
+Use two terminals, both in the repository root.
 
-Which will start the server at <http://localhost:3000>.
-You may wish to use a tool like [Bruno](https://www.usebruno.com/) to manually query the API.
+**API:**
 
-#### Test
+```sh
+npm run api:dev
+```
 
-In a new terminal, navigate to `/api`.
+The API runs at <http://localhost:3000> and restarts when you change its
+code. To call it by hand, use something like [Bruno](https://www.usebruno.com/).
+Emails it "sends" appear in this terminal.
 
-To run tests once, run:
+**Website:**
 
-`npm run test`
+```sh
+npm run client:dev
+```
 
-Or to run tests continuously as you work (recommended), run:
+Open the address it prints (<http://localhost:5173>). Log in with the
+`DEFAULT_ADMIN_*` details from `.env`.
 
-`npm run test:watch`
+## Media (images and video)
 
-### Client
+Icons, screenshots and videos are stored in S3, even locally: the API
+uploads straight to the buckets named in `BUCKET_ICONS` and `BUCKET_MEDIA`,
+and the site loads images from `VITE_S3_ICON_BUCKET` and
+`VITE_S3_MEDIA_BUCKET`. Without them, everything else works, but images
+don't show and uploads fail.
 
-#### Build
+The RACE account has a set of buckets for local development, created by
+[`infra/local_dev`](../../infra/local_dev/main.tf):
 
-To start building the client/frontend, from the repo root (in a new terminal), run:
+| Bucket | Used for |
+|---|---|
+| `hapi-local-icons-<account>-ap-southeast-2-an` | App icons (`BUCKET_ICONS`) |
+| `hapi-local-media-<account>-ap-southeast-2-an` | Screenshots, hero art and video (`BUCKET_MEDIA`) |
 
-`npm run client:dev`
+A CloudFront distribution serves them at `/icons/` and `/media/`, the same
+way production does. All developers share these buckets, and their
+contents are disposable.
 
-You will likely want to develop against the API locally, so follow [the above instructions](#api) to set that up too.
+**Don't point local development at the production buckets** (`hapi-*-prod-*`).
+The production clean-up job deletes files the production database doesn't
+reference, and a mistake could overwrite or delete real media.
 
-#### Test
+### Use the dev buckets
 
-In a new terminal, navigate to `/client`.
+1. Make sure your `hapi` AWS profile works (`aws sts get-caller-identity
+   --profile hapi`). The API uses it to upload.
+2. Print the settings for `.env`. This reads the `local_dev` state, which
+   needs the state bucket's name:
 
-To run tests once, run:
+   ```sh
+   BUCKET=$(aws s3api list-buckets --profile hapi \
+     --query "Buckets[?starts_with(Name,'hapi-tfstate-')].Name | [0]" --output text)
+   tofu -chdir=infra/local_dev init \
+     -backend-config="bucket=$BUCKET" \
+     -backend-config="key=local-dev.tfstate" \
+     -backend-config="region=ap-southeast-2"
+   AWS_PROFILE=hapi tofu -chdir=infra/local_dev output -raw env_file
+   ```
 
-`npm run test`
+   If you don't have OpenTofu installed, ask someone who does for these
+   lines; they're the same for everyone.
 
-Or to run tests continuously as you work (recommended), run:
+3. Replace the matching lines in the media section of `.env` with the
+   output, and set `AWS_PROFILE="hapi"`.
+4. Restart `npm run api:dev` and `npm run client:dev`.
 
-`npm run test:watch`
+Uploaded icons and screenshots now appear. Video processing (MediaConvert)
+only runs in the deployed environments, so videos uploaded locally stay
+"processing", and their raw uploads are deleted after 7 days.
+
+The demo projects from `db:populate` refer to images that aren't in these
+buckets, so they show without images. Projects you create or edit yourself
+work normally.
+
+### Create the dev buckets
+
+This is only needed once per AWS account. If the
+`hapi-local-*` buckets already exist, skip it. An admin applies it from a
+laptop, like `infra/platform` (see the
+[deploy guide](../infrastructure/deploy-to-race.md) for the tools and
+credentials):
+
+```sh
+tofu -chdir=infra/local_dev init \
+  -backend-config="bucket=$BUCKET" \
+  -backend-config="key=local-dev.tfstate" \
+  -backend-config="region=ap-southeast-2"
+tofu -chdir=infra/local_dev apply
+```
+
+It creates the two buckets and the CloudFront distribution (about 5 to 10
+minutes) and nothing else: no IAM roles or users. The cost is a few cents a
+month at development volumes.
+
+If the local website runs somewhere other than `http://localhost:5173`, add
+that address to the `allowed_origins` variable, or video uploads will be
+blocked by the browser.
+
+## Tests and checks
+
+The pipeline runs these on every merge to `main`, and a failure blocks the
+deploy. Nothing runs them on pull requests, so run them yourself before
+asking for review. From the repository root:
+
+```sh
+npm run lint --workspace client --workspace api --workspace shared
+npm run typecheck --workspaces --if-present
+npm run test --workspaces --if-present
+```
+
+While you work, run one package's tests in watch mode from its folder:
+
+```sh
+cd client      # or api, shared
+npm run test:watch
+```
+
+See [frontend testing](frontend-testing.md) for how the client tests are
+written.
+
+## Next
+
+- [How the code works](architecture.md): a tour of the codebase
+- [Common tasks](common-tasks.md): schema changes, new endpoints and pages,
+  users, publishing content

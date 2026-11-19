@@ -70,14 +70,6 @@ cannot change its own permissions.
 ## Changing the pipeline itself
 
 The CodeBuild project, its role and the trigger live in `infra/platform`,
-which only an admin can apply ([runbook](../infrastructure/runbooks.md#3-platform-once-per-environment)).
+which only an admin can apply ([deploy guide, step 7](../infrastructure/deploy-to-race.md#7-create-the-platform)).
 A change to `buildspec.yml` or `ci/` takes effect on the next build. A change
 to the project or its permissions needs a `platform` apply first.
-
-## Legacy GitHub workflows
-
-`.github/workflows/` is kept until the client account is live, because the
-old stacks are torn down with the old code
-([runbook](../infrastructure/runbooks.md#10-migration-rehearsal-in-the-teams-private-account)).
-Those workflows no longer match the infrastructure in `infra/` and must not
-be used to deploy.

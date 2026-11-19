@@ -125,6 +125,7 @@ mediaRouter.post("/screenshot", needsAuth, async (c) => {
                 mediaType: "SCREENSHOT",
                 projectId: data.projectId,
                 status: "AVAILABLE",
+                uploaderId: c.get("user")!.id,
             }
         })
 
@@ -214,6 +215,8 @@ mediaRouter.post("/video", needsAuth, async(c) => {
                 status: "PENDING",
                 projectId: projectId,
                 mediaType: "VIDEO",
+                // transcode_in charges the uploader's video credits
+                uploaderId: c.get("user")!.id,
             }
         })
         const versionRecord = await db.projectVersionMedia.create({

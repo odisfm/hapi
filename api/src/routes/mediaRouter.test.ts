@@ -32,6 +32,7 @@ function makeMedia(overrides: Partial<ProjectMediaModel> = {}): ProjectMediaMode
         status: "AVAILABLE",
         createdAt: new Date(),
         failureReason: null,
+        uploaderId: null,
         ...overrides,
     }
 }
@@ -72,6 +73,9 @@ describe("image uploads", () => {
         const res = await app.request(path, {method: "POST", headers: loginAs("STUDENT", {id: OWNER_ID}), body: uploadForm(data)})
         expect(res.status).toBe(status)
         expect(s3.send).toHaveBeenCalledOnce()
+        if (path === "/media/screenshot") {
+            expect(db.projectMedia.create).toHaveBeenCalledWith({data: expect.objectContaining({uploaderId: OWNER_ID})})
+        }
     })
 })
 
@@ -100,10 +104,19 @@ describe("POST /media/video", () => {
         })
         // The db mock doesn't validate fields, so pin the exact columns written
         expect(db.projectMedia.create).toHaveBeenCalledWith({
-            data: {mediaUrl: expect.any(String), status: "PENDING", projectId, mediaType: "VIDEO"},
+            data: {mediaUrl: expect.any(String), status: "PENDING", projectId, mediaType: "VIDEO", uploaderId: OWNER_ID},
         })
         const {mediaUrl} = vi.mocked(db.projectMedia.create).mock.calls[0][0].data
         expect(createVideoUploadUrl).toHaveBeenCalledWith(mediaUrl)
+    })
+
+    test("records an admin as the uploader on a student's project, so the admin is charged", async () => {
+        const record = makeMedia({mediaType: "VIDEO", status: "PENDING"})
+        vi.mocked(db.projectMedia.create).mockResolvedValue(record)
+        vi.mocked(db.projectVersionMedia.create).mockResolvedValue({order: "", mediaId: "", projectVersionId: "", deviceType: "PHONE"})
+        const res = await uploadVideo(loginAs("ADMIN", {id: "admin-1"}))
+        expect(res.status).toBe(200)
+        expect(db.projectMedia.create).toHaveBeenCalledWith({data: expect.objectContaining({uploaderId: "admin-1"})})
     })
 })
 

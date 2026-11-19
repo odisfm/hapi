@@ -16,14 +16,6 @@ Contents:
 
 ## Bugs
 
-### Video credits are charged to the project owner
-
-- **Problem:** `transcode_in` charges the project's owner, not the person
-  uploading.
-- **Impact:** an admin uploading a video to a student's project uses the
-  student's credits.
-- **Fix:** record the uploader on `ProjectMedia`, if this matters.
-
 ### Approving a version isn't atomic
 
 - **Problem:** approving a version marks the previous approved version

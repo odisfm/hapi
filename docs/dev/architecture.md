@@ -361,12 +361,12 @@ Video is too big for the API, so the browser uploads it straight to S3,
 and processing happens in AWS Elemental MediaConvert:
 
 ```
-1. Website ──POST /media/video──► API: creates ProjectMedia (PENDING), links it to the version,
-                                       returns a presigned upload URL
+1. Website ──POST /media/video──► API: creates ProjectMedia (PENDING, uploaderId = the user),
+                                       links it to the version, returns a presigned upload URL
 2. Website ──PUT file──► S3 media bucket: transcode_in/<uuid>
 3. S3 event ──► transcode_in Lambda:
       - probes the video (length, size, audio)
-      - checks and deducts the owner's video credits
+      - checks and deducts the uploader's video credits
       - starts a MediaConvert job (VP9/Opus WebM, long edge max 1920)
       - on any failure: marks the media FAILED, deletes the upload, refunds credits
 4. MediaConvert ──► S3: transcode_out/<uuid>.webm
@@ -381,8 +381,10 @@ videos stay `PENDING`.
 nearest minute. Students start with 10 (`shared/src/consts.ts`), and
 admins can change a student's credits on the Users page. Admins have
 `null`, which means unlimited, however they were created. Credits are
-charged to the project's owner, not the uploader, so an admin uploading to
-a student's project uses the student's credits.
+charged to whoever uploads the video (`ProjectMedia.uploaderId`), so an
+admin uploading to a student's project doesn't use the student's credits.
+Videos with no recorded uploader (uploaded before November 2026, or by a
+user since deleted) are charged to the project's owner.
 
 ### Clean-up
 

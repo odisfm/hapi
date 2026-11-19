@@ -69,6 +69,7 @@ export const handler = async (event: S3Event) => {
             mediaUrl: uri
         },
         include: {
+            uploader: true,
             project: {
                 include: {
                     ownerships: {
@@ -83,13 +84,18 @@ export const handler = async (event: S3Event) => {
     if (!record) {
         throw new Error(`No DB record with URI ${uri}`)
     }
-    const owner = record.project.ownerships[0].owner
-    // DB schema technically allows multiple project owners but this is not implemented on frontend
+    // The uploader pays. Videos uploaded before uploaders were recorded, or whose uploader has
+    // since been deleted, fall back to the project's owner (the website only ever sets one).
+    const payer = record.uploader ?? record.project.ownerships[0]?.owner
 
     try {
+        if (!payer) {
+            // marked FAILED below
+            throw new Error(`No uploader or owner to charge for ${uri}`)
+        }
 
-        if (owner.videoTranscodeCredits !== null) { // admins have null (unlimited credits)
-            if (roundedDurationMinutes > owner.videoTranscodeCredits) {
+        if (payer.videoTranscodeCredits !== null) { // admins have null (unlimited credits)
+            if (roundedDurationMinutes > payer.videoTranscodeCredits) {
                 await db.projectMedia.update({
                     where: {
                         mediaUrl: uri
@@ -108,7 +114,7 @@ export const handler = async (event: S3Event) => {
             }
             await db.user.update({
                 where: {
-                    id: owner.id
+                    id: payer.id
                 },
                 data: {
                     videoTranscodeCredits: {
@@ -214,10 +220,10 @@ export const handler = async (event: S3Event) => {
                 Key: key,
             } satisfies DeleteObjectCommandInput))
 
-            if (didDeductCredits) {
+            if (didDeductCredits && payer) {
                 await db.user.update({
                     where: {
-                        id: owner.id
+                        id: payer.id
                     },
                     data: {
                         videoTranscodeCredits: {
